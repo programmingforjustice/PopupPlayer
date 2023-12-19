@@ -1,7 +1,7 @@
 package nl.blauw.pipplayer
 
 import androidx.appcompat.app.AppCompatActivity
-import nl.blauw.klembord.databinding.ActivityMainBinding
+import nl.blauw.pipplayer.databinding.ActivityMainBinding
 import android.os.Bundle
 import java.io.File
 import kotlin.io.*
