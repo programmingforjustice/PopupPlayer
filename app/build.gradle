@@ -8,7 +8,7 @@ android {
 	  namespace "nl.blauw.pipplayer"
 		
     defaultConfig {
-        applicationId "nl.blauw.klembord"
+        applicationId "nl.blauw.pipplayer"
         minSdk 26
         targetSdk 33
         versionCode 1
