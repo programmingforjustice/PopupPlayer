@@ -1,4 +1,4 @@
-package com.videooverlay;
+package nl.blauw.pipplayer;
 
 
 import android.content.Context;

@@ -1,20 +1,20 @@
 package nl.blauw.pipplayer
 
 import androidx.appcompat.app.AppCompatActivity
-import nl.blauw.pipplayer.databinding.ActivityMainBinding
+import nl.blauw.pipplayer.databinding.ActivityPlayListBinding
 import android.os.Bundle
 import java.io.File
 import kotlin.io.*
 
 public class PlayerListActivity : AppCompatActivity() {
 
-	private lateinit var binding: ActivityMainBinding
+	private lateinit var binding: ActivityPlayListBinding
 	
 	private lateinit var klembordFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
          super.onCreate(savedInstanceState)
-         binding = ActivityMainBinding.inflate(layoutInflater)
+         binding = ActivityPlayListBinding.inflate(layoutInflater)
          val view = binding.root
          setContentView(view)
 		 

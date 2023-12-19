@@ -25,6 +25,11 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="Play" />
+		  
+		 <Button android:id="@+id/button_playlist"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="PlayList" />
           
         <Button android:id="@+id/button_exit"
           android:layout_width="wrap_content"

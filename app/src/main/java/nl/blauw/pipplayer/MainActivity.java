@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     public final static int REQUEST_CODE = 100;
 
     private Button playButton;
+	
+	private Button playListButton;
     
     private Button exitButton;
 
@@ -52,12 +54,25 @@ public class MainActivity extends AppCompatActivity {
                   public void onClick(View view) 
                   { 
                       String url = urlEdit.getText().toString();
-      		            startPipPlayer(url);
-      		            addTextView(url);
-      		            writeUrl(url);
+					  if (url == null || url.trim().length() == 0) 
+					  	return;
+						  
+      		        startPipPlayer(url);
+      		        addTextView(url);
+      		        writeUrl(url);
       			    urlEdit.setText("");
                   } 
               }); 
+			  
+		playListButton = (Button)findViewById(R.id.button_playlist);
+        playListButton.setOnClickListener(new View.OnClickListener() { 
+            @Override
+            public void onClick(View view) 
+            { 
+				Intent intent = new Intent(MainActivity.this, PlayerListActivity.class);
+            	startActivity(intent);
+            } 
+        }); 
               
         exitButton = (Button)findViewById(R.id.button_exit);
       	exitButton.setOnClickListener(new View.OnClickListener() { 
@@ -103,12 +118,14 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) 
             { 
                 String url = ((TextView)view).getText().toString();
-		            startPlayingOverlay(url);
+				if (url != null && !"nothing".equalsIgnoreCase(url)) {
+		        	startPipPlayer(url);
+				}
             } 
         }); 
       
     
-    layout.addView(urlText);
+   	 layout.addView(urlText);
     }
     
     private void writeUrl(String url) {
@@ -137,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
       BufferedReader reader = null;
       try {
         reader = new BufferedReader(new InputStreamReader(
-        openFileInput("geschiedenis.txt")));
+        openFileInput("playlist.content")));
         String url = null;
         while ((url = reader.readLine()) != null) {
           urlList.add(url);
