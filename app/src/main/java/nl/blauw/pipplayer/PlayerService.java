@@ -81,8 +81,6 @@ public class PlayerService extends Service {
 		    params.gravity = Gravity.TOP | Gravity.LEFT;
             params.x = 100;
             params.y = 200;
-	    params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-	    params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
             //simpleExoPlayerView = new StyledPlayerView(getApplicationContext());
             simpleExoPlayerView = new PlayerView(getApplicationContext());
@@ -292,20 +290,23 @@ public class PlayerService extends Service {
             (double)event.getY(0) - event.getY(1)
         );
 
-        //double popupWidth = playerUi.popupLayoutParams.width.toDouble()
         double popupWidth = params.width;
-        // change co-ordinates of popup so the center stays at the same position
-        double newWidth = popupWidth * currentPointerDistance /
-        initPointerDistance;
-        initPointerDistance = currentPointerDistance;
-        params.x += (int)((popupWidth - newWidth) / 2.0);
+        double popupHeight = params.height;
 
-        // lplayerUi.checkPopupPositionBounds()
-        //playerUi.updateScreenSize()
-        //playerUi.changePopupSize(min(playerUi.screenWidth.toDouble(), newWidth).toInt())
-        
+        // Calculate new width and height
+        double newWidth = popupWidth * currentPointerDistance / initPointerDistance;
+        double newHeight = popupHeight * currentPointerDistance / initPointerDistance;
+
+        // Adjust position to keep the popup centered
+        params.x += (int)((popupWidth - newWidth) / 2.0);
+        params.y += (int)((popupHeight - newHeight) / 2.0);
+
+        // Update the initial pointer distance
+        initPointerDistance = currentPointerDistance;
+
+        // Calculate the actual width and height
         final int actualWidth = (int)newWidth;
-        final int actualHeight = (int) getMinimumVideoHeight(newWidth);
+        final int actualHeight = (int)newHeight;
 
         params.width = actualWidth;
         params.height = actualHeight;
