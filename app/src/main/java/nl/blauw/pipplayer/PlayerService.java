@@ -66,8 +66,10 @@ public class PlayerService extends Service {
             windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    Utils.convertDpToPixelsInt(300, getApplicationContext()),
-                    Utils.convertDpToPixelsInt(169, getApplicationContext()),
+                    //Utils.convertDpToPixelsInt(300, getApplicationContext()),
+                    //Utils.convertDpToPixelsInt(169, getApplicationContext()),
+		    WindowManager.LayoutParams.WRAP_CONTENT, // 너비
+                    WindowManager.LayoutParams.WRAP_CONTENT, // 높이
                     WindowManager.LayoutParams.TYPE_PHONE,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT);
@@ -81,8 +83,8 @@ public class PlayerService extends Service {
 	    params.gravity = Gravity.TOP | Gravity.LEFT;
             params.x = 100;
             params.y = 200;
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-	    params.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            //params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+	    //params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
             //simpleExoPlayerView = new StyledPlayerView(getApplicationContext());
             simpleExoPlayerView = new PlayerView(getApplicationContext());
