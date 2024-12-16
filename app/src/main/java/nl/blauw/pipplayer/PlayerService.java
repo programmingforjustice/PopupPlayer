@@ -78,9 +78,11 @@ public class PlayerService extends Service {
                 params.type = WindowManager.LayoutParams.TYPE_TOAST;
 	   	 }
        	
-		    params.gravity = Gravity.TOP | Gravity.LEFT;
+	    params.gravity = Gravity.TOP | Gravity.LEFT;
             params.x = 100;
             params.y = 200;
+            params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+	    params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
             //simpleExoPlayerView = new StyledPlayerView(getApplicationContext());
             simpleExoPlayerView = new PlayerView(getApplicationContext());
