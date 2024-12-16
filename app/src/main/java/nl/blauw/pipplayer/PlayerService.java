@@ -138,7 +138,7 @@ public class PlayerService extends Service {
 						.setTrackSelector(trackSelector)
 						.build();
 						
-		simpleExoPlayerView.setPlayer(player);
+		//simpleExoPlayerView.setPlayer(player);
 		
         // Bind the player to the view.
 		Log.e(TAG, "PlayerView = " + simpleExoPlayerView);
@@ -159,6 +159,24 @@ public class PlayerService extends Service {
 		player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.seekTo(0L);
         player.setPlayWhenReady(true);
+
+	// Get the width and height of the video content
+float videoWidth = player.getVideoSize().width;
+float videoHeight = player.getVideoSize().height;
+
+// Calculate the aspect ratio and set the layout size accordingly
+if (videoWidth > 0 && videoHeight > 0) {
+    float aspectRatio = videoWidth / videoHeight;
+
+    ViewGroup.LayoutParams params = simpleExoPlayerView.getLayoutParams();
+    params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+    params.height = (int) (params.width / aspectRatio); // Calculate the height
+    simpleExoPlayerView.setLayoutParams(params);
+}
+
+    simpleExoPlayerView.setPlayer(player);    
+
+
     }
 
 	private class ListenerImpl implements View.OnTouchListener { 
