@@ -17,6 +17,7 @@ import android.util.Log;
 
 //import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.video.VideoSize
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -176,11 +177,14 @@ public class PlayerService extends Service {
 	height = newSize[1];
 	    
         // 비율에 맞게 PlayerView 조정
-        ViewGroup.LayoutParams params = playerView.getLayoutParams();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = (int) ((float) width / height * params.width);
+        ViewGroup.LayoutParams params = simpleExoPlayerView.getLayoutParams();
+        //params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        //params.height = (int) ((float) width / height * params.width);
+	params.width = width;
+        params.height = height;    
         //if (simpleExoPlayerView != null) simpleExoPlayerView.setLayoutParams(params);
 	simpleExoPlayerView.setLayoutParams(params);
+	//windowManager.updateViewLayout(simpleExoPlayerView, params);
     }
 });
 
@@ -371,8 +375,8 @@ if (videoWidth > 0 && videoHeight > 0) {
     }
 	}
 
-    private static final int MAX_WIDTH = 200;
-    private static final int MAX_HEIGHT = 200;
+    private static final int MAX_WIDTH = 400;
+    private static final int MAX_HEIGHT = 400;
 
     public static int[] calculateResizedDimensions(int width, int height) {
         // 가로와 세로의 비율
