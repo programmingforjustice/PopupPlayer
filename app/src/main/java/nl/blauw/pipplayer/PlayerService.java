@@ -66,6 +66,8 @@ public class PlayerService extends Service {
             //simpleExoPlayerView = new StyledPlayerView(getApplicationContext());
             simpleExoPlayerView = new PlayerView(getApplicationContext());
 
+	    
+
 	    	ImageButton crossButton = (ImageButton)simpleExoPlayerView.findViewById(R.id.cross_button);
 	    	crossButton.setTag(simpleExoPlayerView);
 
@@ -93,14 +95,12 @@ public class PlayerService extends Service {
 
 	    simpleExoPlayerView.setPlayer(player);
 
-	    float videoWidth = player.getVideoSize().width;
-            float videoHeight = player.getVideoSize().height;
-	    int[] newSize = calculateResizedDimensions((int)videoWidth, (int)videoHeight);
+	    
 
 	    windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    Utils.convertDpToPixelsInt(newSize[0], getApplicationContext()),
-                    Utils.convertDpToPixelsInt(newSize[1], getApplicationContext()),
+                    Utils.convertDpToPixelsInt(300, getApplicationContext()),
+                    Utils.convertDpToPixelsInt(169, getApplicationContext()),
 		    //WindowManager.LayoutParams.WRAP_CONTENT, // 너비
                     //WindowManager.LayoutParams.WRAP_CONTENT, // 높이
                     WindowManager.LayoutParams.TYPE_PHONE,
@@ -160,6 +160,30 @@ public class PlayerService extends Service {
                 new ProgressiveMediaSource.Factory(dataSourceFactory, new DefaultExtractorsFactory())
                         .createMediaSource(MediaItem.fromUri(contentUrl));
 						
+        
+
+	player.addListener(new Player.Listener() {
+    @Override
+    public void onVideoSizeChanged(VideoSize videoSize) {
+        int width = videoSize.width;
+        int height = videoSize.height;
+        int rotation = videoSize.unappliedRotationDegrees;
+
+        Log.d("VideoSize", "Width: " + width + ", Height: " + height + ", Rotation: " + rotation);
+
+	int[] newSize = calculateResizedDimensions(width, height);
+	width = newSize[0];
+	height = newSize[1];
+	    
+        // 비율에 맞게 PlayerView 조정
+        ViewGroup.LayoutParams params = playerView.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = (int) ((float) width / height * params.width);
+        //if (simpleExoPlayerView != null) simpleExoPlayerView.setLayoutParams(params);
+	simpleExoPlayerView.setLayoutParams(params);
+    }
+});
+
         player.prepare(contentMediaSource);
 		player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.seekTo(0L);
