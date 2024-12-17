@@ -63,29 +63,6 @@ public class PlayerService extends Service {
 
     private void addPopupWindow() {
         try {
-            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-
-            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    //Utils.convertDpToPixelsInt(300, getApplicationContext()),
-                    //Utils.convertDpToPixelsInt(169, getApplicationContext()),
-		    WindowManager.LayoutParams.WRAP_CONTENT, // 너비
-                    WindowManager.LayoutParams.WRAP_CONTENT, // 높이
-                    WindowManager.LayoutParams.TYPE_PHONE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    PixelFormat.TRANSLUCENT);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
-            } else {
-                params.type = WindowManager.LayoutParams.TYPE_TOAST;
-	   	 }
-       	
-	    params.gravity = Gravity.TOP | Gravity.LEFT;
-            params.x = 100;
-            params.y = 200;
-            //params.width = WindowManager.LayoutParams.WRAP_CONTENT;
-	    //params.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
             //simpleExoPlayerView = new StyledPlayerView(getApplicationContext());
             simpleExoPlayerView = new PlayerView(getApplicationContext());
 
@@ -113,6 +90,30 @@ public class PlayerService extends Service {
             //simpleExoPlayerView.setShowPreviousButton(true);
             simpleExoPlayerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
 	    	simpleExoPlayerView.setControllerShowTimeoutMs(2500);
+
+	    simpleExoPlayerView.setPlayer(player);
+
+	    windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+            WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                    //Utils.convertDpToPixelsInt(300, getApplicationContext()),
+                    //Utils.convertDpToPixelsInt(169, getApplicationContext()),
+		    WindowManager.LayoutParams.WRAP_CONTENT, // 너비
+                    WindowManager.LayoutParams.WRAP_CONTENT, // 높이
+                    WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                params.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+            } else {
+                params.type = WindowManager.LayoutParams.TYPE_TOAST;
+	   	 }
+       	
+	    params.gravity = Gravity.TOP | Gravity.LEFT;
+            params.x = 100;
+            params.y = 200;
+            //params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+	    //params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 	    
             windowManager.addView(simpleExoPlayerView, params);
         } catch (Exception e) {
@@ -122,9 +123,9 @@ public class PlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        addPopupWindow();
         final String url = intent.getStringExtra("data");
         initializePlayer(url);
+	addPopupWindow();
         return START_NOT_STICKY;
     }
 
@@ -134,7 +135,7 @@ public class PlayerService extends Service {
         TrackSelector trackSelector = new DefaultTrackSelector(getApplicationContext(), videoTrackSelectionFactory);
         // Create a player instance.
         //player = ExoPlayerFactory.newSimpleInstance(getApplicationContext(), trackSelector);
-		player = new SimpleExoPlayer.Builder(getApplicationContext())
+	player = new SimpleExoPlayer.Builder(getApplicationContext())
 						.setTrackSelector(trackSelector)
 						.build();
 						
@@ -161,10 +162,13 @@ public class PlayerService extends Service {
         player.setPlayWhenReady(true);
 
 	// Get the width and height of the video content
+/*
 float videoWidth = player.getVideoSize().width;
 float videoHeight = player.getVideoSize().height;
-
+*/
+	    
 // Calculate the aspect ratio and set the layout size accordingly
+/*
 if (videoWidth > 0 && videoHeight > 0) {
     float aspectRatio = videoWidth / videoHeight;
 
@@ -175,7 +179,7 @@ if (videoWidth > 0 && videoHeight > 0) {
 }
 
     simpleExoPlayerView.setPlayer(player);    
-
+*/
 
     }
 
