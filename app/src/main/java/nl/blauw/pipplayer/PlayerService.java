@@ -84,7 +84,7 @@ public class PlayerService extends Service {
         	}); 
      
             simpleExoPlayerView.setKeepScreenOn(true);
-            simpleExoPlayerView.setLayoutParams(params);
+            //simpleExoPlayerView.setLayoutParams(params);
             simpleExoPlayerView.setOnTouchListener(new ListenerImpl());
             //simpleExoPlayerView.setShowNextButton(true);
             //simpleExoPlayerView.setShowPreviousButton(true);
