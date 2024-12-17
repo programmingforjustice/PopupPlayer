@@ -93,12 +93,16 @@ public class PlayerService extends Service {
 
 	    simpleExoPlayerView.setPlayer(player);
 
+	    float videoWidth = player.getVideoSize().width;
+            float videoHeight = player.getVideoSize().height;
+	    int[] newSize = calculateResizedDimensions((int)videoWidth, (int)videoHeight);
+
 	    windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
             WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-                    //Utils.convertDpToPixelsInt(300, getApplicationContext()),
-                    //Utils.convertDpToPixelsInt(169, getApplicationContext()),
-		    WindowManager.LayoutParams.WRAP_CONTENT, // 너비
-                    WindowManager.LayoutParams.WRAP_CONTENT, // 높이
+                    Utils.convertDpToPixelsInt(newSize[0], getApplicationContext()),
+                    Utils.convertDpToPixelsInt(newSize[1], getApplicationContext()),
+		    //WindowManager.LayoutParams.WRAP_CONTENT, // 너비
+                    //WindowManager.LayoutParams.WRAP_CONTENT, // 높이
                     WindowManager.LayoutParams.TYPE_PHONE,
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT);
@@ -342,4 +346,29 @@ if (videoWidth > 0 && videoHeight > 0) {
         return true;
     }
 	}
+
+    private static final int MAX_WIDTH = 200;
+    private static final int MAX_HEIGHT = 200;
+
+    public static int[] calculateResizedDimensions(int width, int height) {
+        // 가로와 세로의 비율
+        float aspectRatio = (float) width / height;
+
+        int newWidth = width;
+        int newHeight = height;
+
+        // 가로 또는 세로가 최대 크기를 초과하는 경우 축소
+        if (newWidth > MAX_WIDTH) {
+            newWidth = MAX_WIDTH;
+            newHeight = (int) (newWidth / aspectRatio);
+        }
+
+        if (newHeight > MAX_HEIGHT) {
+            newHeight = MAX_HEIGHT;
+            newWidth = (int) (newHeight * aspectRatio);
+        }
+
+        return new int[]{newWidth, newHeight};
+    }
+
 }
