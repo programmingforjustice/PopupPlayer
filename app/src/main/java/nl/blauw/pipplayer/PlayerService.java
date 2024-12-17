@@ -17,7 +17,7 @@ import android.util.Log;
 
 //import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.video.VideoSize
+import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
