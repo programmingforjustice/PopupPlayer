@@ -348,6 +348,15 @@ if (videoWidth > 0 && videoHeight > 0) {
             (double)event.getY(0) - event.getY(1)
         );
 
+{
+        ViewGroup.LayoutParams params = simpleExoPlayerView.getLayoutParams();
+        //params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        //params.height = (int) ((float) width / height * params.width);
+	//params.width = width;
+        //params.height = height;    
+        //if (simpleExoPlayerView != null) simpleExoPlayerView.setLayoutParams(params);
+	
+
         double popupWidth = params.width;
         double popupHeight = params.height;
 
@@ -373,8 +382,9 @@ if (videoWidth > 0 && videoHeight > 0) {
         params.width = actualWidth;
         params.height = actualHeight;
         //binding.surfaceView.setHeights(popupLayoutParams.height, popupLayoutParams.height);
+	//simpleExoPlayerView.setLayoutParams(params);
         windowManager.updateViewLayout(simpleExoPlayerView, params);
-
+}
 	/*{
            ViewGroup.LayoutParams params = simpleExoPlayerView.getLayoutParams();
         //params.width = ViewGroup.LayoutParams.MATCH_PARENT;
