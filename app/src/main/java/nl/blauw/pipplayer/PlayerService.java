@@ -351,9 +351,13 @@ if (videoWidth > 0 && videoHeight > 0) {
         double popupWidth = params.width;
         double popupHeight = params.height;
 
+	double scaleFactor = popupHeight / popupWidth;
+
         // Calculate new width and height
         double newWidth = popupWidth * currentPointerDistance / initPointerDistance;
-        double newHeight = popupHeight * currentPointerDistance / initPointerDistance;
+        //double newHeight = popupHeight * currentPointerDistance / initPointerDistance;
+	    
+        double newHeight = newWidth * scaleFactor;
 
         // Adjust position to keep the popup centered
         params.x += (int)((popupWidth - newWidth) / 2.0);
