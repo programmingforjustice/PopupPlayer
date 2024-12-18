@@ -170,6 +170,8 @@ public class PlayerService extends Service {
         int height = videoSize.height;
         int rotation = videoSize.unappliedRotationDegrees;
 
+	double scaleFactor = (double) width / height;
+
         Log.d("VideoSize", "Width: " + width + ", Height: " + height + ", Rotation: " + rotation);
 
 	int[] newSize = calculateResizedDimensions(width, height);
@@ -184,6 +186,7 @@ public class PlayerService extends Service {
         params.height = height;    
         //if (simpleExoPlayerView != null) simpleExoPlayerView.setLayoutParams(params);
 	simpleExoPlayerView.setLayoutParams(params);
+        simpleExoPlayerView.setTag(scaleFactor)
 	//windowManager.updateViewLayout(simpleExoPlayerView, params);
     }
 });
@@ -359,13 +362,13 @@ if (videoWidth > 0 && videoHeight > 0) {
         double popupWidth = playerViewParams.width;
         double popupHeight = playerViewParams.height;
 
-	double scaleFactor = popupHeight / popupWidth;
+	double scaleFactor = simpleExoPlayerView.getTag();
 
         // Calculate new width and height
         double newWidth = popupWidth * currentPointerDistance / initPointerDistance;
         //double newHeight = popupHeight * currentPointerDistance / initPointerDistance;
 	    
-        double newHeight = newWidth * scaleFactor;
+        double newHeight = newWidth / scaleFactor;
 
         // Adjust position to keep the popup centered
         params.x += (int)((popupWidth - newWidth) / 2.0);
