@@ -362,7 +362,7 @@ if (videoWidth > 0 && videoHeight > 0) {
         double popupWidth = playerViewParams.width;
         double popupHeight = playerViewParams.height;
 
-	double scaleFactor = simpleExoPlayerView.getTag();
+	double scaleFactor = (Double)simpleExoPlayerView.getTag();
 
         // Calculate new width and height
         double newWidth = popupWidth * currentPointerDistance / initPointerDistance;
