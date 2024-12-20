@@ -62,10 +62,27 @@ public class PopupManager {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = DEFAULT_POPUP_X;
         params.y = DEFAULT_POPUP_Y;
+        
+        setupCrossButton(playerView);
 
         setupTouchListeners(playerView, params);
 
         windowManager.addView(playerView, params);
+    }
+    
+    private void setupCrossButton(PlayerView playerView) {
+        ImageButton crossButton = playerView.findViewById(R.id.cross_button);
+        if (crossButton != null) {
+            crossButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (playerView.getParent() != null) {
+                        windowManager.removeViewImmediate(playerView);
+                        player.release(); // 플레이어 리소스 해제
+                    }
+                }
+            });
+        }
     }
 
     private void setupTouchListeners(PlayerView view, WindowManager.LayoutParams params) {
