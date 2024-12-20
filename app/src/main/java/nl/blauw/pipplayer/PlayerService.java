@@ -84,8 +84,8 @@ public class PlayerService extends Service {
       windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
       WindowManager.LayoutParams params =
           new WindowManager.LayoutParams(
-              Utils.convertDpToPixelsInt(0, getApplicationContext()),
-              Utils.convertDpToPixelsInt(0, getApplicationContext()),
+              Utils.convertDpToPixelsInt(160, getApplicationContext()),
+              Utils.convertDpToPixelsInt(90, getApplicationContext()),
               // WindowManager.LayoutParams.WRAP_CONTENT, // 너비
               // WindowManager.LayoutParams.WRAP_CONTENT, // 높이
               WindowManager.LayoutParams.TYPE_PHONE,
@@ -104,6 +104,8 @@ public class PlayerService extends Service {
       // params.width = WindowManager.LayoutParams.WRAP_CONTENT;
       // params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
+      // View 숨기기
+      simpleExoPlayerView.setVisibility(View.GONE);
       windowManager.addView(simpleExoPlayerView, params);
     } catch (Exception e) {
       Utils.LogData(false, TAG, e.getMessage());
@@ -177,6 +179,8 @@ public class PlayerService extends Service {
             simpleExoPlayerView.setLayoutParams(params);
             simpleExoPlayerView.setTag(scaleFactor);
             windowManager.updateViewLayout(simpleExoPlayerView, params);
+            // View 다시 보이게 하기
+            simpleExoPlayerView.setVisibility(View.VISIBLE);
           }
         });
 
