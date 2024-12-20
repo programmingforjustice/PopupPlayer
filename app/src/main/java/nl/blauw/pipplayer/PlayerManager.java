@@ -19,7 +19,7 @@ import com.google.android.exoplayer2.util.Util;
 public class PlayerManager {
 
     private final Context context;
-    // private SimpleExoPlayer player;
+    private SimpleExoPlayer player;
 
     public PlayerManager(Context context) {
         this.context = context;
