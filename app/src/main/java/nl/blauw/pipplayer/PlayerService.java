@@ -105,8 +105,9 @@ public class PlayerService extends Service {
       // params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
       // View 숨기기
-      windowManager.addView(simpleExoPlayerView, params);
+      //windowManager.addView(simpleExoPlayerView, params);
       //simpleExoPlayerView.setVisibility(View.INVISIBLE);
+      simpleExoPlayerView.setLayoutParams(params);
     } catch (Exception e) {
       Utils.LogData(false, TAG, e.getMessage());
     }
