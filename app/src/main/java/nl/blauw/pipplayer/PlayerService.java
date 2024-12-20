@@ -106,7 +106,7 @@ public class PlayerService extends Service {
 
       // View 숨기기
       windowManager.addView(simpleExoPlayerView, params);
-      simpleExoPlayerView.setVisibility(View.INVISIBLE);
+      //simpleExoPlayerView.setVisibility(View.INVISIBLE);
     } catch (Exception e) {
       Utils.LogData(false, TAG, e.getMessage());
     }
@@ -180,7 +180,7 @@ public class PlayerService extends Service {
             simpleExoPlayerView.setTag(scaleFactor);
             windowManager.updateViewLayout(simpleExoPlayerView, params);
             // View 다시 보이게 하기
-            simpleExoPlayerView.setVisibility(View.VISIBLE);
+            //simpleExoPlayerView.setVisibility(View.VISIBLE);
           }
         });
 
