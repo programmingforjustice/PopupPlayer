@@ -71,4 +71,8 @@ public class PopupManager {
             windowManager.removeViewImmediate(playerView);
         }
     }
+    
+    public PlayerView getPlayerView() {
+      return playerView;
+    }
 }
