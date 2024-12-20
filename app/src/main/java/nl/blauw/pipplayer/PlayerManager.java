@@ -50,7 +50,7 @@ public class PlayerManager {
 
         player.setMediaSource(contentMediaSource);
         player.prepare();
-        player.setRepeatMode(Player.REPEAT_MODE_ALL);
+        //player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.setPlayWhenReady(true);
         playerView.setPlayer(player);
     }

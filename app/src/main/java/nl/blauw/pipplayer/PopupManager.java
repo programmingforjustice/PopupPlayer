@@ -39,7 +39,7 @@ public class PopupManager {
         playerView = new PlayerView(context);
         playerView.setKeepScreenOn(true);
         //playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
-        //playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
+        ///playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
         playerView.setPlayer(player);
 
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -64,7 +64,7 @@ public class PopupManager {
         params.x = DEFAULT_POPUP_X;
         params.y = DEFAULT_POPUP_Y;
         
-        setupCrossButton(playerView);
+        //setupCrossButton(playerView);
 
         setupTouchListeners(playerView, params);
 
