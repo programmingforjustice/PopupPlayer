@@ -84,8 +84,8 @@ public class PlayerService extends Service {
       windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
       WindowManager.LayoutParams params =
           new WindowManager.LayoutParams(
-              Utils.convertDpToPixelsInt(300, getApplicationContext()),
-              Utils.convertDpToPixelsInt(169, getApplicationContext()),
+              Utils.convertDpToPixelsInt(0, getApplicationContext()),
+              Utils.convertDpToPixelsInt(0, getApplicationContext()),
               // WindowManager.LayoutParams.WRAP_CONTENT, // 너비
               // WindowManager.LayoutParams.WRAP_CONTENT, // 높이
               WindowManager.LayoutParams.TYPE_PHONE,
