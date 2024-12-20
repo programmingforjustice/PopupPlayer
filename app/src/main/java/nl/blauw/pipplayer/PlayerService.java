@@ -176,7 +176,7 @@ public class PlayerService extends Service {
             // if (simpleExoPlayerView != null) simpleExoPlayerView.setLayoutParams(params);
             simpleExoPlayerView.setLayoutParams(params);
             simpleExoPlayerView.setTag(scaleFactor);
-            // windowManager.updateViewLayout(simpleExoPlayerView, params);
+            windowManager.updateViewLayout(simpleExoPlayerView, params);
           }
         });
 
