@@ -26,6 +26,7 @@ public class PlayerService extends Service {
         popupManager.createPopupWindow();
 
         playerManager.initializePlayer(url, popupManager.getPlayerView());
+        
         return START_NOT_STICKY;
     }
 

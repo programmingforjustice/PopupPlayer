@@ -52,8 +52,8 @@ public class PopupResizeHandler implements View.OnTouchListener {
                         int newHeight = (int) (newWidth / scaleFactor);
 
                         // 크기 제한
-                        newWidth = Math.min(newWidth, MAX_WIDTH);
-                        newHeight = Math.min(newHeight, MAX_HEIGHT);
+                        //newWidth = Math.min(newWidth, MAX_WIDTH);
+                        //newHeight = Math.min(newHeight, MAX_HEIGHT);
 
                         params.width = newWidth;
                         params.height = newHeight;

@@ -17,6 +17,8 @@ public class PopupManager {
 
     private static final int DEFAULT_POPUP_X = 100;
     private static final int DEFAULT_POPUP_Y = 200;
+    
+    private static final int CONTROLLER_SHOW_TIMEOUT = 250;
 
     private static final int DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
@@ -34,6 +36,9 @@ public class PopupManager {
         playerView = new PlayerView(context);
         playerView.setPlayer(player);
         playerView.setKeepScreenOn(true);
+        playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
+        playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
+
 
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
