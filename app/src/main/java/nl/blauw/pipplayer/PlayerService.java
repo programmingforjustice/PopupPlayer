@@ -179,7 +179,8 @@ public class PlayerService extends Service {
             // if (simpleExoPlayerView != null) simpleExoPlayerView.setLayoutParams(params);
             simpleExoPlayerView.setLayoutParams(params);
             simpleExoPlayerView.setTag(scaleFactor);
-            windowManager.updateViewLayout(simpleExoPlayerView, params);
+            windowManager.addView(simpleExoPlayerView, params);
+            //windowManager.updateViewLayout(simpleExoPlayerView, params);
             // View 다시 보이게 하기
             //simpleExoPlayerView.setVisibility(View.VISIBLE);
           }
