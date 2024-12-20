@@ -21,7 +21,7 @@ public class PopupManager {
     private static final int DEFAULT_POPUP_X = 100;
     private static final int DEFAULT_POPUP_Y = 200;
     
-    private static final int CONTROLLER_SHOW_TIMEOUT = 250;
+    private static final int CONTROLLER_SHOW_TIMEOUT = 2500;
 
     private static final int DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
