@@ -37,11 +37,10 @@ public class PopupManager {
 
     public void createPopupWindow() {
         playerView = new PlayerView(context);
-        playerView.setPlayer(player);
         playerView.setKeepScreenOn(true);
         playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
         playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
-
+        playerView.setPlayer(player);
 
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
