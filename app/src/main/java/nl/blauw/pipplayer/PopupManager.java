@@ -9,6 +9,7 @@ import android.view.WindowManager;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.util.RepeatModeUtil;
 
 public class PopupManager {
 
