@@ -19,13 +19,13 @@ import com.google.android.exoplayer2.util.Util;
 public class PlayerManager {
 
     private final Context context;
-    private SimpleExoPlayer player;
+    // private SimpleExoPlayer player;
 
     public PlayerManager(Context context) {
         this.context = context;
     }
 
-    public void initializePlayer(String contentUrl, PlayerView playerView) {
+    public void initializePlayer(String contentUrl) {
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(context);
         player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
@@ -52,7 +52,7 @@ public class PlayerManager {
         player.prepare();
         //player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.setPlayWhenReady(true);
-        playerView.setPlayer(player);
+        // playerView.setPlayer(player);
     }
 
     public SimpleExoPlayer getPlayer() {

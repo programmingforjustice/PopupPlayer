@@ -41,11 +41,11 @@ public class PopupManager {
         playerView.setKeepScreenOn(true);
         //playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
         // Ensure touch on PlayerView shows controls
-        playerView.setOnTouchListener((view, motionEvent) -> {
-            playerView.showController();
-            return false; // Allow default behavior (like toggling play/pause on tap)
-        });
-        playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
+        // playerView.setOnTouchListener((view, motionEvent) -> {
+        //     playerView.showController();
+        //     return false; // Allow default behavior (like toggling play/pause on tap)
+        // });
+        // playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
 
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
