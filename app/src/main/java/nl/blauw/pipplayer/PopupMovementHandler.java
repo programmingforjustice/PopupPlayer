@@ -33,6 +33,6 @@ public class PopupMovementHandler implements View.OnTouchListener {
                 windowManager.updateViewLayout(view, params);
                 break;
         }
-        return true;
+        return false;
     }
 }
