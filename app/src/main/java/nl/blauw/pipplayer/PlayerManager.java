@@ -57,8 +57,8 @@ public class PlayerManager {
                     
                     ViewGroup.LayoutParams params = playerView.getLayoutParams();
 
-                    params.width = Utils.convertDpToPixelsInt(width, context);
-                    params.height = Utils.convertDpToPixelsInt(height, context);
+                    params.width = width;
+                    params.height = height;
                     
                     windowManager.updateViewLayout(playerView, params);
                 }
