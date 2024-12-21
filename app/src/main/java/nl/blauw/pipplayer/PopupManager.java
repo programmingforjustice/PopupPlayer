@@ -29,6 +29,9 @@ public class PopupManager {
     private final SimpleExoPlayer player;
     private WindowManager windowManager;
     private PlayerView playerView;
+    
+    private boolean isMute;
+    private ImageButton muteToggleButton;
 
     public PopupManager(Context context, SimpleExoPlayer player) {
         this.context = context;
@@ -43,6 +46,7 @@ public class PopupManager {
         playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
         
         setupCrossButton(playerView);
+        setupMuteToggleButton(playerView);
     }
 
     public void show() {
@@ -85,6 +89,30 @@ public class PopupManager {
                     }
                 }
             });
+        }
+    }
+    
+    
+    
+    private void toggleMute() {
+        isMuted = !isMuted; // Mute 상태를 반전
+        player.setVolume(isMuted ? 0f : 1f); // Mute 시 볼륨을 0, Unmute 시 1
+        updateButtonImage(); // 버튼 이미지 업데이트
+    }
+
+    private void updateButtonImage() {
+        if (isMuted) {
+            muteToggleButton.setImageResource(R.drawable.ic_mute); // Mute 이미지
+        } else {
+            muteToggleButton.setImageResource(R.drawable.ic_unmute); // Unmute 이미지
+        }
+    }
+
+    
+    private void setupMuteToggleButton(PlayerView playerView) {
+        muteToggleButton = playerView.findViewById(R.id.mute_toggle_button);
+        if (muteToggleButton != null) {
+            muteToggleButton.setOnClickListener(v -> toggleMute());
         }
     }
 
