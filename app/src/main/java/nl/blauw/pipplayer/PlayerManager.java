@@ -60,6 +60,8 @@ public class PlayerManager {
                     params.width = width;
                     params.height = height;
                     
+                    playerView.setLayoutParams(params);
+                    
                     windowManager.updateViewLayout(playerView, params);
                 }
             }
