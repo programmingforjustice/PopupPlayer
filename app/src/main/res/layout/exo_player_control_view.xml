@@ -32,7 +32,7 @@
     
     <ImageButton
         android:id="@+id/mute_toggle_button"
-        android:src="@drawable/ic_mute" 
+        android:src="@drawable/ic_unmute" 
         android:layout_width="24dp"
 	android:layout_height="24dp"
 	android:background="?android:attr/selectableItemBackground" />
