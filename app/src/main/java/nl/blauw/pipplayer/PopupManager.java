@@ -39,13 +39,26 @@ public class PopupManager {
         playerView = new PlayerView(context);
         playerView.setPlayer(player);
         playerView.setKeepScreenOn(true);
+        playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
         //playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
         // Ensure touch on PlayerView shows controls
         // playerView.setOnTouchListener((view, motionEvent) -> {
         //     playerView.showController();
         //     return false; // Allow default behavior (like toggling play/pause on tap)
         // });
-        // playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
+        
+        player.addListener(new Player.Listener() {
+            @Override
+            public void onVideoSizeChanged(VideoSize videoSize) {
+                int width = videoSize.width;
+                int height = videoSize.height;
+                if (width > 0 && height > 0) {
+                    double scaleFactor = (double) width / height;
+                    playerView.setTag(scaleFactor); // 비율 정보를 PlayerView에 저장
+                    Log.d("PlayerManager", "ScaleFactor: " + scaleFactor);
+                }
+            }
+        });
 
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
