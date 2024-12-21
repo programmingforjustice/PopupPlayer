@@ -21,7 +21,7 @@ public class PlayerService extends Service {
 
         // PlayerManager와 PopupManager 초기화 및 실행
         playerManager = new PlayerManager(this);
-        playerManager.createPlayer(url);
+        playerManager.createPlayer();
 
         popupManager = new PopupManager(this, playerManager.getPlayer());
         popupManager.createPopupWindow();
