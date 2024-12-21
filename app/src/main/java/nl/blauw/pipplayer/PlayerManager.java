@@ -2,6 +2,7 @@
 package nl.blauw.pipplayer;
 
 import android.content.Context;
+import android.view.ViewGroup;
 import android.util.Log;
 
 import com.google.android.exoplayer2.MediaItem;
@@ -15,6 +16,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import android.view.WindowManager;
 
 public class PlayerManager {
 
@@ -50,6 +52,15 @@ public class PlayerManager {
                     double scaleFactor = (double) width / height;
                     playerView.setTag(scaleFactor); // 비율 정보를 PlayerView에 저장
                     Log.d("PlayerManager", "ScaleFactor: " + scaleFactor);
+                    
+                    WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+                    
+                    ViewGroup.LayoutParams params = playerView.getLayoutParams();
+
+                    params.width = Utils.convertDpToPixelsInt(width);
+                    params.height = Utils.convertDpToPixelsInt(height);
+                    
+                    windowManager.updateViewLayout(simpleExoPlayerView, params);
                 }
             }
         });
