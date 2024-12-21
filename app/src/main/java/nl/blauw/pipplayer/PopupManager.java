@@ -40,7 +40,7 @@ public class PopupManager {
         playerView.setPlayer(player);
         playerView.setKeepScreenOn(true);
         playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
-        //playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
+        playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
         // Ensure touch on PlayerView shows controls
         // playerView.setOnTouchListener((view, motionEvent) -> {
         //     playerView.showController();
