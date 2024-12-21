@@ -29,6 +29,13 @@
     android:layout_weight="0"
     android:gravity="right"
     android:orientation="horizontal">
+    
+    <ImageButton
+        android:id="@+id/mute_toggle_button"
+        android:src="@drawable/ic_mute" 
+        android:layout_width="24dp"
+	android:layout_height="24dp"
+	android:background="?android:attr/selectableItemBackground" />
 
     <ImageButton
         android:id="@+id/cross_button"

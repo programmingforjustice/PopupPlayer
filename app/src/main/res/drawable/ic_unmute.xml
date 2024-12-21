@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF"> <!-- 흰색으로 설정 -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M3,9v6h4l5,5V4L7,9H3zm13.41,2c0,-2.31 -1.72,-4.22 -4,-4.73v2.06c1.16,0.45 2,1.57 2,2.88s-0.84,2.43 -2,2.88v2.06c2.28,-0.51 4,-2.42 4,-4.73zM14.59,12l2.7,2.7c0.39,0.39 1.02,0.39 1.41,0 0.39,-0.39 0.39,-1.02 0,-1.41L15.59,12l2.7,-2.7c0.39,-0.39 0.39,-1.02 0,-1.41 -0.39,-0.39 -1.02,-0.39 -1.41,0l-2.7,2.7z" />
+</vector>
