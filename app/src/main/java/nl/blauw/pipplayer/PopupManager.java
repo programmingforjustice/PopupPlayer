@@ -34,19 +34,19 @@ public class PopupManager {
         this.context = context;
         this.player = player;
     }
-
-    public void createPopupWindow() {
+    
+    public void createPlayerView() {
         playerView = new PlayerView(context);
         playerView.setPlayer(player);
         playerView.setKeepScreenOn(true);
         playerView.setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT);
         playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
-        // Ensure touch on PlayerView shows controls
-        playerView.setOnTouchListener((view, motionEvent) -> {
-            playerView.showController();
-            return false; // Allow default behavior (like toggling play/pause on tap)
-        });
+        
+        setupCrossButton(playerView);
+        setupTouchListeners(playerView, params);
+    }
 
+    public void show() {
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -68,10 +68,6 @@ public class PopupManager {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = DEFAULT_POPUP_X;
         params.y = DEFAULT_POPUP_Y;
-        
-        setupCrossButton(playerView);
-
-        setupTouchListeners(playerView, params);
 
         windowManager.addView(playerView, params);
     }

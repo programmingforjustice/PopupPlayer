@@ -24,10 +24,12 @@ public class PlayerService extends Service {
         playerManager.createPlayer();
 
         popupManager = new PopupManager(this, playerManager.getPlayer());
-        popupManager.createPopupWindow();
+        popupManager.createPlayerView();
 
         playerManager.loadMediaSource(url);
         playerManager.play(popupManager.getPlayerView());
+        
+        popupManager.show();
         
         return START_NOT_STICKY;
     }
