@@ -43,7 +43,6 @@ public class PopupManager {
         playerView.setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE);
         
         setupCrossButton(playerView);
-        setupTouchListeners(playerView, params);
     }
 
     public void show() {
@@ -68,6 +67,8 @@ public class PopupManager {
         params.gravity = Gravity.TOP | Gravity.LEFT;
         params.x = DEFAULT_POPUP_X;
         params.y = DEFAULT_POPUP_Y;
+        
+        setupTouchListeners(playerView, params);
 
         windowManager.addView(playerView, params);
     }

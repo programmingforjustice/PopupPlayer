@@ -53,7 +53,7 @@ public class PlayerManager {
                     playerView.setTag(scaleFactor); // 비율 정보를 PlayerView에 저장
                     Log.d("PlayerManager", "ScaleFactor: " + scaleFactor);
                     
-                    WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+                    /*WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
                     
                     WindowManager.LayoutParams params = (WindowManager.LayoutParams) playerView.getLayoutParams();
 
@@ -62,7 +62,7 @@ public class PlayerManager {
                     
                     //playerView.setLayoutParams(params);
                     
-                    windowManager.updateViewLayout(playerView, params);
+                    windowManager.updateViewLayout(playerView, params);*/
                 }
             }
         });
