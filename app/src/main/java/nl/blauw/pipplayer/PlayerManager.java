@@ -55,7 +55,7 @@ public class PlayerManager {
                     
                     WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
                     
-                    WindowManager.LayoutParams params = (WindowManager.LayoutParams) playerView.getParent().getLayoutParams();
+                    WindowManager.LayoutParams params = (WindowManager.LayoutParams) playerView.getLayoutParams();
 
                     params.width = width;
                     params.height = height;
