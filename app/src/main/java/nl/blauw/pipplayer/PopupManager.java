@@ -30,7 +30,7 @@ public class PopupManager {
     private WindowManager windowManager;
     private PlayerView playerView;
     
-    private boolean isMute;
+    private boolean isMuted;
     private ImageButton muteToggleButton;
 
     public PopupManager(Context context, SimpleExoPlayer player) {
