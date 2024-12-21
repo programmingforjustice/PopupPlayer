@@ -53,7 +53,7 @@ public class PlayerManager {
                     playerView.setTag(scaleFactor); // 비율 정보를 PlayerView에 저장
                     Log.d("PlayerManager", "ScaleFactor: " + scaleFactor);
                     
-                    WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                    WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
                     
                     ViewGroup.LayoutParams params = playerView.getLayoutParams();
 
