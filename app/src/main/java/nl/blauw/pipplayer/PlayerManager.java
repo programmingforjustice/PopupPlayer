@@ -24,16 +24,22 @@ public class PlayerManager {
     public PlayerManager(Context context) {
         this.context = context;
     }
-
-    public void initializePlayer(String contentUrl) {
+    
+    public void createPlayer() {
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(context);
         player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
+    }
 
+    public void loadMediaSource(String contentUrl) {
         MediaSource contentMediaSource = new ProgressiveMediaSource.Factory(
             new DefaultDataSourceFactory(context, Util.getUserAgent(context, context.getString(R.string.app_name))),
             new DefaultExtractorsFactory()
         ).createMediaSource(MediaItem.fromUri(contentUrl));
-
+        
+        player.setMediaSource(contentMediaSource);
+    }
+    
+    public void play(PlayerView playerView) {
         // 비율 계산 이벤트 등록
         player.addListener(new Player.Listener() {
             @Override
@@ -48,7 +54,6 @@ public class PlayerManager {
             }
         });
 
-        player.setMediaSource(contentMediaSource);
         player.prepare();
         //player.setRepeatMode(Player.REPEAT_MODE_ALL);
         player.setPlayWhenReady(true);
