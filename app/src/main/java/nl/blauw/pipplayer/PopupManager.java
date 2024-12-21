@@ -46,19 +46,6 @@ public class PopupManager {
         //     playerView.showController();
         //     return false; // Allow default behavior (like toggling play/pause on tap)
         // });
-        
-        player.addListener(new Player.Listener() {
-            @Override
-            public void onVideoSizeChanged(VideoSize videoSize) {
-                int width = videoSize.width;
-                int height = videoSize.height;
-                if (width > 0 && height > 0) {
-                    double scaleFactor = (double) width / height;
-                    playerView.setTag(scaleFactor); // 비율 정보를 PlayerView에 저장
-                    Log.d("PlayerManager", "ScaleFactor: " + scaleFactor);
-                }
-            }
-        });
 
         windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 
@@ -82,7 +69,7 @@ public class PopupManager {
         params.x = DEFAULT_POPUP_X;
         params.y = DEFAULT_POPUP_Y;
         
-        //setupCrossButton(playerView);
+        setupCrossButton(playerView);
 
         setupTouchListeners(playerView, params);
 
