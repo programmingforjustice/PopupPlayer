@@ -53,14 +53,14 @@ public class PlayerManager {
                     playerView.setTag(scaleFactor); // 비율 정보를 PlayerView에 저장
                     Log.d("PlayerManager", "ScaleFactor: " + scaleFactor);
                     
-                    WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+                    WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
                     
                     ViewGroup.LayoutParams params = playerView.getLayoutParams();
 
-                    params.width = Utils.convertDpToPixelsInt(width);
-                    params.height = Utils.convertDpToPixelsInt(height);
+                    params.width = Utils.convertDpToPixelsInt(width, context);
+                    params.height = Utils.convertDpToPixelsInt(height, context);
                     
-                    windowManager.updateViewLayout(simpleExoPlayerView, params);
+                    windowManager.updateViewLayout(playerView, params);
                 }
             }
         });
