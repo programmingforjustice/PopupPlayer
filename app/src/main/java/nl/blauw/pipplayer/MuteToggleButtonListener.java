@@ -16,7 +16,7 @@ public class MuteToggleButtonListener implements View.OnClickListener {
         // muteToggleButton.setOnClickListener(this);
 
         // 초기 버튼 이미지 설정
-        updateButtonImage();
+        //updateButtonImage();
     }
 
     @Override

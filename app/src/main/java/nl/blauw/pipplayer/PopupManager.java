@@ -110,9 +110,9 @@ public class PopupManager {
 
     
     private void setupMuteToggleButton(PlayerView playerView) {
-        muteToggleButton = playerView.findViewById(R.id.mute_toggle_button);
+        ImageButton muteToggleButton = playerView.findViewById(R.id.mute_toggle_button);
         if (muteToggleButton != null) {
-            muteToggleButton.setOnClickListener(new MuteToggleButton(player));
+            muteToggleButton.setOnClickListener(new MuteToggleButtonListener(player));
         }
     }
 
