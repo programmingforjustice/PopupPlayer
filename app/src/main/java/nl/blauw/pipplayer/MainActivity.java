@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Typeface;
 
 import android.view.*;
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button playButton;
 	
-	private Button playListButton;
+	  private Button playListButton;
     
     private Button exitButton;
 
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 					  	return;
 						  
       		        startPipPlayer(url);
-      		        addTextView(url);
+      		        // addTextView(url);
       		        writeUrl(url);
       			    urlEdit.setText("");
                   } 
@@ -84,9 +86,19 @@ public class MainActivity extends AppCompatActivity {
                   } 
               }); 
         
-        for (String url: readUrlList()) {
-          addTextView(url);
-        }
+        // for (String url: readUrlList()) {
+        //   addTextView(url);
+        // }
+        
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // 파일 읽어서 리스트에 추가
+        List<String> lines = readUrlList();
+
+        // RecyclerView에 어댑터 연결
+        TextAdapter adapter = new TextAdapter(lines);
+        recyclerView.setAdapter(adapter);
 
 	if (Build.VERSION.SDK_INT >= 30){
 		if (!Environment.isExternalStorageManager()){
@@ -135,10 +147,7 @@ public class MainActivity extends AppCompatActivity {
         openFileOutput("playlist.content", Context.MODE_APPEND)), true);
         writer.println(url);
       } catch (IOException ioe) {
-        //ioe.printStackTrace();
-	StringWriter errors = new StringWriter();
-	ioe.printStackTrace(new PrintWriter(errors));
-	addTextView(errors.toString());
+        ioe.printStackTrace();
       } finally {
         try { if (writer != null) writer.close(); } catch (Exception ignored) {}
       }
@@ -160,11 +169,7 @@ public class MainActivity extends AppCompatActivity {
           urlList.add(url);
         }
       } catch (IOException ioe) {
-       // ioe.printStackTrace();
-	StringWriter errors = new StringWriter();
-	ioe.printStackTrace(new PrintWriter(errors));
-	addTextView(errors.toString());
-
+        ioe.printStackTrace();
       } finally {
         try { if (reader != null) reader.close(); } catch (Exception ignored) {}
       }
