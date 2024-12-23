@@ -10,9 +10,11 @@ import java.util.List;
 
 public class TextAdapter extends RecyclerView.Adapter<TextAdapter.ViewHolder> {
     private final List<String> data;
+    private final OnItemClickListener listener;
 
-    public TextAdapter(List<String> data) {
+    public TextAdapter(List<String> data, OnItemClickListener listener) {
         this.data = data;
+        this.listener = listener;
     }
 
     @NonNull
@@ -24,7 +26,9 @@ public class TextAdapter extends RecyclerView.Adapter<TextAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText(data.get(position));
+        String item = data.get(position);
+        holder.textView.setText(item);
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(item));
     }
 
     @Override
@@ -38,6 +42,7 @@ public class TextAdapter extends RecyclerView.Adapter<TextAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             textView = itemView.findViewById(R.id.textView);
+            textView.setTextColor(getResources().getColor(R.color.lightBlue));
         }
     }
 }
