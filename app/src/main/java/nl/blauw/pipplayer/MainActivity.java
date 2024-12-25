@@ -34,9 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
     public final static int REQUEST_CODE = 100;
 
+    private TextAdapter adapter;
+
     private Button playButton;
 	
 	  private Button playListButton;
+	  
+	  private Button refreshButton;
     
     private Button exitButton;
 
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
       		        startPipPlayer(url);
       		        // addTextView(url);
       		        writeUrl(url);
+      		        refreshData();
       			    urlEdit.setText("");
                   } 
               }); 
@@ -75,6 +80,15 @@ public class MainActivity extends AppCompatActivity {
             	startActivity(intent);
             } 
         }); 
+              
+        refreshButton = (Button)findViewById(R.id.button_refresh);
+      	refreshButton.setOnClickListener(new View.OnClickListener() { 
+                  @Override
+                  public void onClick(View view) 
+                  { 
+      		          refreshData();
+                  } 
+              }); 
               
         exitButton = (Button)findViewById(R.id.button_exit);
       	exitButton.setOnClickListener(new View.OnClickListener() { 
@@ -111,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
 		    startActivity(getpermission);
 		}
 	    }
+    }
+    
+    private void refreshData() {
+        List<String> newLines = readUrlList(); // 새 데이터를 읽음
+        adapter.updateData(newLines); // 어댑터 갱신
     }
     
     private void addTextView(String url) {

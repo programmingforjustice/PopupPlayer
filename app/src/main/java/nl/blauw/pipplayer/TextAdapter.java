@@ -39,6 +39,11 @@ public class TextAdapter extends RecyclerView.Adapter<TextAdapter.ViewHolder> {
     public int getItemCount() {
         return data.size();
     }
+    
+    public void updateData(List<String> newData) {
+        this.data = newData; // 새로운 데이터로 교체
+        notifyDataSetChanged(); // RecyclerView 갱신
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView textView;
