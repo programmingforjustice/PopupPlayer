@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class TextAdapter extends RecyclerView.Adapter<TextAdapter.ViewHolder> {
-    private final List<String> data;
+    private List<String> data;
     private final OnItemClickListener listener;
     
     public interface OnItemClickListener {
