@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         List<String> lines = readUrlList();
 
         // RecyclerView에 어댑터 연결
-        TextAdapter adapter = new TextAdapter(lines, url -> {
+        adapter = new TextAdapter(lines, url -> {
             if (url != null && !"nothing".equalsIgnoreCase(url)) {
 		        	startPipPlayer(url);
 				    }
