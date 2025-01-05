@@ -88,7 +88,7 @@ public class PopupManager {
                         playerView.setPlayer(null);
                         player.stop();
                         player.release();
-                        player = null;// 플레이어 리소스 해제
+                        //player = null;// 플레이어 리소스 해제
                     }
                 }
             });
