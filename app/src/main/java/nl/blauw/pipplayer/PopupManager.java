@@ -9,7 +9,7 @@ import android.view.WindowManager;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
 
@@ -26,14 +26,14 @@ public class PopupManager {
     private static final int DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
     private final Context context;
-    private final SimpleExoPlayer player;
+    private final Player player;
     private WindowManager windowManager;
     private PlayerView playerView;
     
     //private boolean isMuted;
     //private ImageButton muteToggleButton;
 
-    public PopupManager(Context context, SimpleExoPlayer player) {
+    public PopupManager(Context context, Player player) {
         this.context = context;
         this.player = player;
     }
