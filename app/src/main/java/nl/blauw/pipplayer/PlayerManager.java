@@ -24,7 +24,7 @@ import android.view.WindowManager;
 public class PlayerManager {
 
     private final Context context;
-    private Player player;
+    private ExoPlayer player;
 
     public PlayerManager(Context context) {
         this.context = context;
