@@ -85,7 +85,10 @@ public class PopupManager {
                 public void onClick(View v) {
                     if (playerView.getParent() != null) {
                         windowManager.removeViewImmediate(playerView);
-                        player.release(); // 플레이어 리소스 해제
+                        playerView.setPlayer(null);
+                        player.stop()
+                        player.release();
+                        player = null;// 플레이어 리소스 해제
                     }
                 }
             });
