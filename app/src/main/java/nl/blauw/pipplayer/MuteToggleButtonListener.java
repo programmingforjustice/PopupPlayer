@@ -6,17 +6,18 @@ import com.google.android.exoplayer2.Player;
 
 public class MuteToggleButtonListener implements View.OnClickListener {
 
-    private boolean isMuted = false;
+    private boolean isMuted = true;
     private final Player player;
 
     public MuteToggleButtonListener(Player player) {
         this.player = player;
+        this.player.setVolume(0f);
 
         // MuteToggleButtonListener 자신을 클릭 리스너로 설정
         // muteToggleButton.setOnClickListener(this);
 
         // 초기 버튼 이미지 설정
-        //updateButtonImage();
+        updateButtonImage();
     }
 
     @Override

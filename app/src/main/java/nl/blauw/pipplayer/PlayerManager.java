@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.video.VideoSize;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -15,6 +16,8 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.util.Util;
 import android.view.WindowManager;
 
@@ -28,8 +31,26 @@ public class PlayerManager {
     }
     
     public void createPlayer() {
-        DefaultTrackSelector trackSelector = new DefaultTrackSelector(context);
-        player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
+        /*DefaultTrackSelector trackSelector = new DefaultTrackSelector(context);
+        player = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();*/
+        
+        DefaultLoadControl loadControl = new DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                1000, // 최소 버퍼
+                2000, // 최대 버퍼
+                250,  // 재생 시작 전 버퍼
+                500   // 재버퍼링 후 버퍼
+            )
+            .build();
+
+        // RenderersFactory 설정
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this)
+            .setEnableDecoderFallback(true);
+
+        // ExoPlayer 초기화
+        player = new ExoPlayer.Builder(context, renderersFactory)
+            .setLoadControl(loadControl)
+            .build();
     }
 
     public void loadMediaSource(String contentUrl) {
