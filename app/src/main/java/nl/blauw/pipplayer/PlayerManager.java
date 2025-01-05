@@ -24,7 +24,7 @@ import android.view.WindowManager;
 public class PlayerManager {
 
     private final Context context;
-    private SimpleExoPlayer player;
+    private Player player;
 
     public PlayerManager(Context context) {
         this.context = context;
@@ -93,7 +93,7 @@ public class PlayerManager {
         player.setPlayWhenReady(true);
     }
 
-    public SimpleExoPlayer getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
