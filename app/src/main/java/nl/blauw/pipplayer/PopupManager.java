@@ -86,7 +86,7 @@ public class PopupManager {
                     if (playerView.getParent() != null) {
                         windowManager.removeViewImmediate(playerView);
                         playerView.setPlayer(null);
-                        player.stop()
+                        player.stop();
                         player.release();
                         player = null;// 플레이어 리소스 해제
                     }
