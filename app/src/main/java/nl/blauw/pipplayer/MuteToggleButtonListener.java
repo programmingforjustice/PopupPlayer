@@ -12,12 +12,13 @@ public class MuteToggleButtonListener implements View.OnClickListener {
     public MuteToggleButtonListener(Player player) {
         this.player = player;
         this.player.setVolume(0f);
+        this.isMuted = true;
 
         // MuteToggleButtonListener 자신을 클릭 리스너로 설정
         // muteToggleButton.setOnClickListener(this);
 
         // 초기 버튼 이미지 설정
-        updateButtonImage();
+        //updateButtonImage();
     }
 
     @Override

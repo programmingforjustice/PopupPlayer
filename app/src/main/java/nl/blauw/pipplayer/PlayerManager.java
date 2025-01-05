@@ -44,7 +44,7 @@ public class PlayerManager {
             .build();
 
         // RenderersFactory 설정
-        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(this)
+        DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(context)
             .setEnableDecoderFallback(true);
 
         // ExoPlayer 초기화
