@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                   @Override
                   public void onClick(View view) 
                   { 
-                    Intent intent = new Intent(this, PlayerService.class);
+                    Intent intent = new Intent(MainActivity.this, PlayerService.class);
                     stopService(intent);
       		          MainActivity.this.finish();
                     System.exit(0);
