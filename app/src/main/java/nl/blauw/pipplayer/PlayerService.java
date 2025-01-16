@@ -10,7 +10,7 @@ import android.os.Build;
 import android.os.IBinder;
 
 public class PlayerService extends Service {
-    private static final String CHANNEL_ID = "ForegroundServiceChannel";
+    private static final String CHANNEL_ID = "PopupPlayerChannel";
 
     private PlayerManager playerManager;
     private PopupManager popupManager;
