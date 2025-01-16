@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
                   @Override
                   public void onClick(View view) 
                   { 
+                    Intent intent = new Intent(this, PlayerService.class);
+                    stopService(intent);
       		          MainActivity.this.finish();
                     System.exit(0);
                   } 
@@ -207,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Intent intent = new Intent(this, PlayerService.class);
             intent.putExtra("data", url);
-            startService(intent);
+            startForegroundService(intent);
         }
     }
 

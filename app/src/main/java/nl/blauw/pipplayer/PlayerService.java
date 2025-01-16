@@ -50,12 +50,14 @@ public class PlayerService extends Service {
         
         return START_NOT_STICKY;
     }
-
+    
     @Override
     public void onDestroy() {
         if (playerManager != null) playerManager.releasePlayer();
         if (popupManager != null) popupManager.removePopupWindow();
         super.onDestroy();
+        stopForeground(true); // 알림 제거
+        stopSelf();           // 서비스 종료
     }
     
     private void createNotificationChannel() {
