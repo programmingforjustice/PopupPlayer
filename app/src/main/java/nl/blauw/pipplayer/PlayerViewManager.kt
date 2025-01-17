@@ -10,7 +10,7 @@ class PlayerViewManager(private val context: Context) {
 
     fun createPlayerView(player: Player) {
         playerView = PlayerView(context).apply {
-            setPlayer(player)
+            this.player = player
             keepScreenOn = true
             controllerShowTimeoutMs = 2500
         }
@@ -19,6 +19,6 @@ class PlayerViewManager(private val context: Context) {
     fun getPlayerView(): PlayerView = playerView
 
     fun releasePlayerView() {
-        playerView.setPlayer(null)
+        playerView.player = null
     }
 }
