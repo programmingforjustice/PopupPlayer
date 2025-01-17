@@ -1,147 +1,140 @@
 package nl.blauw.pipplayer;
 
-
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.TargetApi;
-
-import android.content.Intent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.os.*;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.*;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.graphics.Typeface;
-
-import android.view.*;
 import java.io.*;
-
 import java.util.*;
-import android.os.*;
-
-import android.provider.Settings;
 
 public class MainActivity extends AppCompatActivity {
 
-    public final static int REQUEST_CODE = 100;
+  public static final int REQUEST_CODE = 100;
 
-    private TextAdapter adapter;
+  private TextAdapter adapter;
 
-    private Button playButton;
-	
-	  private Button playListButton;
-	  
-	  private Button refreshButton;
-    
-    private Button exitButton;
+  private Button playButton;
 
-    private EditText urlEdit;
-    
-    private List<String> urlList;
+  private Button playListButton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+  private Button refreshButton;
 
-      	urlEdit = (EditText)findViewById(R.id.edit_url);
-      	playButton = (Button)findViewById(R.id.button_play);
-      	playButton.setOnClickListener(new View.OnClickListener() { 
-                  @Override
-                  public void onClick(View view) 
-                  { 
-                      String url = urlEdit.getText().toString();
-					  if (url == null || url.trim().length() == 0) 
-					  	return;
-						  
-      		        startPipPlayer(url);
-      		        // addTextView(url);
-      		        writeUrl(url);
-      		        refreshData();
-      			    urlEdit.setText("");
-                  } 
-              }); 
-			  
-		playListButton = (Button)findViewById(R.id.button_playlist);
-        playListButton.setOnClickListener(new View.OnClickListener() { 
-            @Override
-            public void onClick(View view) 
-            { 
-				Intent intent = new Intent(MainActivity.this, PlayerListActivity.class);
-            	startActivity(intent);
-            } 
-        }); 
-              
-        refreshButton = (Button)findViewById(R.id.button_refresh);
-      	refreshButton.setOnClickListener(new View.OnClickListener() { 
-                  @Override
-                  public void onClick(View view) 
-                  { 
-      		          refreshData();
-                  } 
-              }); 
-              
-        exitButton = (Button)findViewById(R.id.button_exit);
-      	exitButton.setOnClickListener(new View.OnClickListener() { 
-                  @Override
-                  public void onClick(View view) 
-                  { 
-                    Intent intent = new Intent(MainActivity.this, PlayerService.class);
-                    stopService(intent);
-      		          MainActivity.this.finish();
-                    System.exit(0);
-                  } 
-              }); 
-        
-        // for (String url: readUrlList()) {
-        //   addTextView(url);
-        // }
-        
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+  private Button exitButton;
 
-        // 파일 읽어서 리스트에 추가
-        List<String> lines = readUrlList();
+  private EditText urlEdit;
 
-        // RecyclerView에 어댑터 연결
-        adapter = new TextAdapter(lines, url -> {
-            if (url != null && !"nothing".equalsIgnoreCase(url)) {
-		        	startPipPlayer(url);
-				    }
-          });
-        recyclerView.setAdapter(adapter);
+  private List<String> urlList;
 
-	if (Build.VERSION.SDK_INT >= 30){
-		if (!Environment.isExternalStorageManager()){
-		    Intent getpermission = new Intent();
-		    getpermission.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-		    startActivity(getpermission);
-		}
-	    }
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+
+    urlEdit = (EditText) findViewById(R.id.edit_url);
+    playButton = (Button) findViewById(R.id.button_play);
+    playButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            String url = urlEdit.getText().toString();
+            if (url == null || url.trim().length() == 0) return;
+
+            startPipPlayer(url);
+            // addTextView(url);
+            writeUrl(url);
+            refreshData();
+            urlEdit.setText("");
+          }
+        });
+
+    playListButton = (Button) findViewById(R.id.button_playlist);
+    playListButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this, PlayerListActivity.class);
+            startActivity(intent);
+          }
+        });
+
+    refreshButton = (Button) findViewById(R.id.button_refresh);
+    refreshButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            refreshData();
+          }
+        });
+
+    exitButton = (Button) findViewById(R.id.button_exit);
+    exitButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this, PlayerService.class);
+            stopService(intent);
+            MainActivity.this.finish();
+            System.exit(0);
+          }
+        });
+
+    // for (String url: readUrlList()) {
+    //   addTextView(url);
+    // }
+
+    RecyclerView recyclerView = findViewById(R.id.recyclerView);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    // 파일 읽어서 리스트에 추가
+    List<String> lines = readUrlList();
+
+    // RecyclerView에 어댑터 연결
+    adapter =
+        new TextAdapter(
+            lines,
+            url -> {
+              if (url != null && !"nothing".equalsIgnoreCase(url)) {
+                startPipPlayer(url);
+              }
+            });
+    recyclerView.setAdapter(adapter);
+
+    if (Build.VERSION.SDK_INT >= 30) {
+      if (!Environment.isExternalStorageManager()) {
+        Intent getpermission = new Intent();
+        getpermission.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+        startActivity(getpermission);
+      }
     }
-    
-    private void refreshData() {
-        List<String> newLines = readUrlList(); // 새 데이터를 읽음
-        adapter.updateData(newLines); // 어댑터 갱신
-    }
-    
-    private void addTextView(String url) {
-      LinearLayout layout = (LinearLayout)findViewById(R.id.layout_main);
-      
-      TextView urlText = new TextView(this);
+  }
 
-    urlText.setLayoutParams(new LinearLayout.LayoutParams(
-        LayoutParams.FILL_PARENT,
-        LayoutParams.WRAP_CONTENT));
+  private void refreshData() {
+    List<String> newLines = readUrlList(); // 새 데이터를 읽음
+    adapter.updateData(newLines); // 어댑터 갱신
+  }
+
+  private void addTextView(String url) {
+    LinearLayout layout = (LinearLayout) findViewById(R.id.layout_main);
+
+    TextView urlText = new TextView(this);
+
+    urlText.setLayoutParams(
+        new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 
     urlText.setTextSize(12);
     urlText.setPadding(2, 2, 2, 2);
@@ -150,77 +143,86 @@ public class MainActivity extends AppCompatActivity {
     urlText.setGravity(Gravity.LEFT | Gravity.CENTER);
     urlText.setText(url);
 
-    urlText.setOnClickListener(new View.OnClickListener() { 
-            @Override
-            public void onClick(View view) 
-            { 
-                String url = ((TextView)view).getText().toString();
-				if (url != null && !"nothing".equalsIgnoreCase(url)) {
-		        	startPipPlayer(url);
-				}
-            } 
-        }); 
-      
-    
-   	 layout.addView(urlText);
-    }
-    
-    private void writeUrl(String url) {
-      PrintWriter writer = null;
+    urlText.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            String url = ((TextView) view).getText().toString();
+            if (url != null && !"nothing".equalsIgnoreCase(url)) {
+              startPipPlayer(url);
+            }
+          }
+        });
+
+    layout.addView(urlText);
+  }
+
+  private void writeUrl(String url) {
+    PrintWriter writer = null;
+    try {
+      writer =
+          new PrintWriter(
+              new OutputStreamWriter(openFileOutput("playlist.content", Context.MODE_APPEND)),
+              true);
+      writer.println(url);
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    } finally {
       try {
-        writer = new PrintWriter(new OutputStreamWriter(
-        openFileOutput("playlist.content", Context.MODE_APPEND)), true);
-        writer.println(url);
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
-      } finally {
-        try { if (writer != null) writer.close(); } catch (Exception ignored) {}
+        if (writer != null) writer.close();
+      } catch (Exception ignored) {
       }
     }
+  }
 
-    private List<String> readUrlList() {
-      File file = this.getFileStreamPath("playlist.content");
-      if(file == null || !file.exists()) {  
-         return Collections.emptyList(); 
-      } 
+  private List<String> readUrlList() {
+    File file = this.getFileStreamPath("playlist.content");
+    if (file == null || !file.exists()) {
+      return Collections.emptyList();
+    }
 
-      List<String> urlList = new ArrayList<>();
-      BufferedReader reader = null;
-      try {
-        reader = new BufferedReader(new InputStreamReader(
-        openFileInput("playlist.content")));
-        String url = null;
-        while ((url = reader.readLine()) != null) {
-          urlList.add(url);
-        }
-      } catch (IOException ioe) {
-        ioe.printStackTrace();
-      } finally {
-        try { if (reader != null) reader.close(); } catch (Exception ignored) {}
+    List<String> urlList = new ArrayList<>();
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new InputStreamReader(openFileInput("playlist.content")));
+      String url = null;
+      while ((url = reader.readLine()) != null) {
+        urlList.add(url);
       }
-      return urlList;
+    } catch (IOException ioe) {
+      ioe.printStackTrace();
+    } finally {
+      try {
+        if (reader != null) reader.close();
+      } catch (Exception ignored) {
+      }
     }
+    return urlList;
+  }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void startPipPlayer(String url) {
-        if (!Settings.canDrawOverlays(this)) {
-            Intent request = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + this.getPackageName()));
-            startActivityForResult(request, REQUEST_CODE);
-        } else {
-            Intent intent = new Intent(this, PlayerService.class);
-            intent.putExtra("data", url);
-            startForegroundService(intent);
-        }
+  @RequiresApi(api = Build.VERSION_CODES.M)
+  public void startPipPlayer(String url) {
+    if (!Settings.canDrawOverlays(this)) {
+      Intent request =
+          new Intent(
+              Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+              Uri.parse("package:" + this.getPackageName()));
+      startActivityForResult(request, REQUEST_CODE);
+    } else {
+      Intent intent = new Intent(this, PlayerService.class);
+      intent.putExtra("data", url);
+      startForegroundService(intent);
     }
+  }
 
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	super.onActivityResult(requestCode, resultCode, data);
-        //check if received result code
-        //is equal our requested code for draw permission
-        if (requestCode == REQUEST_CODE) {
-            startPipPlayer(urlEdit.getText().toString());
-        }
+  @TargetApi(Build.VERSION_CODES.M)
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    // check if received result code
+    // is equal our requested code for draw permission
+    if (requestCode == REQUEST_CODE) {
+      startPipPlayer(urlEdit.getText().toString());
     }
+  }
 }
