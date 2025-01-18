@@ -1,0 +1,29 @@
+package nl.blauw.pipplayer
+
+import android.content.Context
+
+class PlayerController(context: Context) {
+
+    private val playerManager = PlayerManager(context)
+    private val playerViewManager = PlayerViewManager(context)
+
+    fun initialize(contentUrl: String) {
+        playerManager.apply {
+          createPlayer()
+          loadMediaSource(contentUrl)
+        }
+        
+        playerViewManager.createPlayerView(playerManager.getPlayer())
+    }
+
+    fun play() {
+        playerManager.play()
+    }
+
+    fun getPlayerView(): PlayerView = playerViewManager.getPlayerView()
+
+    fun releaseResources() {
+        playerManager.releasePlayer()
+        playerViewManager.releasePlayerView()
+    }
+}
