@@ -63,7 +63,8 @@ class PopupManager(private val context: Context, private val playerView: PlayerV
         crossButton?.setOnClickListener {
             playerView.parent?.let {
                 windowManager.removeViewImmediate(playerView)
-                playerView.setPlayer(null)
+                playerView.player?.release()
+                playerView.player = null
             }
         }
     }

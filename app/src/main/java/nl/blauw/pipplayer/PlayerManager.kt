@@ -79,6 +79,6 @@ class PlayerManager(private val context: Context) {
     }
 
     fun releasePlayer() {
-        player.release()
+        if (::player.isInitialized) player.release()
     }
 }
