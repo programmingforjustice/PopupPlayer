@@ -23,6 +23,13 @@ class PlayerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val notification = Notification.Builder(this, CHANNEL_ID)
+            .setContentTitle("PopupPlayer Service 실행 중")
+            .setContentText("Foreground Service가 실행 중입니다.")
+            .setSmallIcon(android.R.drawable.ic_menu_info_details)
+            .build();
+        startForeground(1, notification);
+    
         val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
 
         playerController = PlayerController(this)
