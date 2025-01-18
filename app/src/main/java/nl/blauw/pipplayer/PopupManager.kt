@@ -70,15 +70,7 @@ class PopupManager(private val context: Context, private val playerView: PlayerV
 
     private fun setupMuteToggleButton() {
         val muteToggleButton: ImageButton? = playerView.findViewById(R.id.mute_toggle_button)
-        muteToggleButton?.setOnClickListener {
-            playerView.player?.let { player -> 
-                val isMuted = player.volume == 0f
-                player.volume = if (isMuted) 1f else 0f
-                muteToggleButton.setImageResource(
-                    if (isMuted) R.drawable.ic_unmute else R.drawable.ic_mute
-                )
-            }
-        }
+        muteToggleButton?.setOnClickListener(MuteToggleButtonListener(PlayerView.player))
     }
 
     private fun setupTouchListener(params: WindowManager.LayoutParams) {
