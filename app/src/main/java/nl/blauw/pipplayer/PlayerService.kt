@@ -26,12 +26,12 @@ class PlayerService : Service() {
         val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
 
         playerController = PlayerController(this)
-        playerController.?initialize(url)
+        playerController?.initialize(url)
 
-        popupManager = PopupManager(this, playerController.?getPlayerView())
-        popupManager.?show()
+        popupManager = PopupManager(this, playerController?.getPlayerView())
+        popupManager?.show()
 
-        playerController.?play()
+        playerController?.play()
 
         return START_NOT_STICKY
     }
