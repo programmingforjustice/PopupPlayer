@@ -1,6 +1,7 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import com.google.android.exoplayer2.ui.PlayerView
 
 class PlayerController(context: Context) {
 
@@ -17,10 +18,10 @@ class PlayerController(context: Context) {
     }
 
     fun play() {
-        playerManager.play()
+        playerManager.play(playerViewManager.playerView)
     }
 
-    fun getPlayerView(): PlayerView = playerViewManager.getPlayerView()
+    fun getPlayerView(): PlayerView = playerViewManager.playerView
 
     fun releaseResources() {
         playerManager.releasePlayer()
