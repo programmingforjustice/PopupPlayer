@@ -87,10 +87,10 @@ class PopupManager(private val context: Context, private val playerViewManager: 
     }*/
 
     private fun setupTouchListener(params: WindowManager.LayoutParams) {
-        playerView.setOnTouchListener(PlayerTouchListener(context, windowManager, params))
+        playerViewManager.getPlayerView().setOnTouchListener(PlayerTouchListener(context, windowManager, params))
     }
 
     fun removePopupWindow() {
-        windowManager.removeViewImmediate(playerView)
+        windowManager.removeViewImmediate(playerViewManager.getPlayerView())
     }
 }
