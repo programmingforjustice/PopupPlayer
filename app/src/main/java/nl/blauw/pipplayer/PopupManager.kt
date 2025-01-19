@@ -11,8 +11,28 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 
 class PopupManager(private val context: Context, private val playerViewManager: PlayerViewManager) {
-    private val windowManager: WindowManager by lazy {
-      (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
+    private val windowManager: WindowManager
+    private val layoutParams: WindowManager.layoutParams
+    
+    init {
+      windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
+    }
+    
+    init {
+      layoutParams = WindowManager.LayoutParams(
+            Utils.convertDpToPixelsInt(160f, context),
+            Utils.convertDpToPixelsInt(90f, context),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                WindowManager.LayoutParams.TYPE_TOAST,
+            DEFAULT_WINDOW_FLAGS,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.TOP or Gravity.LEFT
+            x = DEFAULT_POPUP_X
+            y = DEFAULT_POPUP_Y
+        }
     }
 
     companion object {
@@ -27,46 +47,30 @@ class PopupManager(private val context: Context, private val playerViewManager: 
         private const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     }
 
-    fun setupPlayerView() {
-        playerViewManager.getPlayerView()?.apply {
-            keepScreenOn = true
-            controllerShowTimeoutMs = CONTROLLER_SHOW_TIMEOUT
+    private fun setupPlayerView() {
+        playerViewManager.apply {
+            setKeepScreenOn(true)
+            setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT)
             setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE)
         }
 
         playerViewManager.setupCrossButton {
-            playerViewManager.getPlayerView()?.let { playerView -> 
-                playerView.parent?.let {
-                    windowManager.removeViewImmediate(playerView)
-                    playerView.player?.release()
-                    playerView.player = null
-                }
+            playerViewManager.getPlayerView()?.takeIf{ it.parent != null }?.apply { 
+                windowManager.removeViewImmediate(this)
+                player?.release()
+                player = null
             }
         }
         
         val muteToggleButtonListener =  MuteToggleButtonListener(playerViewManager.getPlayerView()?.player)
-        playerViewManager.setupMuteToggleButton { view -> 
-            muteToggleButtonListener.onClick(view)
-        }
+        playerViewManager.setupMuteToggleButton (muteToggleButtonListener::onClick)
+        
+        val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
+        playerViewManager.setupTouchListener(playerTouchListener::onTouch)
     }
 
     fun show() {
-        val params = WindowManager.LayoutParams(
-            Utils.convertDpToPixelsInt(160f, context),
-            Utils.convertDpToPixelsInt(90f, context),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else
-                WindowManager.LayoutParams.TYPE_TOAST,
-            DEFAULT_WINDOW_FLAGS,
-            PixelFormat.TRANSLUCENT
-        ).apply {
-            gravity = Gravity.TOP or Gravity.LEFT
-            x = DEFAULT_POPUP_X
-            y = DEFAULT_POPUP_Y
-        }
-
-        setupTouchListener(params)
+        setupPlayerView()
         windowManager.addView(playerViewManager.getPlayerView(), params)
     }
 

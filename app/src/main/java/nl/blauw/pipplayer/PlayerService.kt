@@ -36,7 +36,6 @@ class PlayerService : Service() {
         playerController?.initialize(url)
 
         popupManager = PopupManager(this, playerController?.getPlayerViewManager() ?: throw IllegalStateException("cannot obtain PlayerViewManager"))
-        popupManager?.setupPlayerView()
         popupManager?.show()
 
         playerController?.play()

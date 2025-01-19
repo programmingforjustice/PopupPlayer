@@ -13,10 +13,25 @@ class PlayerViewManager(private val context: Context) {
 
     fun createPlayerView(player: Player) {
         playerView = PlayerView(context).apply {
-            this.player = player
+            player = player
             keepScreenOn = true
             controllerShowTimeoutMs = 2500
         }
+    }
+    
+    fun setKeepScreenOn(keepScreenOn: Boolean): PlayerViewManager {
+        playerView.keepScreenOn = keepScreenOn
+        return this
+    }
+
+    fun setControllerShowTimeoutMs(timeoutMs: Int): PlayerViewManager {
+        playerView.controllerShowTimeoutMs = timeoutMs
+        return this
+    }
+
+    fun setRepeatToggleModes(modes: Int): PlayerViewManager {
+        playerView.setRepeatToggleModes(modes)
+        return this
     }
     
     fun setupCrossButton(action: (View) -> Unit) {
