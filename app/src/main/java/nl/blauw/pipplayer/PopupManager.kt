@@ -12,7 +12,7 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 
 class PopupManager(private val context: Context, private val playerViewManager: PlayerViewManager) {
     private val windowManager: WindowManager
-    private val layoutParams: WindowManager.layoutParams
+    private val layoutParams: WindowManager.LayoutParams
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
@@ -71,7 +71,7 @@ class PopupManager(private val context: Context, private val playerViewManager: 
 
     fun show() {
         setupPlayerView()
-        windowManager.addView(playerViewManager.getPlayerView(), params)
+        windowManager.addView(playerViewManager.getPlayerView(), layoutParams)
     }
 
     /*private fun setupCrossButton() {
