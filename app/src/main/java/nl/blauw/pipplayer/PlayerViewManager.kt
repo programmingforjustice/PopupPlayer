@@ -1,6 +1,8 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import android.view.MotionEvent
+import android.view.View
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 
@@ -14,6 +16,20 @@ class PlayerViewManager(private val context: Context) {
             keepScreenOn = true
             controllerShowTimeoutMs = 2500
         }
+    }
+    
+    fun setupCrossButton(action: (View) -> Unit) {
+        val crossButton: ImageButton? = playerView.findViewById(R.id.cross_button)
+        crossButton?.setOnClickListener(action)
+    }
+    
+    fun setupMuteToggleButton(action: (View) -> Unit) {
+        val muteToggleButton: ImageButton? = playerView.findViewById(R.id.mute_toggle_button)
+        muteToggleButton?.setOnClickListener(action)
+    }
+
+    fun setupTouchListener(action: (View, MotionEvent) -> Boolean) {
+        playerView.setOnTouchListener(action)
     }
 
     fun getPlayerView(): PlayerView = playerView
