@@ -20,6 +20,8 @@ class PlayerController(context: Context) {
     fun play() {
         playerManager.play(playerViewManager.getPlayerView())
     }
+    
+    fun getPlayerViewManager(): PlayerViewManager = playerViewManager
 
     fun getPlayerView(): PlayerView = playerViewManager.getPlayerView()
 

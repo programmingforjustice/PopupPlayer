@@ -10,7 +10,7 @@ import android.widget.ImageButton
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 
-class PopupManager(private val context: Context, private val playerView: PlayerView) {
+class PopupManager(private val context: Context, private val playerViewManager: PlayerViewManager) {
     private val windowManager: WindowManager by lazy {
       (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
     }
@@ -34,8 +34,17 @@ class PopupManager(private val context: Context, private val playerView: PlayerV
             setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE)
         }
 
-        setupCrossButton()
-        setupMuteToggleButton()
+        playerViewManager.setupCrossButton {
+            playerViewManager.getPlayerView()?.let { playerView -> 
+                playerView.parent?.let {
+                    windowManager.removeViewImmediate(playerView)
+                    playerView.player?.release()
+                    playerView.player = null
+                }
+            }
+        }
+        
+        playerViewManager.setupMuteToggleButton (MuteToggleButtonListener(playerViewManager.getPlayerView()?.player?))
     }
 
     fun show() {
