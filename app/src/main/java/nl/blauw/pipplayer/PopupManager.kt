@@ -44,7 +44,10 @@ class PopupManager(private val context: Context, private val playerViewManager: 
             }
         }
         
-        playerViewManager.setupMuteToggleButton (MuteToggleButtonListener(playerViewManager.getPlayerView()?.player?))
+        val muteToggleButtonListener:  MuteToggleButtonListener(playerViewManager.getPlayerView()?.player)
+        playerViewManager.setupMuteToggleButton { view -> 
+            muteToggleButtonListener.onClick(view)
+        }
     }
 
     fun show() {
