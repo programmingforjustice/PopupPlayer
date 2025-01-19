@@ -28,7 +28,7 @@ class PopupManager(private val context: Context, private val playerViewManager: 
     }
 
     fun setupPlayerView() {
-        playerView.apply {
+        playerViewManager.getPlayerView()?.apply {
             keepScreenOn = true
             controllerShowTimeoutMs = CONTROLLER_SHOW_TIMEOUT
             setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE)
@@ -67,10 +67,10 @@ class PopupManager(private val context: Context, private val playerViewManager: 
         }
 
         setupTouchListener(params)
-        windowManager.addView(playerView, params)
+        windowManager.addView(playerViewManager.getPlayerView(), params)
     }
 
-    private fun setupCrossButton() {
+    /*private fun setupCrossButton() {
         val crossButton: ImageButton? = playerView.findViewById(R.id.cross_button)
         crossButton?.setOnClickListener {
             playerView.parent?.let {
@@ -84,7 +84,7 @@ class PopupManager(private val context: Context, private val playerViewManager: 
     private fun setupMuteToggleButton() {
         val muteToggleButton: ImageButton? = playerView.findViewById(R.id.mute_toggle_button)
         muteToggleButton?.setOnClickListener(MuteToggleButtonListener(playerView.player))
-    }
+    }*/
 
     private fun setupTouchListener(params: WindowManager.LayoutParams) {
         playerView.setOnTouchListener(PlayerTouchListener(context, windowManager, params))
