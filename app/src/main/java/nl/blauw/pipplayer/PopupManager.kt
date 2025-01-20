@@ -57,14 +57,11 @@ class PopupManager(private val context: Context, private val playerManager: Play
                     playerViewManager.getPlayerView().tag = scaleFactor
                     //Log.d("PlayerManager", "ScaleFactor: $scaleFactor")
 
-                    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                    val params = playerViewManager.getPlayerView().layoutParams as WindowManager.LayoutParams
-
-                    params.width = width
-                    params.height = height
+                    layoutParams.width = width
+                    layoutParams.height = height
 
                     // playerView.layoutParams = params
-                    windowManager.updateViewLayout(playerViewManager.getPlayerView(), params)
+                    windowManager.updateViewLayout(playerViewManager.getPlayerView(), layoutParams)
                 }
             }
         }
