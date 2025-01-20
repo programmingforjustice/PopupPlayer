@@ -5,7 +5,7 @@ import com.google.android.exoplayer2.ui.PlayerView
 
 class PlayerController(private val context: Context) {
 
-    private lateinit val playerManager
+    private lateinit var playerManager
     private lateinit var playerViewManager
 
     fun initialize(contentUrl: String) {

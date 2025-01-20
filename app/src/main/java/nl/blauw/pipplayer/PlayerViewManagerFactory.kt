@@ -1,6 +1,7 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import com.google.android.exoplayer2.Player
 
 interface PlayerViewManagerFactory {
     fun create(player: Player): PlayerViewManager
