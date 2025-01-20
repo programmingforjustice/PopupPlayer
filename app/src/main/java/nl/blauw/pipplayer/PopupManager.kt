@@ -48,14 +48,14 @@ class PopupManager(private val context: Context, private val playerManager: Play
     }
     
     private fun setupPlayer() {
-        playerManager.setOnVideoSizeChangedListener { 
+        playerManager.setVideoSizeChangedListener { 
             videoSize -> {
                 val width = videoSize.width
                 val height = videoSize.height
                 if (width > 0 && height > 0) {
                     val scaleFactor = width.toDouble() / height
                     playerViewManager.getPlayerView().tag = scaleFactor
-                    Log.d("PlayerManager", "ScaleFactor: $scaleFactor")
+                    //Log.d("PlayerManager", "ScaleFactor: $scaleFactor")
 
                     val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
                     val params = playerViewManager.getPlayerView().layoutParams as WindowManager.LayoutParams

@@ -21,7 +21,7 @@ class PlayerManager(private val context: Context) {
     private var onVideoSizeChanged: ((VideoSize) -> Unit)? = null
     
     private val playerListener = object : Player.Listener {
-        override fun onVideoSizeChanged(videoSize VideoSize) {
+        override fun onVideoSizeChanged(videoSize: VideoSize) {
             onVideoSizeChanged?.invoke(videoSize)
         }
     }
