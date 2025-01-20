@@ -10,7 +10,7 @@ import android.widget.ImageButton
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 
-class PopupManager(private val context: Context, private val playerViewManager: PlayerViewManager) {
+class PopupManager(private val context: Context, private val playerManager: PlayerManager, private val playerViewManager: PlayerViewManager) {
     private val windowManager: WindowManager
     private val layoutParams: WindowManager.LayoutParams
     
@@ -46,6 +46,29 @@ class PopupManager(private val context: Context, private val playerViewManager: 
 
         private const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     }
+    
+    private fun setupPlayer() {
+        playerManager.setOnVideoSizeChangedListener { 
+            videoSize -> {
+                val width = videoSize.width
+                val height = videoSize.height
+                if (width > 0 && height > 0) {
+                    val scaleFactor = width.toDouble() / height
+                    playerViewManager.getPlayerView().tag = scaleFactor
+                    Log.d("PlayerManager", "ScaleFactor: $scaleFactor")
+
+                    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                    val params = playerViewManager.getPlayerView().layoutParams as WindowManager.LayoutParams
+
+                    params.width = width
+                    params.height = height
+
+                    // playerView.layoutParams = params
+                    windowManager.updateViewLayout(playerViewManager.getPlayerView(), params)
+                }
+            }
+        }
+    }
 
     private fun setupPlayerView() {
         playerViewManager.apply {
@@ -70,6 +93,7 @@ class PopupManager(private val context: Context, private val playerViewManager: 
     }
 
     fun show() {
+        setupPlayer()
         setupPlayerView()
         windowManager.addView(playerViewManager.getPlayerView(), layoutParams)
     }
@@ -90,9 +114,9 @@ class PopupManager(private val context: Context, private val playerViewManager: 
         muteToggleButton?.setOnClickListener(MuteToggleButtonListener(playerView.player))
     }*/
 
-    private fun setupTouchListener(params: WindowManager.LayoutParams) {
+    /*private fun setupTouchListener(params: WindowManager.LayoutParams) {
         playerViewManager.getPlayerView().setOnTouchListener(PlayerTouchListener(context, windowManager, params))
-    }
+    }*/
 
     fun removePopupWindow() {
         windowManager.removeViewImmediate(playerViewManager.getPlayerView())

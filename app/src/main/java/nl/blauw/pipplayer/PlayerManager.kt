@@ -17,6 +17,14 @@ import com.google.android.exoplayer2.video.VideoSize
 class PlayerManager(private val context: Context) {
 
     private lateinit var player: ExoPlayer
+    
+    private var onVideoSizeChanged: ((VideoSize) -> Unit)? = null
+    
+    private val playerListener = object : Player.Listener {
+        override fun onVideoSizeChanged(videoSize VideoSize) {
+            onVideoSizeChanged?.invoke(videoSize)
+        }
+    }
 
     fun createPlayer() {
         val loadControl = DefaultLoadControl.Builder()
@@ -33,6 +41,8 @@ class PlayerManager(private val context: Context) {
         player = ExoPlayer.Builder(context, renderersFactory)
             .setLoadControl(loadControl)
             .build()
+            
+        player.addListener(playerListener)
     }
 
     fun loadMediaSource(contentUrl: String) {
@@ -45,6 +55,16 @@ class PlayerManager(private val context: Context) {
         ).createMediaSource(MediaItem.fromUri(contentUrl))
 
         player.setMediaSource(contentMediaSource)
+    }
+    
+    fun setVideoSizeChangedListener(action: (VideoSize) -> Unit) {
+        onVideoSizeChanged = action
+    }
+    
+    fun play() {
+        player.prepare()
+        player.repeatMode = Player.REPEAT_MODE_ALL
+        player.playWhenReady = true
     }
 
     fun play(playerView: PlayerView) {

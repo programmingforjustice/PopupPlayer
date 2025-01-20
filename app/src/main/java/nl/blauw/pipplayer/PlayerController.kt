@@ -22,8 +22,10 @@ class PlayerController(context: Context) {
     }
     
     fun getPlayerViewManager(): PlayerViewManager = playerViewManager
+    
+    fun getPlayerManager(): PlayerManager = playerManager
 
-    fun getPlayerView(): PlayerView = playerViewManager.getPlayerView()
+    //fun getPlayerView(): PlayerView = playerViewManager.getPlayerView()
 
     fun releaseResources() {
         playerManager.releasePlayer()
