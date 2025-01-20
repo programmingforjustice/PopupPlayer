@@ -47,6 +47,10 @@ class PlayerViewManager(private val context: Context) {
     fun setupTouchListener(action: (View, MotionEvent) -> Boolean) {
         playerView.setOnTouchListener(action)
     }
+    
+    fun applyToPlayerView(command: (playerView: PlayerView) -> Unit) {
+        command(playerView)
+    }
 
     fun getPlayerView(): PlayerView = playerView
 

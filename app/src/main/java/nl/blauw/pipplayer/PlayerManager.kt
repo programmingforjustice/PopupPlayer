@@ -14,7 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 
-class PlayerManager(private val context: Context) {
+class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
 
     private lateinit var player: ExoPlayer
     
@@ -66,32 +66,9 @@ class PlayerManager(private val context: Context) {
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.playWhenReady = true
     }
-
-    fun play(playerView: PlayerView) {
-        player.addListener(object : Player.Listener {
-            override fun onVideoSizeChanged(videoSize: VideoSize) {
-                val width = videoSize.width
-                val height = videoSize.height
-                if (width > 0 && height > 0) {
-                    val scaleFactor = width.toDouble() / height
-                    playerView.tag = scaleFactor
-                    Log.d("PlayerManager", "ScaleFactor: $scaleFactor")
-
-                    val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                    val params = playerView.layoutParams as WindowManager.LayoutParams
-
-                    params.width = width
-                    params.height = height
-
-                    // playerView.layoutParams = params
-                    windowManager.updateViewLayout(playerView, params)
-                }
-            }
-        })
-
-        player.prepare()
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.playWhenReady = true
+    
+    fun createPlayerViewManager(): PlayerViewManager {
+      return playerViewManagerFactory.create(player)
     }
 
     fun getPlayer(): Player {

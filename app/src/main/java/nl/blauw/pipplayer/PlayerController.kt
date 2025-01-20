@@ -3,22 +3,23 @@ package nl.blauw.pipplayer
 import android.content.Context
 import com.google.android.exoplayer2.ui.PlayerView
 
-class PlayerController(context: Context) {
+class PlayerController(private val context: Context) {
 
-    private val playerManager = PlayerManager(context)
-    private val playerViewManager = PlayerViewManager(context)
+    private lateinit val playerManager
+    private lateinit var playerViewManager
 
     fun initialize(contentUrl: String) {
-        playerManager.apply {
+        playerManager = PlayerManager(context, DefaultPlayerViewManagerFactory(context)).apply {
           createPlayer()
           loadMediaSource(contentUrl)
         }
         
+        playerViewManager = playerManager.createPlayerViewManager()
         playerViewManager.createPlayerView(playerManager.getPlayer())
     }
 
     fun play() {
-        playerManager.play(playerViewManager.getPlayerView())
+        playerManager.play()
     }
     
     fun getPlayerViewManager(): PlayerViewManager = playerViewManager
