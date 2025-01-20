@@ -14,7 +14,7 @@ class PlayerViewManager(private val context: Context) {
 
     fun createPlayerView(player: Player) {
         playerView = PlayerView(context).apply {
-            setVideoSurfaceView(TextureView(context))
+            //setVideoSurfaceView(TextureView(context))
             //setUseTextureView(true)
             //keepScreenOn = true
             //controllerShowTimeoutMs = 2500
