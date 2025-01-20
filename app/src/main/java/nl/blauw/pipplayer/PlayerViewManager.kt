@@ -3,6 +3,7 @@ package nl.blauw.pipplayer
 import android.content.Context
 import android.view.MotionEvent
 import android.view.View
+import android.view.TextureView
 import android.widget.ImageButton
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
