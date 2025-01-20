@@ -67,6 +67,10 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         player.playWhenReady = true
     }
     
+    fun applyToPlayer(command: (player: Player) -> Unit) {
+        command(player)
+    }
+    
     fun createPlayerViewManager(): PlayerViewManager {
       return playerViewManagerFactory.create(player)
     }

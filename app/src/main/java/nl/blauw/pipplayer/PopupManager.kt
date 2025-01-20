@@ -11,8 +11,12 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 
 class PopupManager(private val context: Context, private val playerManager: PlayerManager, private val playerViewManager: PlayerViewManager) {
+    private val player: Player = playerManager.getPlayer()
+    private val playerView: PlayerView = playerViewManager.getPlayerView()
+    
     private val windowManager: WindowManager
     private val layoutParams: WindowManager.LayoutParams
+    
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
@@ -54,14 +58,12 @@ class PopupManager(private val context: Context, private val playerManager: Play
                 val height = videoSize.height
                 if (width > 0 && height > 0) {
                     val scaleFactor = width.toDouble() / height
-                    playerViewManager.getPlayerView().tag = scaleFactor
-                    //Log.d("PlayerManager", "ScaleFactor: $scaleFactor")
+                    playerView.tag = scaleFactor
 
                     layoutParams.width = width
                     layoutParams.height = height
-
-                    // playerView.layoutParams = params
-                    windowManager.updateViewLayout(playerViewManager.getPlayerView(), layoutParams)
+                    
+                    windowManager.updateViewLayout(playerView, layoutParams)
                 }
             }
         }
@@ -75,14 +77,12 @@ class PopupManager(private val context: Context, private val playerManager: Play
         }
 
         playerViewManager.setupCrossButton {
-            playerViewManager.getPlayerView()?.takeIf{ it.parent != null }?.apply { 
-                windowManager.removeViewImmediate(this)
-                player?.release()
-                player = null
-            }
+            playerManager.releasePlayer()
+            playerViewManager.releasePlayerView()
+            removePopupWindow()
         }
         
-        val muteToggleButtonListener =  MuteToggleButtonListener(playerViewManager.getPlayerView()?.player)
+        val muteToggleButtonListener =  MuteToggleButtonListener(player)
         playerViewManager.setupMuteToggleButton (muteToggleButtonListener::onClick)
         
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
@@ -92,30 +92,10 @@ class PopupManager(private val context: Context, private val playerManager: Play
     fun show() {
         setupPlayer()
         setupPlayerView()
-        windowManager.addView(playerViewManager.getPlayerView(), layoutParams)
+        windowManager.addView(playerView, layoutParams)
     }
-
-    /*private fun setupCrossButton() {
-        val crossButton: ImageButton? = playerView.findViewById(R.id.cross_button)
-        crossButton?.setOnClickListener {
-            playerView.parent?.let {
-                windowManager.removeViewImmediate(playerView)
-                playerView.player?.release()
-                playerView.player = null
-            }
-        }
-    }
-
-    private fun setupMuteToggleButton() {
-        val muteToggleButton: ImageButton? = playerView.findViewById(R.id.mute_toggle_button)
-        muteToggleButton?.setOnClickListener(MuteToggleButtonListener(playerView.player))
-    }*/
-
-    /*private fun setupTouchListener(params: WindowManager.LayoutParams) {
-        playerViewManager.getPlayerView().setOnTouchListener(PlayerTouchListener(context, windowManager, params))
-    }*/
 
     fun removePopupWindow() {
-        windowManager.removeViewImmediate(playerViewManager.getPlayerView())
+        windowManager.removeViewImmediate(playerView)
     }
 }
