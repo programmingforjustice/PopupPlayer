@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
   private EditText urlEdit;
 
   private List<String> urlList;
+  
+  private String savedUrl;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -204,11 +206,11 @@ public class MainActivity extends AppCompatActivity {
   @RequiresApi(api = Build.VERSION_CODES.M)
   public void startPipPlayer(String url) {
     if (!Settings.canDrawOverlays(this)) {
+      this.savedUrl = url;
       Intent request =
           new Intent(
-              Settings.ACTION_MANAGE_OVERLAY_PERMISSIO,
+              Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
               Uri.parse("package:" + this.getPackageName()));
-      request.putExtra("url", url);
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
     } else {
       Intent intent = new Intent(this, PlayerService.class);
@@ -225,12 +227,7 @@ public class MainActivity extends AppCompatActivity {
     if (requestCode == REQUEST_CODE_OVERLAY_PERMISSION) {
         if (Settings.canDrawOverlays(this)) {
             // 전달된 데이터 가져오기
-            if (data != null && data.hasExtra("url")) {
-                String url = data.getStringExtra("url");
-                startPipPlayer(url);
-            } else {
-                Toast.makeText(this, "데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
-            }
+            startPipPlayer(this.savedUrl);
         } else {
             Toast.makeText(this, "권한이 필요합니다!", Toast.LENGTH_SHORT).show();
         }
