@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
     } else {
       Intent intent = new Intent(this, PlayerService.class);
-      intent.putExtra("url", url);
+      intent.putExtra("data", url);
       startForegroundService(intent);
     }
   }
