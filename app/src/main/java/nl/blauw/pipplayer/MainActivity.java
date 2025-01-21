@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
   @TargetApi(Build.VERSION_CODES.M)
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    //super.onActivityResult(requestCode, resultCode, data);
+    super.onActivityResult(requestCode, resultCode, data);
 
     if (requestCode == REQUEST_CODE_OVERLAY_PERMISSION) {
         if (Settings.canDrawOverlays(this)) {
