@@ -55,7 +55,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     
     private fun setupPlayer() {
         playerManager.setVideoSizeChangedListener { videoSize -> 
-                Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
                 val width = videoSize.width
                 val height = videoSize.height
                 if (width > 0 && height > 0) {
@@ -65,12 +65,12 @@ class PopupManager(private val context: Context, private val playerManager: Play
                     layoutParams.width = width
                     layoutParams.height = height
                     
-                    //windowManager.updateViewLayout(playerView, layoutParams)
+                    windowManager.updateViewLayout(playerView, layoutParams)
             }
         }
         
-         playerManager.setRenderedFirstFrameListener {
-             windowManager.addView(playerView, layoutParams)
+        // playerManager.setRenderedFirstFrameListener {
+        //     windowManager.addView(playerView, layoutParams)
          }
     }
 
@@ -94,10 +94,10 @@ class PopupManager(private val context: Context, private val playerManager: Play
         playerViewManager.setupTouchListener(playerTouchListener::onTouch)
     }
 
-    fun prepare() {
+    fun show() {
         setupPlayer()
         setupPlayerView()
-        //windowManager.addView(playerView, layoutParams)
+        windowManager.addView(playerView, layoutParams)
     }
 
     fun removePopupWindow() {
