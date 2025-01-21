@@ -24,7 +24,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         var onRenderedFirstFrameListener: (() -> Unit)? = null
         
         override fun onVideoSizeChanged(videoSize: VideoSize) {
-            Toast.makeText(context, "$videoSize", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "onVideoSizeChangedListener : ${if (onVideoSizeChangedListener == null) false else true}", Toast.LENGTH_SHORT).show()
             onVideoSizeChangedListener?.invoke(videoSize)
         }
         
