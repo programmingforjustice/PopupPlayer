@@ -68,6 +68,10 @@ class PopupManager(private val context: Context, private val playerManager: Play
                 }
             }
         }
+        
+        playerManager.setRenderedFirstFrameListener {
+            windowManager.addView(playerView, layoutParams)
+        }
     }
 
     private fun setupPlayerView() {
@@ -90,10 +94,9 @@ class PopupManager(private val context: Context, private val playerManager: Play
         playerViewManager.setupTouchListener(playerTouchListener::onTouch)
     }
 
-    fun show() {
+    fun prepare() {
         setupPlayer()
         setupPlayerView()
-        windowManager.addView(playerView, layoutParams)
     }
 
     fun removePopupWindow() {

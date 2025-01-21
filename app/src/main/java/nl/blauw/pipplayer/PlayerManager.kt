@@ -19,10 +19,15 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
     private lateinit var player: ExoPlayer
     
     private var onVideoSizeChanged: ((VideoSize) -> Unit)? = null
+    private var onRenderedFirstFrame:(() -> Unit)? = null
     
     private val playerListener = object : Player.Listener {
         override fun onVideoSizeChanged(videoSize: VideoSize) {
             onVideoSizeChanged?.invoke(videoSize)
+        }
+        
+        override fun onRenderedFirstFrame() {
+            onRenderedFirstFrame?.invoke()
         }
     }
 
@@ -60,6 +65,10 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
     
     fun setVideoSizeChangedListener(action: (VideoSize) -> Unit) {
         onVideoSizeChanged = action
+    }
+    
+    fun setRenderedFirstFrameListener(action: () -> Unit) {
+        onRenderedFirstFrame = action
     }
     
     fun play() {
