@@ -7,7 +7,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.widget.Toast;
+import android.widget.Toast
 
 class PlayerService : Service() {
 

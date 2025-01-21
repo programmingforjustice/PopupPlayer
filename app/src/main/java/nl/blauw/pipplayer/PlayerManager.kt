@@ -13,6 +13,7 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
+import android.widget.Toast
 
 class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
 
@@ -23,10 +24,12 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         var onRenderedFirstFrameListener: (() -> Unit)? = null
         
         override fun onVideoSizeChanged(videoSize: VideoSize) {
+            Toast.makeText(context, "$videoSize", Toast.LENGTH_SHORT).show()
             onVideoSizeChangedListener?.invoke(videoSize)
         }
         
         override fun onRenderedFirstFrame() {
+            Toast.makeText(context, "onRenderedFirstFrame", Toast.LENGTH_SHORT).show()
             onRenderedFirstFrameListener?.invoke()
         }
     }
