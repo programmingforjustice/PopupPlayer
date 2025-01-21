@@ -26,8 +26,8 @@ class PopupManager(private val context: Context, private val playerManager: Play
     
     init {
       layoutParams = WindowManager.LayoutParams(
-            Utils.convertDpToPixelsInt(160f, context),
-            Utils.convertDpToPixelsInt(90f, context),
+            Utils.convertDpToPixelsInt(0f, context),
+            Utils.convertDpToPixelsInt(0f, context),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             else
@@ -65,13 +65,13 @@ class PopupManager(private val context: Context, private val playerManager: Play
                     layoutParams.width = width
                     layoutParams.height = height
                     
-                    windowManager.updateViewLayout(playerView, layoutParams)
+                    // windowManager.updateViewLayout(playerView, layoutParams)
             }
         }
         
-        // playerManager.setRenderedFirstFrameListener {
-        //     windowManager.addView(playerView, layoutParams)
-        //}
+        playerManager.setRenderedFirstFrameListener {
+            windowManager.addView(playerView, layoutParams)
+        }
     }
 
     private fun setupPlayerView() {
@@ -97,7 +97,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     fun prepare() {
         setupPlayer()
         setupPlayerView()
-        windowManager.addView(playerView, layoutParams)
+        //windowManager.addView(playerView, layoutParams)
     }
 
     fun removePopupWindow() {
