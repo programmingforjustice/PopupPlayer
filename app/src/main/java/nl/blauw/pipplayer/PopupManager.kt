@@ -25,8 +25,8 @@ class PopupManager(private val context: Context, private val playerManager: Play
     
     init {
       layoutParams = WindowManager.LayoutParams(
-            Utils.convertDpToPixelsInt(160f, context),
-            Utils.convertDpToPixelsInt(90f, context),
+            Utils.convertDpToPixelsInt(0f, context),
+            Utils.convertDpToPixelsInt(0f, context),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             else
