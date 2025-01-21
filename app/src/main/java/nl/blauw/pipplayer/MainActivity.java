@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
     if (!Settings.canDrawOverlays(this)) {
       Intent request =
           new Intent(
-              Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+              Settings.ACTION_MANAGE_OVERLAY_PERMISSIO,
               Uri.parse("package:" + this.getPackageName()));
       request.putExtra("url", url);
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
