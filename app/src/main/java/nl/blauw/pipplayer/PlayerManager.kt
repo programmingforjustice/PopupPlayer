@@ -66,11 +66,11 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         player.setMediaSource(contentMediaSource)
     }
     
-    fun setVideoSizeChangedListener(action: (VideoSize) -> Unit) {
+    fun setVideoSizeChangedListener(action: ((VideoSize) -> Unit)?) {
         playerListener.onVideoSizeChangedListener = action
     }
     
-    fun setRenderedFirstFrameListener(action: () -> Unit) {
+    fun setRenderedFirstFrameListener(action: (() -> Unit)?) {
         playerListener.onRenderedFirstFrameListener = action
     }
     
