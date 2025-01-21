@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
           new Intent(
               Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
               Uri.parse("package:" + this.getPackageName()));
+      request.putExtra("url", url);
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
     } else {
       Intent intent = new Intent(this, PlayerService.class);
