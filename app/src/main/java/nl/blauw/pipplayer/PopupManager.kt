@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
+import android.widget.Toast
 
 class PopupManager(private val context: Context, private val playerManager: PlayerManager, private val playerViewManager: PlayerViewManager) {
     private val player: Player = playerManager.getPlayer()
@@ -55,6 +56,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     private fun setupPlayer() {
         playerManager.setVideoSizeChangedListener { 
             videoSize -> {
+                Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
                 val width = videoSize.width
                 val height = videoSize.height
                 if (width > 0 && height > 0) {
