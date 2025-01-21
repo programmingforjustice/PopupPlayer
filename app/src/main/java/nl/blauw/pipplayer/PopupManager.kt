@@ -64,7 +64,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
                     layoutParams.width = width
                     layoutParams.height = height
                     
-                    windowManager.updateViewLayout(playerView, layoutParams)
+                    windowManager.pdateViewLayout(playerView, layoutParams)
                 }
             }
         }
