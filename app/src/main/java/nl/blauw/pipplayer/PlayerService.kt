@@ -34,6 +34,8 @@ class PlayerService : Service() {
         
     
         val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
+        
+        Toast.makeText(this, "$url").show()
 
         playerController = PlayerController(this)
         playerController?.initialize(url)
