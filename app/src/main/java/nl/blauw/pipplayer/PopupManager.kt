@@ -54,7 +54,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     }
     
     private fun setupPlayer() {
-        playerManager.setVideoSizeChangedListener { videoSize -> {
+        playerManager.setVideoSizeChangedListener { videoSize -> 
                 Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
                 val width = videoSize.width
                 val height = videoSize.height
@@ -66,7 +66,6 @@ class PopupManager(private val context: Context, private val playerManager: Play
                     layoutParams.height = height
                     
                     windowManager.updateViewLayout(playerView, layoutParams)
-                }
             }
         }
         
