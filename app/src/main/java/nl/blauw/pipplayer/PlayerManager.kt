@@ -29,7 +29,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         }
         
         override fun onRenderedFirstFrame() {
-            Toast.makeText(context, "onRenderedFirstFrame : ${if (onRenderedFirstFrame == null) false else true}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "onRenderedFirstFrameListener : ${if (onRenderedFirstFrameListener == null) false else true}", Toast.LENGTH_SHORT).show()
             onRenderedFirstFrameListener?.invoke()
         }
     }
