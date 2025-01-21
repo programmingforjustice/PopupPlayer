@@ -24,7 +24,7 @@ import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
 
-  public static final int REQUEST_CODE = 100;
+  public static final int REQUEST_CODE_OVERLAY_PERMISSION = 100;
 
   private TextAdapter adapter;
 
@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
           new Intent(
               Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
               Uri.parse("package:" + this.getPackageName()));
-      startActivityForResult(request, REQUEST_CODE);
+      startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
     } else {
       Intent intent = new Intent(this, PlayerService.class);
       intent.putExtra("data", url);
@@ -219,10 +219,19 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
-    // check if received result code
-    // is equal our requested code for draw permission
-    if (requestCode == REQUEST_CODE) {
-      startPipPlayer(urlEdit.getText().toString());
+
+    if (requestCode == REQUEST_CODE_OVERLAY_PERMISSION) {
+        if (Settings.canDrawOverlays(this)) {
+            // 전달된 데이터 가져오기
+            if (data != null && data.hasExtra("url")) {
+                String url = data.getStringExtra("url");
+                startPipPlayer(url);
+            } else {
+                Toast.makeText(this, "데이터를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "권한이 필요합니다!", Toast.LENGTH_SHORT).show();
+        }
     }
   }
 }
