@@ -14,27 +14,10 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 import android.widget.Toast
-import com.google.android.exoplayer2.analytics.AnalyticsListener
 
 class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
 
     private lateinit var player: ExoPlayer
-    private val analyticsListener: AnalyticsListener
-    
-    init {
-        // AnalyticsListener 구현
-        analyticsListener = object : AnalyticsListener {
-            override fun onVideoDecoderInitialized(
-                eventTime: AnalyticsListener.EventTime,
-                decoderName: String,
-                initializedTimestampMs: Long,
-                initializationDurationMs: Long
-            ) {
-                // 디코더 이름을 Toast 메시지로 출력
-                Toast.makeText(context, "Video Decoder: $decoderName", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
     
     private val playerListener = object : Player.Listener {
         var onVideoSizeChangedListener: ((VideoSize) -> Unit)? = null
@@ -69,7 +52,6 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             .build()
             
         player.addListener(playerListener)
-        player.addAnalyticsListener(analyticsListener)
     }
 
     fun loadMediaSource(contentUrl: String) {
