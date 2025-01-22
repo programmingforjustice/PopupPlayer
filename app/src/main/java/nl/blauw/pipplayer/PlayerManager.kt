@@ -14,7 +14,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 import android.widget.Toast
-com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 
 class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
 
