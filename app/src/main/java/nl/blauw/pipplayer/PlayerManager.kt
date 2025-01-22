@@ -38,7 +38,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             initializedTimestampMs: Long,
             initializationDurationMs: Long
         ) {
-            Toast.makeText("DecoderInfo", "사용된 디코더: $decoderName", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,"DecoderInfo", "사용된 디코더: $decoderName", Toast.LENGTH_SHORT).show()
         }
     }
 
