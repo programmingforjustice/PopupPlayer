@@ -45,7 +45,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
 
         val renderersFactory = DefaultRenderersFactory(context)
             .setEnableDecoderFallback(true)
-            //.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
+            .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
 
         player = ExoPlayer.Builder(context, renderersFactory)
             .setLoadControl(loadControl)
