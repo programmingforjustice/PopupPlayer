@@ -18,6 +18,22 @@ import android.widget.Toast
 class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
 
     private lateinit var player: ExoPlayer
+    private val analyticsListener: AnalyticsListener
+    
+    init {
+        // AnalyticsListener 구현
+        analyticsListener = object : AnalyticsListener {
+            override fun onVideoDecoderInitialized(
+                eventTime: AnalyticsListener.EventTime,
+                decoderName: String,
+                initializedTimestampMs: Long,
+                initializationDurationMs: Long
+            ) {
+                // 디코더 이름을 Toast 메시지로 출력
+                Toast.makeText(context, "Video Decoder: $decoderName", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
     
     private val playerListener = object : Player.Listener {
         var onVideoSizeChangedListener: ((VideoSize) -> Unit)? = null
@@ -31,14 +47,6 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         override fun onRenderedFirstFrame() {
             //Toast.makeText(context, "onRenderedFirstFrameListener : ${if (onRenderedFirstFrameListener == null) false else true}", Toast.LENGTH_SHORT).show()
             onRenderedFirstFrameListener?.invoke()
-        }
-        
-        override fun onVideoDecoderInitialized(
-            decoderName: String,
-            initializedTimestampMs: Long,
-            initializationDurationMs: Long
-        ) {
-            Toast.makeText(context, "사용된 디코더: $decoderName", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -60,6 +68,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             .build()
             
         player.addListener(playerListener)
+        player.addAnalyticsListener(analyticsListener)
     }
 
     fun loadMediaSource(contentUrl: String) {
