@@ -32,6 +32,14 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             //Toast.makeText(context, "onRenderedFirstFrameListener : ${if (onRenderedFirstFrameListener == null) false else true}", Toast.LENGTH_SHORT).show()
             onRenderedFirstFrameListener?.invoke()
         }
+        
+        override fun onVideoDecoderInitialized(
+            decoderName: String,
+            initializedTimestampMs: Long,
+            initializationDurationMs: Long
+        ) {
+            Toast.makeText("DecoderInfo", "사용된 디코더: $decoderName").show()
+        }
     }
 
     fun createPlayer() {
