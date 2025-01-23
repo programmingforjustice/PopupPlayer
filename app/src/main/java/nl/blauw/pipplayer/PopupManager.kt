@@ -87,8 +87,9 @@ class PopupManager(private val context: Context, private val playerManager: Play
             removePopupWindow()
         }
         
-        val muteToggleButtonListener =  MuteToggleButtonListener(player)
-        playerViewManager.setupMuteToggleButton (muteToggleButtonListener::onClick)
+        //val muteToggleButtonListener =  MuteToggleButtonListener(player)
+        val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
+        playerViewManager.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
         
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewManager.setupTouchListener(playerTouchListener::onTouch)
