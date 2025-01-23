@@ -14,13 +14,31 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    
+    signingConfigs {
+        release {
+            // 키스토어 정보 설정
+            storeFile file("release-key.jks") // 키스토어 파일 경로
+            storePassword "1q2w3e4r" // 키스토어 비밀번호
+            keyAlias "my-release-key" // 키 별칭
+            keyPassword "1q2w3e4r" // 키 비밀번호
+        }
+    }
 
     buildTypes {
         release {
-            minifyEnabled false
+            // 릴리즈 빌드 설정
+            signingConfig signingConfigs.release
+            minifyEnabled true // ProGuard 활성화
+            shrinkResources true // 리소스 축소
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            // 디버그 빌드 설정 (서명하지 않음)
+            signingConfig signingConfigs.debug
+        }
     }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
