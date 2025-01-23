@@ -18,7 +18,7 @@ android {
     signingConfigs {
         release {
             // 키스토어 정보 설정
-            storeFile file("release-key.jks") // 키스토어 파일 경로
+            storeFile file("./release-key.jks") // 키스토어 파일 경로
             storePassword "1q2w3e4r" // 키스토어 비밀번호
             keyAlias "my-release-key" // 키 별칭
             keyPassword "1q2w3e4r" // 키 비밀번호
