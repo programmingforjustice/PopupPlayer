@@ -37,8 +37,16 @@ class AudioToggleHelper(private val player: Player) {
 
     fun toggleMute() {
         isMuted = !isMuted
+        
         val trackSelector = (player as? ExoPlayer)?.trackSelector as? DefaultTrackSelector
-        trackSelector?.parameters = if (isMuted) { 
+        val parametersBuilder = trackSelector?.buildUponParameters()
+        
+        parametersBuilder?.setRendererDisabled(C.TRACK_TYPE_AUDIO, if (isMuted) true else false)
+        parametersBuilder?.build()?.let {
+            trackSelector.setParameters(it)
+        }
+
+        /*trackSelector?.parameters = if (isMuted) { 
             trackSelector
               ?.buildUponParameters()
                 ?.setRendererDisabled(C.TRACK_TYPE_AUDIO, true) // Disable audio decoder
@@ -48,6 +56,6 @@ class AudioToggleHelper(private val player: Player) {
               ?.buildUponParameters()
                 ?.setRendererDisabled(C.TRACK_TYPE_AUDIO, false) // Enable audio decoder
                 .build()
-        }
+        }*/
     }
 }
