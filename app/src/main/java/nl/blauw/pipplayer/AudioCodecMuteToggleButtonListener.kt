@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.C
 
 class AudioCodecMuteToggleButtonListener(private val player: Player) : View.OnClickListener {
-    private var audioToggleHelper: = AudioToggleHelper(player)
+    private var audioToggleHelper = AudioToggleHelper(player)
     
     init {
       audioToggleHelper.toggleMute()
