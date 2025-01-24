@@ -22,7 +22,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     private val playerView: PlayerView = playerViewManager.getPlayerView()
     
     private val windowManager: WindowManager
-    private val layoutParams: WindowManager.LayoutParams
+    private var layoutParams: WindowManager.LayoutParams
     
     private var imageView: ImageView = ImageView(context)
     
@@ -143,11 +143,19 @@ class PopupManager(private val context: Context, private val playerManager: Play
             imageView.setImageBitmap(bitmap)
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
-            val layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams)
+            imageView.setOnClickListener {
+                show()
+                playerManager.play()
+            }
+            
+            layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams)
 
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-            windowManager.removeView(playerView)
+            //windowManager.removeView(playerView)
+            playerManager.releasePlayer()
+            playerViewManager.releasePlayerView()
+            removePopupWindow()
 
             // 5. 동일한 위치에 ImageView를 추가
             /*val layoutParams = WindowManager.LayoutParams(
