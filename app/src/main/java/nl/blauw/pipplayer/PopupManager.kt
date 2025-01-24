@@ -118,7 +118,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     private fun getFrameAtCurrentPosition(videoUri: Uri, currentPosition: Long): Bitmap? {
         val retriever = MediaMetadataRetriever()
         return try {
-            retriever.setDataSource(this, videoUri)
+            retriever.setDataSource(context, videoUri)
             retriever.getFrameAtTime(currentPosition * 1000) // 현재 위치의 프레임 가져오기
         } catch (e: Exception) {
             e.printStackTrace()
