@@ -25,7 +25,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
     private val playerListener = object : Player.Listener {
         var onVideoSizeChangedListener: ((VideoSize) -> Unit)? = null
         var onRenderedFirstFrameListener: (() -> Unit)? = null
-        var onIsPlayingChangedListener: (() -> )? = null
+        var onIsPlayingChangedListener: (() -> Unit)? = null
         
         override fun onVideoSizeChanged(videoSize: VideoSize) {
             //Toast.makeText(context, "onVideoSizeChangedListener : ${if (onVideoSizeChangedListener == null) false else true}", Toast.LENGTH_SHORT).show()
@@ -88,7 +88,8 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         playerListener.onRenderedFirstFrameListener = action
     
     }
-    fun setOnIsPlayingChangedListener() {
+    
+    fun setOnIsPlayingChangedListener(action: (() -> Unit)?) {
         playerListener.onIsPlayingChangedListener = action
     }
     
