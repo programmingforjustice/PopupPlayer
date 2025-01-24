@@ -68,8 +68,9 @@ public class PopupResizeHandler implements View.OnTouchListener {
                     initialPointerDistance = -1;
                     break;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     private double calculateDistance(MotionEvent event) {
