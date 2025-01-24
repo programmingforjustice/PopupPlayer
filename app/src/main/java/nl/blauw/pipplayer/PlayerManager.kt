@@ -88,7 +88,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         playerListener.onRenderedFirstFrameListener = action
     
     }
-    fun setOnIsPlayingChangedListener(action: ((Boolean) -> Unit)?) }
+    fun setOnIsPlayingChangedListener(action: ((Boolean) -> Unit)?) {
         playerListener.onIsPlayingChangedListener = action
     }
     
