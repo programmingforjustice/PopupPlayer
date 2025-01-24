@@ -76,6 +76,10 @@ class PopupManager(private val context: Context, private val playerManager: Play
         // playerManager.setRenderedFirstFrameListener {
         //     windowManager.addView(playerView, layoutParams)
          //}
+         
+         playerViewManager.setOnIsPlayingChangedListener {
+            replacePlayerViewWithImageView()
+        }
     }
 
     private fun setupPlayerView() {
@@ -97,10 +101,6 @@ class PopupManager(private val context: Context, private val playerManager: Play
         
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewManager.setupTouchListener(playerTouchListener::onTouch)
-        
-        playerViewManager.setOnIsPlayingChanged {
-            replacePlayerViewWithImageView()
-        }
     }
 
     fun show() {
