@@ -41,7 +41,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             //super.onIsPlayingChanged(isPlaying)
             if (!isPlaying) {
                 // 플레이어가 일시정지되었을 때 처리
-                onIsPlayingChangedListener?.invoke(isPlaying)   //replacePlayerViewWithImageView()
+                onIsPlayingChangedListener?.invoke()   //replacePlayerViewWithImageView()
             }
         }
     }
@@ -88,7 +88,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         playerListener.onRenderedFirstFrameListener = action
     
     }
-    fun setOnIsPlayingChangedListener(action: ((Boolean) -> Unit)?) {
+    fun setOnIsPlayingChangedListener() {
         playerListener.onIsPlayingChangedListener = action
     }
     
