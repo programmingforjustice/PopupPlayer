@@ -17,14 +17,14 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 import android.widget.Toast
 import java.io.File
 
-class PopupManager(private val context: Context, private val playerManager: PlayerManager, private val playerViewManager: PlayerViewManager) {
-    private val player: Player = playerManager.getPlayer()
-    private val playerView: PlayerView = playerViewManager.getPlayerView()
+class PopupManager(private val context: Context, private var playerManager: PlayerManager, private var playerViewManager: PlayerViewManager) {
+    private var player: Player = playerManager.getPlayer()
+    private var playerView: PlayerView = playerViewManager.getPlayerView()
     
     private val windowManager: WindowManager
     private var layoutParams: WindowManager.LayoutParams
     
-    private var imageView: ImageView = ImageView(context)
+    private val imageView: ImageView = ImageView(context)
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
