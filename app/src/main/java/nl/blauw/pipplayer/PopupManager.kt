@@ -62,18 +62,20 @@ class PopupManager(private val context: Context, private var playerManager: Play
     
     private fun setupPlayer() {
         playerManager.setVideoSizeChangedListener { videoSize -> 
-                if (!isPlaying) isPlaying = true
                 //Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
                 val width = videoSize.width
                 val height = videoSize.height
                 if (width > 0 && height > 0) {
                     val scaleFactor = width.toDouble() / height
                     playerView.tag = scaleFactor
-
-                    layoutParams.width = width
-                    layoutParams.height = height
                     
-                    windowManager.updateViewLayout(playerView, layoutParams)
+                    if (!isPlaying) {
+                      layoutParams.width = width
+                      layoutParams.height = height
+                      windowManager.updateViewLayout(playerView, layoutParams)
+                      
+                      isPlaying = true
+                    }
             }
         }
         
