@@ -148,8 +148,6 @@ class PopupManager(private val context: Context, private var playerManager: Play
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
             imageView.setOnClickListener {
-                windowManager.removeView(imageView)
-                
                 val playerController = PlayerController(context)
                 playerController.initialize(playerManager.contentUrl)
                 
@@ -160,10 +158,13 @@ class PopupManager(private val context: Context, private var playerManager: Play
                 
                 show()
                 playerController.play()
+                
+                windowManager.removeView(imageView)
             }
             
             layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
 
+            imageView.tag = playerView.tag
             imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
             
             // 4. PlayerView를 WindowManager에서 제거
