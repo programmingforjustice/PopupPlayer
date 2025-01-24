@@ -17,7 +17,7 @@ import android.widget.Toast
 
 class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
 
-    private lateinit var player: Player
+    private lateinit var player: ExoPlayer
     
     lateinit var contentUrl: String
       private set
