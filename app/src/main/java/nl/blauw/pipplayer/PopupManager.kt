@@ -143,7 +143,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
             imageView.setImageBitmap(bitmap)
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
-            layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams)
+            val layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams)
 
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
