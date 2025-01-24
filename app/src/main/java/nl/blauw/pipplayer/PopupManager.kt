@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 import android.widget.Toast
+import java.io.File
 
 class PopupManager(private val context: Context, private val playerManager: PlayerManager, private val playerViewManager: PlayerViewManager) {
     private val player: Player = playerManager.getPlayer()
@@ -78,8 +79,8 @@ class PopupManager(private val context: Context, private val playerManager: Play
         //     windowManager.addView(playerView, layoutParams)
          //}
          
-         playerViewManager.setOnIsPlayingChangedListener {
-            replacePlayerViewWithImageView()
+         playerManager.setOnIsPlayingChangedListener {
+                replacePlayerViewWithImageView()
         }
     }
 
@@ -133,7 +134,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     private fun replacePlayerViewWithImageView() {
         // 1. 현재 재생 중인 위치 확인
         val currentPosition = player.currentPosition
-        val videoUri = playerManager.contentUrl ?: return
+        val videoUri = Uri.fromFile(File(playerManager.contentUrl)) ?: return
 
         // 2. 현재 정지된 프레임을 추출
         val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
