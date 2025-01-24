@@ -13,6 +13,8 @@ public class PopupMovementHandler implements View.OnTouchListener {
 
     private float offsetX;
     private float offsetY;
+    
+    private boolean flagActionMove;
 
     public PopupMovementHandler(Context context, WindowManager windowManager, WindowManager.LayoutParams params) {
         this.windowManager = windowManager;
@@ -23,15 +25,20 @@ public class PopupMovementHandler implements View.OnTouchListener {
     public boolean onTouch(View view, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                flagActionMove = false;
                 offsetX = params.x - event.getRawX();
                 offsetY = params.y - event.getRawY();
                 return false;
 
             case MotionEvent.ACTION_MOVE:
+                flagActionMove = true;
                 params.x = (int) (event.getRawX() + offsetX);
                 params.y = (int) (event.getRawY() + offsetY);
                 windowManager.updateViewLayout(view, params);
                 return true;
+                
+            case MotionEvent.ACTION_UP:
+                return flagActionMove;
         }
         return false;
     }
