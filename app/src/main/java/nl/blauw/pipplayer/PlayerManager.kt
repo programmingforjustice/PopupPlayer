@@ -17,11 +17,15 @@ import android.widget.Toast
 
 class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
 
-    private lateinit var player: ExoPlayer
+    private lateinit var player: Player
+    
+    lateinit var contentUrl: String
+      private set
     
     private val playerListener = object : Player.Listener {
         var onVideoSizeChangedListener: ((VideoSize) -> Unit)? = null
         var onRenderedFirstFrameListener: (() -> Unit)? = null
+        var onIsPlayingChangedListener: ((Boolean) -> Unit)? = null
         
         override fun onVideoSizeChanged(videoSize: VideoSize) {
             //Toast.makeText(context, "onVideoSizeChangedListener : ${if (onVideoSizeChangedListener == null) false else true}", Toast.LENGTH_SHORT).show()
@@ -31,6 +35,14 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         override fun onRenderedFirstFrame() {
             //Toast.makeText(context, "onRenderedFirstFrameListener : ${if (onRenderedFirstFrameListener == null) false else true}", Toast.LENGTH_SHORT).show()
             onRenderedFirstFrameListener?.invoke()
+        }
+        
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            //super.onIsPlayingChanged(isPlaying)
+            if (!isPlaying) {
+                // 플레이어가 일시정지되었을 때 처리
+                onIsPlayingChangedListener?.invoke(isPlaying)   //replacePlayerViewWithImageView()
+            }
         }
     }
 
@@ -55,6 +67,8 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
     }
 
     fun loadMediaSource(contentUrl: String) {
+        this.contentUrl = contentUrl
+        
         val dataSourceFactory = DefaultDataSourceFactory(
             context, Util.getUserAgent(context, context.getString(R.string.app_name))
         )
@@ -72,6 +86,10 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
     
     fun setRenderedFirstFrameListener(action: (() -> Unit)?) {
         playerListener.onRenderedFirstFrameListener = action
+    
+    }
+    fun setOnIsPlayingChangedListener(action: ((Boolean) -> Unit)?) }
+        playerListener.onIsPlayingChangedListener = action
     }
     
     fun play() {

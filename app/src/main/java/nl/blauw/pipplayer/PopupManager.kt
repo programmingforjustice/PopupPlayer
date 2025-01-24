@@ -1,11 +1,14 @@
 package nl.blauw.pipplayer
 
+import android.graphics.Bitmap
+import android.media.MediaMetadataRetriever
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.ImageButton
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
@@ -19,6 +22,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     private val windowManager: WindowManager
     private val layoutParams: WindowManager.LayoutParams
     
+    private lateinit var imageView: ImageView
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
@@ -93,6 +97,10 @@ class PopupManager(private val context: Context, private val playerManager: Play
         
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewManager.setupTouchListener(playerTouchListener::onTouch)
+        
+        playerViewManager.setOnIsPlayingChanged {
+            replacePlayerViewWithImageView()
+        }
     }
 
     fun show() {
@@ -103,5 +111,48 @@ class PopupManager(private val context: Context, private val playerManager: Play
 
     fun removePopupWindow() {
         windowManager.removeViewImmediate(playerView)
+    }
+    
+    private fun getFrameAtCurrentPosition(videoUri: Uri, currentPosition: Long): Bitmap? {
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(this, videoUri)
+            retriever.getFrameAtTime(currentPosition * 1000) // 현재 위치의 프레임 가져오기
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } finally {
+            retriever.release()
+        }
+    }
+
+    /**
+     * PlayerView를 제거하고 ImageView로 대체하는 메서드
+     */
+    private fun replacePlayerViewWithImageView() {
+        // 1. 현재 재생 중인 위치 확인
+        val currentPosition = player.currentPosition
+        val videoUri = playerManager.contentUrl ?: return
+
+        // 2. 현재 정지된 프레임을 추출
+        val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
+        if (bitmap != null) {
+            // 3. ImageView에 추출한 프레임 설정
+            imageView.setImageBitmap(bitmap)
+            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+            
+            layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams)
+
+            // 4. PlayerView를 WindowManager에서 제거
+            //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
+            windowManager.removeView(playerView)
+
+            // 5. 동일한 위치에 ImageView를 추가
+            /*val layoutParams = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT
+            )*/
+            windowManager.addView(imageView, layoutParams)
+        }
     }
 }
