@@ -164,6 +164,8 @@ class PopupManager(private val context: Context, private var playerManager: Play
             
             layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
 
+            imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+            
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             //windowManager.removeView(playerView)
