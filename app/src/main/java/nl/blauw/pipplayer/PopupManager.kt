@@ -25,7 +25,7 @@ class PopupManager(private val context: Context, private var playerManager: Play
     private var layoutParams: WindowManager.LayoutParams
     
     private val imageView: ImageView = ImageView(context)
-    private val isPlaying: Boolean = false
+    private var isPlaying: Boolean = false
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
@@ -62,11 +62,10 @@ class PopupManager(private val context: Context, private var playerManager: Play
     
     private fun setupPlayer() {
         playerManager.setVideoSizeChangedListener { videoSize -> 
-                if (isPlaying) return
                 //Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
                 val width = videoSize.width
                 val height = videoSize.height
-                if (width > 0 && height > 0) {
+                if (!isPlaying && (width > 0 && height > 0)) {
                     val scaleFactor = width.toDouble() / height
                     playerView.tag = scaleFactor
 
@@ -74,8 +73,9 @@ class PopupManager(private val context: Context, private var playerManager: Play
                     layoutParams.height = height
                     
                     windowManager.updateViewLayout(playerView, layoutParams)
+                    
+                    isPlaying = true
             }
-            isPlaying = true
         }
         
         // playerManager.setRenderedFirstFrameListener {
