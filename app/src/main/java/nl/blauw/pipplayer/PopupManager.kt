@@ -146,7 +146,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
             imageView.setOnClickListener {
                 windowManager.removeView(imageView)
                 
-                val playerController = PlayerController(this)
+                val playerController = PlayerController(context)
                 playerController.initialize(playerManager.contentUrl)
                 
                 playerManager = playerController.getPlayerManager()
@@ -155,7 +155,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
                 playerView = playerViewManager.getPlayerView()
                 
                 show()
-                playerManager.play()
+                playerController.play()
             }
             
             layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
