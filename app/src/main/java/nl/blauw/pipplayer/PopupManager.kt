@@ -24,7 +24,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
     private val windowManager: WindowManager
     private val layoutParams: WindowManager.LayoutParams
     
-    private lateinit var imageView: ImageView
+    private var imageView: ImageView = ImageView(context)
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
