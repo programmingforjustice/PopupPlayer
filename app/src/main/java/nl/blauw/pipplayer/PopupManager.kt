@@ -24,7 +24,7 @@ class PopupManager(private val context: Context, private var playerManager: Play
     private val windowManager: WindowManager
     private var layoutParams: WindowManager.LayoutParams
     
-    private val imageView: ImageView = ImageView(context
+    private val imageView: ImageView = ImageView(context)
     private val isPlaying: Boolean = false
     
     init {
