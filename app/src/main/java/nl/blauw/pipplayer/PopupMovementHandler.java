@@ -25,13 +25,13 @@ public class PopupMovementHandler implements View.OnTouchListener {
             case MotionEvent.ACTION_DOWN:
                 offsetX = params.x - event.getRawX();
                 offsetY = params.y - event.getRawY();
-                break;
+                return true;
 
             case MotionEvent.ACTION_MOVE:
                 params.x = (int) (event.getRawX() + offsetX);
                 params.y = (int) (event.getRawY() + offsetY);
                 windowManager.updateViewLayout(view, params);
-                break;
+                return true;
         }
         return false;
     }

@@ -26,9 +26,9 @@ public class PopupResizeHandler implements View.OnTouchListener {
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent event) {
+    public boolean onTouch(View playerView, MotionEvent event) {
         if (event.getPointerCount() == 2) {
-            PlayerView playerView = (PlayerView) view;
+            //PlayerView playerView = (PlayerView) view;
             if (playerView.getTag() == null) return false;
 
             switch (event.getActionMasked()) {
