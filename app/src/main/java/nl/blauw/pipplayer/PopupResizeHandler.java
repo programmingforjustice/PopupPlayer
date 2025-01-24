@@ -59,7 +59,7 @@ public class PopupResizeHandler implements View.OnTouchListener {
                         params.height = newHeight;
 
                         // 레이아웃 업데이트
-                        windowManager.updateViewLayout(view, params);
+                        windowManager.updateViewLayout(playerView, params);
                     }
                     break;
 
