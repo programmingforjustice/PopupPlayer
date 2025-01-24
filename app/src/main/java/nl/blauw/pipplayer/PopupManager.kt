@@ -148,7 +148,7 @@ class PopupManager(private val context: Context, private val playerManager: Play
                 playerManager.play()
             }
             
-            layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams)
+            layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
 
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
