@@ -15,7 +15,7 @@ class PlayerController(private val context: Context) {
         }
         
         playerViewManager = playerManager.createPlayerViewManager()
-        playerViewManager.createPlayerView(playerManager.getPlayer())
+        //playerViewManager.createPlayerView(playerManager.getPlayer())
     }
 
     fun play() {

@@ -144,6 +144,16 @@ class PopupManager(private val context: Context, private val playerManager: Play
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
             imageView.setOnClickListener {
+                windowManager.removeView(imageView)
+                
+                val playerController = PlayerController(this)
+                playerController.initialize(playerManager.contentUrl)
+                
+                playerManager = playerController.getPlayerManager()
+                playerViewManager = playerController.getPlayerViewManager()
+                player = playerManager.getPlayer()
+                playerView = playerViewManager.getPlayerView()
+                
                 show()
                 playerManager.play()
             }
