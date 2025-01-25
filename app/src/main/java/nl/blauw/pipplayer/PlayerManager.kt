@@ -41,7 +41,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             //super.onIsPlayingChanged(isPlaying)
-            if (!isPlaying && !isSeekInProgress) {
+            if (player.playbackState != Player.STATE_BUFFERING && !isPlaying && !isSeekInProgress) {
                 // 플레이어가 일시정지되었을 때 처리
                 onIsPlayingChangedListener?.invoke()   //replacePlayerViewWithImageView()
             }
@@ -60,6 +60,17 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             isSeekInProgress = false
             println("진행바 이동 완료")
         }
+        
+        /*override fun onPlaybackStateChanged(playbackState: Int) {
+            when (playbackState) {
+                Player.STATE_ENDED -> {
+
+                }
+                Player.STATE_READY -> {
+                    
+                }
+            }
+        }*/
     }
 
     fun createPlayer() {
