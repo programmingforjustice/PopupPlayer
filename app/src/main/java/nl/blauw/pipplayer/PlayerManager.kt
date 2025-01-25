@@ -27,6 +27,8 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         var onRenderedFirstFrameListener: (() -> Unit)? = null
         var onIsPlayingChangedListener: (() -> Unit)? = null
         
+        private var isSeekInProgress: Boolean = false
+        
         override fun onVideoSizeChanged(videoSize: VideoSize) {
             //Toast.makeText(context, "onVideoSizeChangedListener : ${if (onVideoSizeChangedListener == null) false else true}", Toast.LENGTH_SHORT).show()
             onVideoSizeChangedListener?.invoke(videoSize)
@@ -39,10 +41,22 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             //super.onIsPlayingChanged(isPlaying)
-            if (!isPlaying) {
+            if (!isPlaying && !isSeekInProgress) {
                 // 플레이어가 일시정지되었을 때 처리
                 onIsPlayingChangedListener?.invoke()   //replacePlayerViewWithImageView()
             }
+        }
+        
+        override fun onSeekStarted() {
+            // 사용자가 진행바를 이동하면 호출
+            isSeekInProgress = true
+            println("진행바 이동 시작")
+        }
+    
+        override fun onSeekProcessed() {
+            // 진행바 이동이 완료된 후 호출
+            isSeekInProgress = false
+            println("진행바 이동 완료")
         }
     }
 
