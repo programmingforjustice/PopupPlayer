@@ -157,6 +157,7 @@ class PopupManager(private val context: Context, private var playerManager: Play
                 playerView = playerViewManager.getPlayerView()
                 
                 show()
+                player.seekTo(currentPosition)
                 playerController.play()
                 
                 windowManager.removeView(imageView)
