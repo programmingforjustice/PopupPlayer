@@ -159,7 +159,9 @@ class PopupManager(private val context: Context, private var playerManager: Play
                 show()
                 player.seekTo(currentPosition)
                 playerManager.setRenderedFirstFrameListener {
-                      windowManager.removeView(imageView)
+                      if (imageView.parent != null) {
+                          windowManager.removeView(imageView)
+                      }
                 }
                 playerController.play()
             }
