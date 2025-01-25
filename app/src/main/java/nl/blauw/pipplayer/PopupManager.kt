@@ -158,9 +158,10 @@ class PopupManager(private val context: Context, private var playerManager: Play
                 
                 show()
                 player.seekTo(currentPosition)
+                playerManager.setRenderedFirstFrameListener {
+                      windowManager.removeView(imageView)
+                }
                 playerController.play()
-                
-                windowManager.removeView(imageView)
             }
             
             layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
