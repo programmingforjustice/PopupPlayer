@@ -47,12 +47,14 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             }
         }
         
-        override fun onSeekStarted() {
-            // 사용자가 진행바를 이동하면 호출
-            isSeekInProgress = true
-            println("진행바 이동 시작")
+        override fun onPositionDiscontinuity(reason: Player.PositionDiscontinuityReason) {
+            // 진행바 이동이 시작되었을 때 호출
+            if (reason == Player.DISCONTINUITY_REASON_SEEK) {
+                isSeekInProgress = true
+                println("진행바 이동 시작")
+            }
         }
-    
+        
         override fun onSeekProcessed() {
             // 진행바 이동이 완료된 후 호출
             isSeekInProgress = false
