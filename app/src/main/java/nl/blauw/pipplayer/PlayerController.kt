@@ -1,6 +1,7 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import android.view.WindowManager
 import com.google.android.exoplayer2.ui.PlayerView
 import org.json.JSONObject
 import java.util.UUID
