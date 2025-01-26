@@ -61,7 +61,7 @@ class PlayerViewManager(private val context: Context): JsonSerializable {
         playerView.player = null
     }
     
-    override fun toJsonString(): String {
+    /*override fun toJsonString(): String {
       
-    }
+    }*/
 }
