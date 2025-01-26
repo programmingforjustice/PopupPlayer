@@ -17,6 +17,7 @@ class PlayerService : Service() {
 
     private var playerController: PlayerController? = null
     private var popupManager: PopupManager? = null
+    private var playerList = mutableList<PlayerController>()
 
     override fun onCreate() {
         super.onCreate()
@@ -41,9 +42,10 @@ class PlayerService : Service() {
         playerController?.initialize(url)
 
         popupManager = PopupManager(this, playerController?.getPlayerManager() ?: throw IllegalStateException("cannot obtain PlayerManager"), playerController?.getPlayerViewManager() ?: throw IllegalStateException("cannot obtain PlayerViewManager"))
+        
         popupManager?.show()
-
         playerController?.play()
+        playerList.add(playerController)
         
         return START_NOT_STICKY
     }
