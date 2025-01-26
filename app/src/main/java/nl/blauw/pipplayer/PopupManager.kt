@@ -187,7 +187,7 @@ class PopupManager(private val context: Context, private var playerManager: Play
         }
     }
     
-    /*override fun toJsonString(): String {
-      
-    }*/
+    override fun toJsonString(): String {
+        return ""
+    }
 }

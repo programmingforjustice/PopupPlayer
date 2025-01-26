@@ -142,7 +142,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
         if (::player.isInitialized) player.release()
     }
     
-    /*override fun toJsonString(): String {
-      
-    }*/
+    override fun toJsonString(): String {
+        return ""
+    }
 }
