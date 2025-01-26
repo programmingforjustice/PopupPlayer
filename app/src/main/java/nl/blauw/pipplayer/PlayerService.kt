@@ -44,8 +44,11 @@ class PlayerService : Service() {
         popupManager = PopupManager(this, playerController?.getPlayerManager() ?: throw IllegalStateException("cannot obtain PlayerManager"), playerController?.getPlayerViewManager() ?: throw IllegalStateException("cannot obtain PlayerViewManager"))
         
         popupManager?.show()
-        playerController?.play()
-        playerList.add(playerController)
+        //playerController?.play()
+        playerController?.apply { 
+          play()
+          playerList.add(this) 
+        }
         
         return START_NOT_STICKY
     }
