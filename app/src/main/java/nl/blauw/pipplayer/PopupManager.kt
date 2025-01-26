@@ -17,7 +17,7 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 import android.widget.Toast
 import java.io.File
 
-class PopupManager(private val context: Context, private var playerManager: PlayerManager, private var playerViewManager: PlayerViewManager) {
+class PopupManager(private val context: Context, private var playerManager: PlayerManager, private var playerViewManager: PlayerViewManager): JsonSerializable {
     private var player: Player = playerManager.getPlayer()
     private var playerView: PlayerView = playerViewManager.getPlayerView()
     
@@ -185,5 +185,9 @@ class PopupManager(private val context: Context, private var playerManager: Play
             )*/
             windowManager.addView(imageView, layoutParams)
         }
+    }
+    
+    override fun toJsonString(): String {
+      
     }
 }

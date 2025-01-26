@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 import android.widget.Toast
 
-class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory) {
+class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory): JsonSerializable {
 
     private lateinit var player: ExoPlayer
     
@@ -140,5 +140,9 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
 
     fun releasePlayer() {
         if (::player.isInitialized) player.release()
+    }
+    
+    override fun toJsonString(): String {
+      
     }
 }

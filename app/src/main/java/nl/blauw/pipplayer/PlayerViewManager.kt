@@ -8,7 +8,7 @@ import android.widget.ImageButton
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 
-class PlayerViewManager(private val context: Context) {
+class PlayerViewManager(private val context: Context): JsonSerializable {
 
     private lateinit var playerView: PlayerView
 
@@ -59,5 +59,9 @@ class PlayerViewManager(private val context: Context) {
 
     fun releasePlayerView() {
         playerView.player = null
+    }
+    
+    override fun toJsonString(): String {
+      
     }
 }
