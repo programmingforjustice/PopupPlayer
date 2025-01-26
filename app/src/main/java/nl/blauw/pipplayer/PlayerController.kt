@@ -20,7 +20,7 @@ class PlayerController(private val context: Context): JsonSerializable {
         
         playerViewManager = playerManager.createPlayerViewManager()
         //playerViewManager.createPlayerView(playerManager.getPlayer())
-        popupManager = PopupManager(context, playerController.getPlayerManager(), playerController.getPlayerViewManager())
+        popupManager = PopupManager(context, playerManager, playerViewManager
     }
 
     fun play() {

@@ -14,7 +14,7 @@ class PlayerService : Service() {
     companion object {
         const val ACTION_START_PIP = "nl.blauw.pipplayer.ACTION_START_PIP"
         const val ACTION_SAVE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.SAVE_CURRENT_PLAYLIST"
-        const val ACTION_SAVE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.RESTORE_CURRENT_PLAYLIST"
+        const val ACTION_RESTORE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.RESTORE_CURRENT_PLAYLIST"
         const val COMMAND = "command"
         
         private const val CHANNEL_ID = "PopupPlayerChannel"
