@@ -12,6 +12,11 @@ import android.widget.Toast
 class PlayerService : Service() {
 
     companion object {
+        const val ACTION_START_PIP = "nl.blauw.pipplayer.ACTION_START_PIP"
+        const val ACTION_SAVE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.SAVE_CURRENT_PLAYLIST"
+        const val ACTION_SAVE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.RESTORE_CURRENT_PLAYLIST"
+        const val COMMAND = "command"
+        
         private const val CHANNEL_ID = "PopupPlayerChannel"
     }
 
@@ -38,24 +43,17 @@ class PlayerService : Service() {
         
         //Toast.makeText(this, "$url", Toast.LENGTH_SHORT).show()
 
-        playerController = PlayerController(this)
-        playerController?.initialize(url)
-
-        popupManager = PopupManager(this, playerController?.getPlayerManager() ?: throw IllegalStateException("cannot obtain PlayerManager"), playerController?.getPlayerViewManager() ?: throw IllegalStateException("cannot obtain PlayerViewManager"))
-        
-        popupManager?.show()
-        //playerController?.play()
-        playerController?.apply { 
-          play()
-          playerList.add(this) 
+        playerController = PlayerController(this)?.apply {
+            initialize(url)
+            play()
+            playerList.add(this) 
         }
         
         return START_NOT_STICKY
     }
 
     override fun onDestroy() {
-        playerController?.releaseResources()
-        popupManager?.removePopupWindow()
+        playerList.forEach { controller -> controller.releaseResources() }
         super.onDestroy()
     }
 
