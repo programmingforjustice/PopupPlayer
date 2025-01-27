@@ -126,7 +126,7 @@ class PlayerService : Service() {
             val playerView = playerController.getPlayerViewManager().getPlayerView()
             playerView.layoutParams = layoutParams
             
-            val popupManager = PopupManager(this, player, playerView)
+            val popupManager = PopupManager(this, playerController.getPlayerManager(), playerController.getPlayerViewManager())
             popupManager.show(layoutParams)
             playerController.play()
             playerController.onReleaseResources = { popupManager.removePopupWindow()
