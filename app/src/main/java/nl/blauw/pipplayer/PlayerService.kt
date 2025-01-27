@@ -116,8 +116,8 @@ class PlayerService : Service() {
               format = PixelFormat.TRANSLUCENT
             }
             
-            /*val playerView = playerController.getPlayerViewManager().getPlayerView()
-            playerView.layoutParams = layoutParams*/
+            val playerView = playerController.getPlayerViewManager().getPlayerView()
+            playerView.layoutParams = layoutParams
             
             playerController.play(layoutParams)
             playerList.add(playerController)
