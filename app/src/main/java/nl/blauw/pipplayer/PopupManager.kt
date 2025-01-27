@@ -109,8 +109,15 @@ class PopupManager(private val context: Context, private var playerManager: Play
         playerViewManager.setupTouchListener(playerTouchListener::onTouch)
     }
 
-    fun show(layoutParams: WindowManager.LayoutParams? = null) {
-        layoutParams?.let { this.layoutParams = it }
+    fun show(params: WindowManager.LayoutParams? = null) {
+        //layoutParams?.let { this.layoutParams = it }
+        this.layoutParams.apply {
+          x = params.x 
+          y = params.y 
+          width = params.width
+          height = params.height
+        }
+        
         setupPlayer()
         setupPlayerView()
         windowManager.addView(playerView, this.layoutParams)
