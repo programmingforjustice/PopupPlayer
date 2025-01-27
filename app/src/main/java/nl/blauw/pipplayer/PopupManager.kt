@@ -116,6 +116,7 @@ class PopupManager(private val context: Context, private var playerManager: Play
           layoutParams.y = y 
           layoutParams.width = width
           layoutParams.height = height
+          isPlaying = true
         }
         
         setupPlayer()
