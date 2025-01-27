@@ -50,10 +50,10 @@ class PlayerService : Service() {
             }
           }
           ACTION_SAVE_CURRENT_PLAYLIST -> {
-            
+            saveCurrentPlayList()
           }
           ACTION_RESTORE_CURRENT_PLAYLIST -> {
-            
+            restorePlayList()
           }
           else -> {
             
@@ -77,7 +77,7 @@ class PlayerService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
     
     fun saveCurrentPlayList() {
-      var jsonStringForPlayetList = playerList.map{ it.toJasonString() }.joinToString(",", "[", "]")
+      var jsonStringForPlayetList = playerList.map{ it.toJsonString() }.joinToString(",", "[", "]")
       
       savePlayerListToFile(this,jsonStringForPlayetList)
     }
