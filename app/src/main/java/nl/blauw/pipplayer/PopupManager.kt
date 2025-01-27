@@ -111,11 +111,11 @@ class PopupManager(private val context: Context, private var playerManager: Play
 
     fun show(params: WindowManager.LayoutParams? = null) {
         //layoutParams?.let { this.layoutParams = it }
-        this.layoutParams.apply {
-          x = params.x 
-          y = params.y 
-          width = params.width
-          height = params.height
+        params?.apply {
+          layoutParams.x = x 
+          layoutParams.y = y 
+          layoutParams.width = width
+          layoutParams.height = height
         }
         
         setupPlayer()
