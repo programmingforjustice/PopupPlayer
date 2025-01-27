@@ -97,7 +97,7 @@ class PlayerService : Service() {
               }            
               
             val player = playerController.getPlayerManager().getPlayer()
-            player.currentPosition = playerInfo.getString("currentPosition")
+            player.currentPosition = playerInfo.getLong("currentPosition")
             player.isPlaying = playerInfo.getBoolean("isPlaying")
             
             val layoutParams = WindowManager.LayoutParams().apply {
