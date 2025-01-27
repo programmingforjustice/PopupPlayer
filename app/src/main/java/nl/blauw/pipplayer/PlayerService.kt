@@ -7,6 +7,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.view.WindowManager
 import android.widget.Toast
 import org.json.JSONArray
 import org.json.JSONObject
