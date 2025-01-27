@@ -10,10 +10,11 @@ class PlayerController(private val context: Context): JsonSerializable {
 
     private lateinit var playerManager: PlayerManager
     private lateinit var playerViewManager: PlayerViewManager
-    private lateinit var popupManager: PopupManager
+    //private lateinit var popupManager: PopupManager
     
     //var isPlayerReleased = false
       //private set
+    var onReleaseResources: (() -> Unit)? = null
 
     fun initialize(contentUrl: String) {
         playerManager = PlayerManager(context, DefaultPlayerViewManagerFactory(context)).apply {
@@ -23,7 +24,7 @@ class PlayerController(private val context: Context): JsonSerializable {
         
         playerViewManager = playerManager.createPlayerViewManager()
         //playerViewManager.createPlayerView(playerManager.getPlayer())
-        popupManager = PopupManager(context, playerManager, playerViewManager)
+        //popupManager = PopupManager(context, playerManager, playerViewManager)
     }
 
     fun play(layoutParams: WindowManager.LayoutParams? = null) {
@@ -40,8 +41,9 @@ class PlayerController(private val context: Context): JsonSerializable {
     fun releaseResources() {
         playerManager.releasePlayer()
         playerViewManager.releasePlayerView()
-        popupManager.removePopupWindow()
+        //popupManager.removePopupWindow()
         //isPlayerReleased = true
+        onReleaseResources?.invoke()
     }
     
     override fun toJsonString(): String {

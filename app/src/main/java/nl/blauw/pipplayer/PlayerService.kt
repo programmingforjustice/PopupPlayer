@@ -25,8 +25,8 @@ class PlayerService : Service() {
         private const val CHANNEL_ID = "PopupPlayerChannel"
     }
 
-    private var playerController: PlayerController? = null
-    private var popupManager: PopupManager? = null
+    //private var playerController: PlayerController? = null
+    //private var popupManager: PopupManager? = null
     private var playerList: MutableList<PlayerController> = mutableListOf()
 
     override fun onCreate() {
@@ -48,10 +48,17 @@ class PlayerService : Service() {
           ACTION_START_PIP -> {
             val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
             
-            playerController = PlayerController(this)?.apply {
+            var playerController = PlayerController(this)
+            var popupManager = PopupManager(context, playerController.getPlayerManager(), playerController.getPlayerViewManager())
+            
+            playerController.apply {
               initialize(url)
+              popupManager.show()
               play()
+              
               playerList.add(this) 
+              onReleaseResources = { popupManager.removePopupWindow()
+              }
             }
           }
           ACTION_SAVE_CURRENT_PLAYLIST -> {
