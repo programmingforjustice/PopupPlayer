@@ -38,16 +38,32 @@ class PlayerService : Service() {
             .build();
         startForeground(1, notification);
         
+        val command = intent?.getStringExtra(COMMAND)
+        when (command) {
+          ACTION_START_PIP -> {
+            val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
+            
+            playerController = PlayerController(this)?.apply {
+              initialize(url)
+              play()
+              playerList.add(this) 
+            }
+          }
+          ACTION_SAVE_CURRENT_PLAYLIST -> {
+            
+          }
+          ACTION_RESTORE_CURRENT_PLAYLIST -> {
+            
+          }
+          else -> {
+            
+          }
+        }
+        
     
-        val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
         
         //Toast.makeText(this, "$url", Toast.LENGTH_SHORT).show()
 
-        playerController = PlayerController(this)?.apply {
-            initialize(url)
-            play()
-            playerList.add(this) 
-        }
         
         return START_NOT_STICKY
     }

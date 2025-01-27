@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
   private Button playListButton;
 
   private Button refreshButton;
+  
+  private Button saveButton;
+  
+  private Button restoreButton;
 
   private Button exitButton;
 
@@ -81,6 +85,30 @@ public class MainActivity extends AppCompatActivity {
           @Override
           public void onClick(View view) {
             refreshData();
+          }
+        });
+        
+    saveButton = (Button) findViewById(R.id.button_refresh);
+    saveButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            //savePlayList();
+            Intent intent = new Intent(this, PlayerService.class);
+            intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_SAVE_CURRENT_PLAYLIST);
+            startForegroundService(intent);
+          }
+        });
+        
+    restoreButton = (Button) findViewById(R.id.button_refresh);
+    restoreButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            //restorePlayList();
+            Intent intent = new Intent(this, PlayerService.class);
+            intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_RESTORE_CURRENT_PLAYLIST);
+            startForegroundService(intent);
           }
         });
 
@@ -214,6 +242,7 @@ public class MainActivity extends AppCompatActivity {
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
     } else {
       Intent intent = new Intent(this, PlayerService.class);
+      intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_START_PIP);
       intent.putExtra("data", url);
       startForegroundService(intent);
     }
