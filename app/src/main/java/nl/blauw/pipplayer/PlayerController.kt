@@ -12,8 +12,8 @@ class PlayerController(private val context: Context): JsonSerializable {
     private lateinit var playerViewManager: PlayerViewManager
     private lateinit var popupManager: PopupManager
     
-    var isPlayerReleased = false
-      private set
+    //var isPlayerReleased = false
+      //private set
 
     fun initialize(contentUrl: String) {
         playerManager = PlayerManager(context, DefaultPlayerViewManagerFactory(context)).apply {
@@ -41,7 +41,7 @@ class PlayerController(private val context: Context): JsonSerializable {
         playerManager.releasePlayer()
         playerViewManager.releasePlayerView()
         popupManager.removePopupWindow()
-        isPlayerReleased = true
+        //isPlayerReleased = true
     }
     
     override fun toJsonString(): String {
