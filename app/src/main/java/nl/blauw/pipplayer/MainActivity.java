@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
           }
         });
         
-    saveButton = (Button) findViewById(R.id.button_refresh);
+    saveButton = (Button) findViewById(R.id.button_save);
     saveButton.setOnClickListener(
         new View.OnClickListener() {
           @Override
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
           }
         });
         
-    restoreButton = (Button) findViewById(R.id.button_refresh);
+    restoreButton = (Button) findViewById(R.id.button_restore);
     restoreButton.setOnClickListener(
         new View.OnClickListener() {
           @Override
