@@ -82,7 +82,7 @@ class PlayerService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
     
     fun saveCurrentPlayList() {
-      var jsonStringForPlayetList = playerList.filter{ !it.getPlayerManager().getPlayer().isReleased() }.map{ it.toJsonString() }.joinToString(",", "[", "]")
+      var jsonStringForPlayetList = playerList/*.filter{  }*/.map{ it.toJsonString() }.joinToString(",", "[", "]")
       
       savePlayerListToFile(this,jsonStringForPlayetList)
     }
