@@ -70,7 +70,7 @@ class PlayerService : Service() {
 
     override fun onDestroy() {
         playerList.forEach { controller -> controller.releaseResources() }
-        playList = mutableListOf()
+        playerList = mutableListOf()
         super.onDestroy()
     }
 
