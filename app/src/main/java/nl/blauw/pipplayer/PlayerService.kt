@@ -22,7 +22,7 @@ class PlayerService : Service() {
 
     private var playerController: PlayerController? = null
     private var popupManager: PopupManager? = null
-    private var playerList = mutableListOf<PlayerController>()
+    private var playerList: List<PlayController> = mutableListOf()
 
     override fun onCreate() {
         super.onCreate()
@@ -70,10 +70,15 @@ class PlayerService : Service() {
 
     override fun onDestroy() {
         playerList.forEach { controller -> controller.releaseResources() }
+        playList = mutableListOf()
         super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+    
+    fun saveCurrentPlayList() {
+      
+    }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
