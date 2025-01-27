@@ -81,7 +81,7 @@ class PlayerService : Service() {
     }
 
     override fun onDestroy() {
-        playerList.forEach { controller -> controller.releaseResources() }
+        playerList.filter{ controller -> controller.getPlayerManager().getPlayer().isPlayerReleased == false }.forEach { controller -> controller.releaseResources() }
         playerList = mutableListOf()
         super.onDestroy()
     }
