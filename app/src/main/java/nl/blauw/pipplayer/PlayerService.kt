@@ -13,6 +13,7 @@ import android.graphics.PixelFormat
 import android.widget.Toast
 import org.json.JSONArray
 import org.json.JSONObject
+import com.google.android.exoplayer2.ExoPlayer
 
 class PlayerService : Service() {
 
@@ -81,7 +82,14 @@ class PlayerService : Service() {
     }
 
     override fun onDestroy() {
-        playerList.filter{ controller -> controller.getPlayerManager().getPlayer().isPlayerReleased == false }.forEach { controller -> controller.releaseResources() }
+        playerList
+          .filter{ controller ->
+            var player = (controller.getPlayerManager().getPlayer() as ExoPlayer)
+            player.isReleased == false
+          }
+          .forEach { controller -> 
+            controller.releaseResources() 
+          }
         playerList = mutableListOf()
         super.onDestroy()
     }
