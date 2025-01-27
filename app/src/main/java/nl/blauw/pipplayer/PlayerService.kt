@@ -96,7 +96,7 @@ class PlayerService : Service() {
                 initialize(playerInfo.getString("mediaPath"))
               }            
               
-            val player = PlayerController.getPlayer()
+            val player = playerController.getPlayer()
             player.currentPosition = playerInfo.getString("currentPosition")
             player.isPlaying = playerInfo.getBoolean("isPlaying")
             
@@ -113,7 +113,7 @@ class PlayerService : Service() {
               format = PixelFormat.TRANSLUCENT
             }
             
-            val playerView = PlayerController.getPlayerView()
+            val playerView = playerController.getPlayerView()
             playerView.layoutParams = layoutParams
             
             playerController.play()
