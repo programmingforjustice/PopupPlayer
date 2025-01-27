@@ -110,9 +110,10 @@ class PopupManager(private val context: Context, private var playerManager: Play
     }
 
     fun show(layoutParams: WindowManager.LayoutParams? = null) {
+        layoutParams?.let { this.layoutParams = it }
         setupPlayer()
         setupPlayerView()
-        windowManager.addView(playerView, layoutParams ?: this.layoutParams)
+        windowManager.addView(playerView, this.layoutParams)
     }
 
     fun removePopupWindow() {
