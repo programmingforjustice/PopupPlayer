@@ -22,7 +22,7 @@ class PlayerService : Service() {
 
     private var playerController: PlayerController? = null
     private var popupManager: PopupManager? = null
-    private var playerList: List<PlayerController> = mutableListOf()
+    private var playerList: mutableList<PlayerController> = mutableListOf()
 
     override fun onCreate() {
         super.onCreate()
