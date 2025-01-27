@@ -48,14 +48,14 @@ class PlayerService : Service() {
           ACTION_START_PIP -> {
             val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
             
-            var playerController = PlayerController(this)
+            var playerController = PlayerController(this).apply {
+              initialize(url)
+            }
             var popupManager = PopupManager(this, playerController.getPlayerManager(), playerController.getPlayerViewManager())
             
+            popupManager.show()
             playerController.apply {
-              initialize(url)
-              popupManager.show()
               play()
-              
               playerList.add(this) 
               onReleaseResources = { popupManager.removePopupWindow()
               }
