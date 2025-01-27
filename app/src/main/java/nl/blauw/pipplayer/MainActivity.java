@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
           @Override
           public void onClick(View view) {
             //savePlayList();
-            Intent intent = new Intent(this, PlayerService.class);
+            Intent intent = new Intent(MainActivity.this, PlayerService.class);
             intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_SAVE_CURRENT_PLAYLIST);
             startForegroundService(intent);
           }
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
           @Override
           public void onClick(View view) {
             //restorePlayList();
-            Intent intent = new Intent(this, PlayerService.class);
+            Intent intent = new Intent(MainActivity.this, PlayerService.class);
             intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_RESTORE_CURRENT_PLAYLIST);
             startForegroundService(intent);
           }
