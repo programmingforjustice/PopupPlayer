@@ -109,10 +109,10 @@ class PopupManager(private val context: Context, private var playerManager: Play
         playerViewManager.setupTouchListener(playerTouchListener::onTouch)
     }
 
-    fun show(layoutParams: WindowManager.LayoutParams = this.layoutParams) {
+    fun show(layoutParams: WindowManager.LayoutParams?) {
         setupPlayer()
         setupPlayerView()
-        windowManager.addView(playerView, layoutParams)
+        windowManager.addView(playerView, layoutParams ?: this.layoutParams)
     }
 
     fun removePopupWindow() {

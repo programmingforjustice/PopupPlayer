@@ -26,8 +26,8 @@ class PlayerController(private val context: Context): JsonSerializable {
         popupManager = PopupManager(context, playerManager, playerViewManager)
     }
 
-    fun play() {
-        popupManager.show()
+    fun play(layoutParams: WindowManager.LayoutParams? = null) {
+        popupManager.show(layoutParams)
         playerManager.play()
     }
     
