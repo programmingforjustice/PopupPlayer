@@ -141,7 +141,7 @@ class PlayerService : Service() {
         }
     }
     
-    fun readPlayerListFromFile(context: Context): String {
+    fun readPlayerListFromFile(context: Context): String? {
         val fileName = "playerList.txt"
         return try {
             context.openFileInput(fileName).bufferedReader().use { it.readText() }
