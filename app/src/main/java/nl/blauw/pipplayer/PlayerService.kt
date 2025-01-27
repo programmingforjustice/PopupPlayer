@@ -84,8 +84,9 @@ class PlayerService : Service() {
     override fun onDestroy() {
         playerList
           .filter{ controller ->
-            var player = (controller.getPlayerManager().getPlayer() as ExoPlayer)
-            player.isReleased == false
+            //var player = (controller.getPlayerManager().getPlayer() as ExoPlayer)
+            var player = controller.getPlayerManager().getPlayer()
+            player.isPlayerReleased == false
           }
           .forEach { controller -> 
             controller.releaseResources() 
