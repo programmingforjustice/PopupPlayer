@@ -45,13 +45,12 @@ class PlayerController(private val context: Context): JsonSerializable {
         //playerView: scaleFactor, videoSize
         //layoutParams: x, y, width, height
         // 고유한 플레이어 식별자 생성 (UUID 사용)
-        val playerIdentifier = "instance-${UUID.randomUUID()}"
+        //val playerIdentifier = "instance-${UUID.randomUUID()}"
     
         val layoutParams = (playerViewManager.getPlayerView().layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
     
         // JSON 객체 생성
         val jsonObject = JSONObject().apply {
-            put(playerIdentifier, JSONObject().apply {
                 put("mediaPath", playerManager.contentUrl)
                 put("currentPosition", playerManager.getPlayer().currentPosition)
                 put("isPlaying", playerManager.getPlayer().isPlaying)
@@ -59,8 +58,7 @@ class PlayerController(private val context: Context): JsonSerializable {
                 put("y", layoutParams.y)
                 put("width", layoutParams.width)
                 put("height", layoutParams.height)
-            })
-        }
+            }
     
         // JSON 문자열로 변환
         return jsonObject.toString()

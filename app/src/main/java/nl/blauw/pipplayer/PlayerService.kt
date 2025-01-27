@@ -77,7 +77,73 @@ class PlayerService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
     
     fun saveCurrentPlayList() {
+      var jsonStringForPlayetList = playerList.map{ it.toJasonString() }.joinToString(",", "[", "]")
       
+      savePlayerListToFile(this,jsonStringForPlayetList)
+    }
+    
+    fun restorePlayList() {
+      var jsonStringForPlayetList: String? = readPlayerListFromFile(this)
+      jsonStringForPlayetList?.let {
+        val jsonArray = JSONArray(it)
+
+        // 각 객체의 "id" 값을 읽기
+        for (i in 0 until jsonArray.length()) {
+            val playerInfo: JSONObject = jsonArray.getJSONObject(i)
+            val playerController = PlayerController(this).apply {
+                initialize(playerInfo.getString("mediaPath"))
+              }            
+              
+            val player = PlayerController.getPlayer()
+            player.currentPosition = playerInfo.getString("currentPosition")
+            player.isPlaying = playerInfo.getBoolean("isPlaying")
+            
+            val layoutParams = WindowManager.LayoutParams().apply {
+              x = playerInfo.getInt("x")
+              y = playerInfo.getInt("y")
+              width = playerInfo.getInt("width")
+              height = playerInfo.getInt("height")
+              type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                  WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+              else
+                  WindowManager.LayoutParams.TYPE_TOAST
+              flags = DEFAULT_WINDOW_FLAGS
+              format = PixelFormat.TRANSLUCENT
+            }
+            
+            val playerView = PlayerController.getPlayerView()
+            playerView.layoutParams = layoutParams
+            
+            playerController.play()
+            playerList.add(playerController)
+        }
+      }
+    }
+  
+    fun savePlayerListToFile(context: Context, data: String) {
+        // 파일 이름 정의
+        val fileName = "playerList.txt"
+    
+        // 앱 전용 디렉토리에 파일 생성 및 데이터 저장
+        try {
+            context.openFileOutput(fileName, Context.MODE_PRIVATE).use { outputStream ->
+                outputStream.write(data.toByteArray())
+            }
+            println("File saved successfully to: ${context.filesDir}/$fileName")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            println("Failed to save file.")
+        }
+    }
+    
+    fun readPlayerListFromFile(context: Context): String {
+        val fileName = "playerList.txt"
+        return try {
+            context.openFileInput(fileName).bufferedReader().use { it.readText() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     private fun createNotificationChannel() {
