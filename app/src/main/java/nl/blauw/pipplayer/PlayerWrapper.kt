@@ -77,6 +77,14 @@ class PlayerWrapper(private val player: Player): Player by player {
         player.addListener(playerListener)
     }
     
+    fun setMediaSource(mediaSource: MediaSource) {
+        if (player is ExoPlayer) {
+          player.setMediaSource(mediaSource)
+        } else {
+          throw UnsupportedOperationException("player instance is not ExoPlayer type.")
+        }
+    }
+    
     override fun release() {
         player.release()
         isReleased = true
