@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 import android.widget.Toast
 
-class PlayerWrapper(private val player: Player): Player, JsonSerializable by player {
+class PlayerWrapper(private val player: Player): Player by player, JsonSerializable {
     
     lateinit var contentUrl: String
       private set
