@@ -20,7 +20,7 @@ class PlayerWrapper(private val player: Player): Player, JsonSerializable by pla
     lateinit var contentUrl: String
       private set
     var isReleased = false
-      privaten set
+      private set
     
     private val playerListener = object : Player.Listener {
         var onVideoSizeChangedListener: ((VideoSize) -> Unit)? = null
