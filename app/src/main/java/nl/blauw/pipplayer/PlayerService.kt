@@ -56,7 +56,7 @@ class PlayerService : Service() {
               show()
               play()
             }
-            playerList.add(PopupPlayer)
+            playerList.add(popupPlayer)
             
           }
           ACTION_SAVE_CURRENT_PLAYLIST -> {

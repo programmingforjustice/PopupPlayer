@@ -26,7 +26,8 @@ class PopupPlayer @Jvmoverloads constructor(private val context: Context, privat
     
     private val imageView: ImageView = ImageView(context)
     private var isPlaying: Boolean = false
-    private var isDisposed: Boolean = false
+    var isDisposed: Boolean = false
+      private set
     
     init {
         player = playerFacory.create(contentUrl)
