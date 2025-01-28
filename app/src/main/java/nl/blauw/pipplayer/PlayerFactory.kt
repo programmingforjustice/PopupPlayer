@@ -3,6 +3,8 @@ package nl.blauw.pipplayer
 import android.content.Context
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -17,7 +19,7 @@ class DefaultPlayerFactory(
     private val context: Context
 ) : PlayerFactory {
     
-    fun create(contentUrl: String): Player {
+    override fun create(contentUrl: String): Player {
         val loadControl = DefaultLoadControl.Builder()
             .setBufferDurationsMs(
                 1000, // 최소 버퍼
