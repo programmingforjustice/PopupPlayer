@@ -52,7 +52,7 @@ class PlayerService : Service() {
             /*var playerController = PlayerController(this).apply {
               initialize(url)
             }*/
-            var popupPlayer = PopupPlayer(this, url).run {
+            var popupPlayer = PopupPlayer(this, url).apply {
               show()
               play()
             }
