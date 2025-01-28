@@ -17,9 +17,9 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 import android.widget.Toast
 import java.io.File
 
-class PopupPlayer @Jvmoverloads constructor(private val context: Context, private val contentUrl: String, private var playerFactory: PlayerFactory = DefaultPlayerFactory(context), private var playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): JsonSerializable {
-    private val player: Player
-    private val playerView: PlayerView
+class PopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String, private var playerFactory: PlayerFactory = DefaultPlayerFactory(context), private var playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): JsonSerializable {
+    private var player: Player
+    private var playerView: PlayerView
     
     private val windowManager: WindowManager
     private var layoutParams: WindowManager.LayoutParams
@@ -30,7 +30,7 @@ class PopupPlayer @Jvmoverloads constructor(private val context: Context, privat
       private set
     
     init {
-        player = playerFacory.create(contentUrl)
+        player = playerFactory.create(contentUrl)
         playerView = playerViewFactory.create(player)
     }
     
