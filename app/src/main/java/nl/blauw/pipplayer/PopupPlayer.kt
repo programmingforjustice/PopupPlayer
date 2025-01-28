@@ -17,7 +17,7 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 import android.widget.Toast
 import java.io.File
 
-class PopupManager @Jvmoverloads constructor(private val context: Context, private val contentUrl: String, private var playerFactory: PlayerFactory = DefaultPlayerFactory(context), private var playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): JsonSerializable {
+class PopupPlayer @Jvmoverloads constructor(private val context: Context, private val contentUrl: String, private var playerFactory: PlayerFactory = DefaultPlayerFactory(context), private var playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): JsonSerializable {
     private val player: Player
     private val playerView: PlayerView
     
