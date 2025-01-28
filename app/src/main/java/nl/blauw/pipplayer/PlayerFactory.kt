@@ -5,11 +5,13 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.util.Util
 
 interface PlayerFactory {
     fun create(contentUrl: String): Player
