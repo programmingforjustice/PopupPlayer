@@ -28,7 +28,7 @@ class PlayerService : Service() {
 
     //private var playerController: PlayerController? = null
     //private var popupManager: PopupManager? = null
-    private var playerList: MutableList<PlayerController> = mutableListOf()
+    private var playerList: MutableList<PopupPlayer> = mutableListOf()
 
     override fun onCreate() {
         super.onCreate()
@@ -49,18 +49,15 @@ class PlayerService : Service() {
           ACTION_START_PIP -> {
             val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
             
-            var playerController = PlayerController(this).apply {
+            /*var playerController = PlayerController(this).apply {
               initialize(url)
-            }
-            var popupManager = PopupManager(this, playerController.getPlayerManager(), playerController.getPlayerViewManager())
-            
-            popupManager.show()
-            playerController.apply {
+            }*/
+            var popupPlayer = PopupPlayer(this, url).run {
+              show()
               play()
-              playerList.add(this) 
-              onReleaseResources = { popupManager.removePopupWindow()
-              }
             }
+            playerList.add(PopupPlayer)
+            
           }
           ACTION_SAVE_CURRENT_PLAYLIST -> {
             saveCurrentPlayList()
@@ -83,13 +80,11 @@ class PlayerService : Service() {
 
     override fun onDestroy() {
         playerList
-          .filter{ controller ->
-            //var player = (controller.getPlayerManager().getPlayer() as ExoPlayer)
-            var player = controller.getPlayerManager().getPlayer() as PlayerWrapper
-            player.isReleased == false
+          .filter{ popupPlayer -> 
+            !popupPlayer.isDisposed
           }
-          .forEach { controller -> 
-            controller.releaseResources() 
+          .forEach { popupPlayer -> 
+            popupPlayer.dispose() 
           }
         playerList = mutableListOf()
         super.onDestroy()
@@ -98,7 +93,15 @@ class PlayerService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
     
     fun saveCurrentPlayList() {
-      var jsonStringForPlayetList = playerList/*.filter{  }*/.map{ it.toJsonString() }.joinToString(",", "[", "]")
+      var jsonStringForPlayetList = 
+        playerList
+          .filter{ popupPlayer -> 
+            !popupPlayer.isDisposed
+          }
+          .map{ 
+            it.toJsonString() 
+          }
+          .joinToString(",", "[", "]")
       
       savePlayerListToFile(this,jsonStringForPlayetList)
     }
@@ -111,9 +114,9 @@ class PlayerService : Service() {
         // 각 객체의 "id" 값을 읽기
         for (i in 0 until jsonArray.length()) {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
-            val playerController = PlayerController(this).apply {
-                initialize(playerInfo.getString("mediaPath"))
-              }            
+            
+            var url = playerInfo.getString("mediaPath")
+            var popupPlayer = PopupPlayer(this, url)
               
             val player = playerController.getPlayerManager().getPlayer()
             player.seekTo(playerInfo.getLong("currentPosition"))
@@ -132,15 +135,9 @@ class PlayerService : Service() {
               format = PixelFormat.TRANSLUCENT
             }
             
-            val playerView = playerController.getPlayerViewManager().getPlayerView()
-            playerView.layoutParams = layoutParams
-            
-            val popupManager = PopupManager(this, playerController.getPlayerManager(), playerController.getPlayerViewManager())
-            popupManager.show(layoutParams)
-            playerController.play()
-            playerController.onReleaseResources = { popupManager.removePopupWindow()
-              }
-            playerList.add(playerController)
+            popupPlayer.show(layoutParams)
+            popupPlayer.play(playerInfo.getLong("currentPosition"))
+            playerList.add(popupPlayer)
         }
       }
     }
