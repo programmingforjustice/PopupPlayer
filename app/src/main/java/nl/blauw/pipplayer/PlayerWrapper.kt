@@ -102,19 +102,19 @@ class PlayerWrapper(private val player: Player): Player by player, JsonSerializa
         player.addListener(playerListener)
     }*/
 
-    fun loadMediaSource(contentUrl: String) {
-        this.contentUrl = contentUrl
+    // fun loadMediaSource(contentUrl: String) {
+    //     this.contentUrl = contentUrl
         
-        val dataSourceFactory = DefaultDataSourceFactory(
-            context, Util.getUserAgent(context, context.getString(R.string.app_name))
-        )
-        val contentMediaSource: MediaSource = ProgressiveMediaSource.Factory(
-            dataSourceFactory,
-            DefaultExtractorsFactory()
-        ).createMediaSource(MediaItem.fromUri(contentUrl))
+    //     val dataSourceFactory = DefaultDataSourceFactory(
+    //         context, Util.getUserAgent(context, context.getString(R.string.app_name))
+    //     )
+    //     val contentMediaSource: MediaSource = ProgressiveMediaSource.Factory(
+    //         dataSourceFactory,
+    //         DefaultExtractorsFactory()
+    //     ).createMediaSource(MediaItem.fromUri(contentUrl))
 
-        player.setMediaSource(contentMediaSource)
-    }
+    //     player.setMediaSource(contentMediaSource)
+    // }
     
     fun setVideoSizeChangedListener(action: ((VideoSize) -> Unit)?) {
         playerListener.onVideoSizeChangedListener = action
