@@ -82,7 +82,7 @@ class PlayerWrapper(private val player: Player): Player by player {
     }
     
     fun enableExoPlayerFeatures(): ExoPlayerFeatureAccessor = 
-        if (player is ExoPlayer) player else throw UnsupportedOperationException("player instance is not ExoPlayer type.")
+        if (player is ExoPlayer) ExoPlayerFeatureAccessor(player) else throw UnsupportedOperationException("player instance is not ExoPlayer type.")
     
     /*fun setMediaSource(mediaSource: MediaSource) {
         if (player is ExoPlayer) {
