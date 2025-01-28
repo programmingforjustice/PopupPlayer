@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.video.VideoSize
 import android.widget.Toast
 
 class ExoPlayerFeatureAccessor(val exoPlayer: ExoPlayer) {
+    var trackSelector = exoPlayer.trackSelector
     fun setMediaSource(mediaSource: MediaSource) = exoPlayer.setMediaSource(mediaSource)
 }
 
