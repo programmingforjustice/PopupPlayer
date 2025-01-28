@@ -85,8 +85,8 @@ class PlayerService : Service() {
         playerList
           .filter{ controller ->
             //var player = (controller.getPlayerManager().getPlayer() as ExoPlayer)
-            var player = controller.getPlayerManager().getPlayer()
-            player.isPlayerReleased == false
+            var player = controller.getPlayerManager().getPlayer() as PlayerWrapper
+            player.isReleased == false
           }
           .forEach { controller -> 
             controller.releaseResources() 

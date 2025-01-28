@@ -88,7 +88,7 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
 
         player = ExoPlayer.Builder(context, renderersFactory)
             .setLoadControl(loadControl)
-            .build()
+            .build().run { PlayerWrapper(this) }
             
         player.addListener(playerListener)
     }
