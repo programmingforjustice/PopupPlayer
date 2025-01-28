@@ -19,9 +19,6 @@ class ExoPlayerFeatureAccessor(val exoPlayer: ExoPlayer) {
     fun setMediaSource(mediaSource: MediaSource) = exoPlayer.setMediaSource(mediaSource)
 }
 
-// 사용 예시
-player.enableExoFeatures()?.exoMethod1()
-
 class PlayerWrapper(private val player: Player): Player by player {
     
     lateinit var contentUrl: String
