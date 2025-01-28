@@ -34,9 +34,9 @@ class DefaultPlayerFactory(
             .setEnableDecoderFallback(true)
             //.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
 
-        val player = ExoPlayer.Builder(context, renderersFactory)
+        val player = PlayerWrapper(ExoPlayer.Builder(context, renderersFactory)
             .setLoadControl(loadControl)
-            .build().run { PlayerWrapper(this) }
+            .build())
         loadMediaSource(player, contentUrl)
         return player
     }

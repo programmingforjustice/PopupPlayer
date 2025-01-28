@@ -13,7 +13,7 @@ class DefaultPlayerViewFactory(
 ) : PlayerViewFactory {
 
     override fun create(player: Player): PlayerView {
-        return PlayerView(context).apply {
+        return PlayerViewWrapper(context).apply {
             this.player = player
         }
     }
