@@ -118,8 +118,6 @@ class PlayerService : Service() {
             var url = playerInfo.getString("mediaPath")
             var popupPlayer = PopupPlayer(this, url)
               
-            val player = playerController.getPlayerManager().getPlayer()
-            player.seekTo(playerInfo.getLong("currentPosition"))
             //player.isPlaying = playerInfo.getBoolean("isPlaying")
             
             val layoutParams = WindowManager.LayoutParams().apply {
