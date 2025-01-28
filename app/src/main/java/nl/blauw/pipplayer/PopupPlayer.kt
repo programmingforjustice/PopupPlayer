@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
 import android.widget.Toast
 import java.io.File
+import org.json.JSONObject
 
 class PopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String, private var playerFactory: PlayerFactory = DefaultPlayerFactory(context), private var playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): JsonSerializable {
     private var player: Player
@@ -175,7 +176,7 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
             imageView.setOnClickListener {
                 imageView.setOnClickListener(null)
                 
-                player = playerFactory.create(videoUri)
+                player = playerFactory.create(contentUrl)
                 playerView = playerViewFactory.create(player)
                 
                 player.seekTo(currentPosition)
