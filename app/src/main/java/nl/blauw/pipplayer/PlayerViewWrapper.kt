@@ -10,12 +10,12 @@ import com.google.android.exoplayer2.ui.PlayerView
 
 class PlayerViewWrapper(private val context: Context): PlayerView(context) {
     
-    fun setKeepScreenOn(keepScreenOn: Boolean) = this.keepScreenOn = keepScreenOn
+    fun setKeepScreenOn(keepScreenOn: Boolean) = super.keepScreenOn = keepScreenOn
 
-    fun setControllerShowTimeoutMs(timeoutMs: Int) = this.controllerShowTimeoutMs = timeoutMs
+    fun setControllerShowTimeoutMs(timeoutMs: Int) = super.controllerShowTimeoutMs = timeoutMs
 
     fun setRepeatToggleModes(modes: Int) = 
-        this.setRepeatToggleModes(modes)
+        super.setRepeatToggleModes(modes)
     
     fun setupCrossButton(action: (View) -> Unit) {
         val crossButton: ImageButton? = this.findViewById(R.id.cross_button)
