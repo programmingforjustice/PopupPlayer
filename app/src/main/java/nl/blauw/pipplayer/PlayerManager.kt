@@ -17,7 +17,7 @@ import android.widget.Toast
 
 class PlayerManager(private val context: Context, private val playerViewManagerFactory: PlayerViewManagerFactory): JsonSerializable {
 
-    private lateinit var player: ExoPlayer
+    private lateinit var player: Player
     
     lateinit var contentUrl: String
       private set
