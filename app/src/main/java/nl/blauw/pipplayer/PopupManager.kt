@@ -91,7 +91,7 @@ class PopupManager(private val context: Context, private var playerManager: Play
     }
 
     private fun setupPlayerView() {
-        val playerViewWrapper = player as PlayerViewWrapper
+        val playerViewWrapper = playerView as PlayerViewWrapper
         
         playerViewWrapper.apply {
             setKeepScreenOn(true)
