@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 import android.widget.Toast
 
-class PlayerWrapper(private val player: Player): Player by player, JsonSerializable {
+class PlayerWrapper(private val player: Player): Player by player {
     
     lateinit var contentUrl: String
       private set
@@ -129,11 +129,11 @@ class PlayerWrapper(private val player: Player): Player by player, JsonSerializa
         playerListener.onIsPlayingChangedListener = action
     }
     
-    fun play() {
+    /*override fun play() {
         player.prepare()
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.playWhenReady = true
-    }
+    }*/
     
     /*fun applyToPlayer(command: (player: Player) -> Unit) {
         command(player)
@@ -150,8 +150,4 @@ class PlayerWrapper(private val player: Player): Player by player, JsonSerializa
     fun releasePlayer() {
         if (::player.isInitialized) player.release()
     }*/
-    
-    override fun toJsonString(): String {
-        return ""
-    }
 }
