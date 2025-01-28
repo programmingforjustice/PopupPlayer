@@ -15,6 +15,13 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 import android.widget.Toast
 
+class ExoPlayerFeatureAccessor(val exoPlayer: ExoPlayer) {
+    fun setMediaSource(mediaSource: MediaSource) = exoPlayer.setMediaSource(mediaSource)
+}
+
+// 사용 예시
+player.enableExoFeatures()?.exoMethod1()
+
 class PlayerWrapper(private val player: Player): Player by player {
     
     lateinit var contentUrl: String
@@ -77,13 +84,16 @@ class PlayerWrapper(private val player: Player): Player by player {
         player.addListener(playerListener)
     }
     
-    fun setMediaSource(mediaSource: MediaSource) {
+    fun enableExoPlayerFeatures(): ExoPlayerFeatureAccessor? = 
+        if (player is ExoPlayer) player else throw UnsupportedOperationException("player instance is not ExoPlayer type.")
+    
+    /*fun setMediaSource(mediaSource: MediaSource) {
         if (player is ExoPlayer) {
           player.setMediaSource(mediaSource)
         } else {
           throw UnsupportedOperationException("player instance is not ExoPlayer type.")
         }
-    }
+    }*/
     
     override fun release() {
         player.release()
