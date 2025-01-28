@@ -18,17 +18,17 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         super.setRepeatToggleModes(modes)
     
     fun setupCrossButton(action: (View) -> Unit) {
-        val crossButton: ImageButton? = this.findViewById(R.id.cross_button)
+        val crossButton: ImageButton? = super.findViewById(R.id.cross_button)
         crossButton?.setOnClickListener(action)
     }
     
     fun setupMuteToggleButton(action: (View) -> Unit) {
-        val muteToggleButton: ImageButton? = this.findViewById(R.id.mute_toggle_button)
+        val muteToggleButton: ImageButton? = super.findViewById(R.id.mute_toggle_button)
         muteToggleButton?.setOnClickListener(action)
     }
 
     fun setupTouchListener(action: (View, MotionEvent) -> Boolean) {
-        this.setOnTouchListener(action)
+        super.setOnTouchListener(action)
     }
     
     /*fun applyToPlayerView(command: (playerView: PlayerView) -> Unit) {
