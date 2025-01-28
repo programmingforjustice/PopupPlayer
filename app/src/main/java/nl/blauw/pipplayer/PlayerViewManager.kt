@@ -13,7 +13,7 @@ class PlayerViewManager(private val context: Context): JsonSerializable {
     private lateinit var playerView: PlayerView
 
     fun createPlayerView(player: Player) {
-        playerView = PlayerView(context).apply {
+        playerView = PlayerViewWrapper(context).apply {
             //setVideoSurfaceView(TextureView(context))
             //setUseTextureView(true)
             //keepScreenOn = true

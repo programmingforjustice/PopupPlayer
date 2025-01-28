@@ -22,8 +22,7 @@ class ExoPlayerFeatureAccessor(val exoPlayer: ExoPlayer) {
 
 class PlayerWrapper(private val player: Player): Player by player {
     
-    lateinit var contentUrl: String
-      private set
+    var contentUrl: String? = null
     var isReleased = false
       private set
     

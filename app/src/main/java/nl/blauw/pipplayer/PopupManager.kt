@@ -61,7 +61,9 @@ class PopupManager(private val context: Context, private var playerManager: Play
     }
     
     private fun setupPlayer() {
-        playerManager.setVideoSizeChangedListener { videoSize -> 
+        val playerWrapper = player as PlayerWrapper
+        
+        playerWrapper.setVideoSizeChangedListener { videoSize -> 
                 //Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
                 val width = videoSize.width
                 val height = videoSize.height
@@ -83,30 +85,32 @@ class PopupManager(private val context: Context, private var playerManager: Play
         //     windowManager.addView(playerView, layoutParams)
          //}
          
-         playerManager.setOnIsPlayingChangedListener {
+         playerWrapper.setOnIsPlayingChangedListener {
                 replacePlayerViewWithImageView()
         }
     }
 
     private fun setupPlayerView() {
-        playerViewManager.apply {
+        val playerViewWrapper = player as PlayerViewWrapper
+        
+        playerViewWrapper.apply {
             setKeepScreenOn(true)
             setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT)
             setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE)
         }
 
-        playerViewManager.setupCrossButton {
-            playerManager.releasePlayer()
-            playerViewManager.releasePlayerView()
+        playerViewWrapper.setupCrossButton {
+            player.release()
+            playerView.player = null
             removePopupWindow()
         }
         
         //val muteToggleButtonListener =  MuteToggleButtonListener(player)
         val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
-        playerViewManager.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
+        playerViewWrapper.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
         
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
-        playerViewManager.setupTouchListener(playerTouchListener::onTouch)
+        playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }
 
     fun show(params: WindowManager.LayoutParams? = null) {
@@ -168,7 +172,7 @@ class PopupManager(private val context: Context, private var playerManager: Play
                 playerView = playerViewManager.getPlayerView()
                 
                 player.seekTo(currentPosition)
-                playerManager.setRenderedFirstFrameListener {
+                (player as PlayerWrapper).setRenderedFirstFrameListener {
                       if (imageView.parent != null) {
                           windowManager.removeView(imageView)
                       }
@@ -186,8 +190,8 @@ class PopupManager(private val context: Context, private var playerManager: Play
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             //windowManager.removeView(playerView)
-            playerManager.releasePlayer()
-            playerViewManager.releasePlayerView()
+            player.release()
+            playerView.player = null
             removePopupWindow()
 
             // 5. 동일한 위치에 ImageView를 추가

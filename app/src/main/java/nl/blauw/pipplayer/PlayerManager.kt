@@ -104,7 +104,10 @@ class PlayerManager(private val context: Context, private val playerViewManagerF
             DefaultExtractorsFactory()
         ).createMediaSource(MediaItem.fromUri(contentUrl))
 
-        (player as PlayerWrapper).enableExoPlayerFeatures().setMediaSource(contentMediaSource)
+        (player as PlayerWrapper).apply {
+          enableExoPlayerFeatures().setMediaSource(contentMediaSource)
+          this.contentUrl = contentUrl
+        }
     }
     
     fun setVideoSizeChangedListener(action: ((VideoSize) -> Unit)?) {
