@@ -222,23 +222,47 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
         isDisposed = true
     }
     
-    private fun toggleFullscreen() {
-        if (!isFullscreen) {
-            // 전체화면으로 변경
-            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
-            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
-            layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-            isFullscreen = true
+    fun toggleFullscreen() { // 외부 컴포넌트(예:알림)에서 호출
+        if (isFullscreen) {
+            exitFullscreen()
         } else {
-            // 원래 사이즈로 복귀
-            layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
-            layoutParams.flags = layoutParams.flags and WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN.inv()
-            isFullscreen = false
+            enterFullscreen()
         }
-        // 변경된 LayoutParams 반영
-        windowManager.updateViewLayout(playerView, layoutParams)
-    }    
+        isFullscreen = !isFullscreen
+    }
+
+    private fun enterFullscreen() {
+        layoutParams?.let { originalParams ->
+            val fullscreenParams = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                originalParams.type,
+                originalParams.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv(),
+                PixelFormat.TRANSLUCENT
+            ).apply {
+                gravity = Gravity.FILL
+                flags = flags or WindowManager.LayoutParams.FLAG_FULLSCREEN
+                windowAnimations = android.R.style.Animation_Translucent
+            }
+
+            windowManager.updateViewLayout(playerView, fullscreenParams)
+            setupImmersiveMode()
+        }
+    }
+
+    private fun exitFullscreen() {
+        layoutParams?.let {
+            windowManager.updateViewLayout(playerView, it)
+            playerView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        }
+    }
+    
+    private fun setupImmersiveMode() {
+        playerView.systemUiVisibility = (View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+    }
     
     override fun toJsonString(): String {
         //player: currentPos, isPlaying
