@@ -236,7 +236,8 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
             val fullscreenParams = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                originalParams.type,
+                //originalParams.type,
+                WindowManager.LayoutParams.TYPE_APPLICATION,
                 originalParams.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv(),
                 PixelFormat.TRANSLUCENT
             ).apply {
