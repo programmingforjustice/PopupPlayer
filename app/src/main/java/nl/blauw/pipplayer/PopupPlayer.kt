@@ -236,19 +236,19 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
             val fullscreenParams = WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.MATCH_PARENT,
-                //originalParams.type,
-                WindowManager.LayoutParams.TYPE_APPLICATION,
+                originalParams.type,
+                //WindowManager.LayoutParams.TYPE_APPLICATION,
                 originalParams.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv(),
                 PixelFormat.TRANSLUCENT
             ).apply {
                 gravity = Gravity.FILL
-                flags = flags or WindowManager.LayoutParams.FLAG_FULLSCREEN
+                flags = flags or WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
                 windowAnimations = android.R.style.Animation_Translucent
             }
             
-            windowManager.removeView(playerView)
-            windowManager.addView(playerView, fullscreenParams)
-            //windowManager.updateViewLayout(playerView, fullscreenParams)
+            //windowManager.removeView(playerView)
+            //windowManager.addView(playerView, fullscreenParams)
+            windowManager.updateViewLayout(playerView, fullscreenParams)
             setupImmersiveMode()
         }
     }
