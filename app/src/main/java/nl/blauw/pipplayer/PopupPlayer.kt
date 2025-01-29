@@ -228,13 +228,13 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
             layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
             layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-            isFullScreen = true
+            isFullscreen = true
         } else {
             // 원래 사이즈로 복귀
             layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
             layoutParams.flags = layoutParams.flags and WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN.inv()
-            isFullScreen = false
+            isFullscreen = false
         }
         // 변경된 LayoutParams 반영
         windowManager.updateViewLayout(playerView, layoutParams)
