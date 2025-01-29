@@ -246,9 +246,9 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
                 windowAnimations = android.R.style.Animation_Translucent
             }
             
-            //windowManager.removeView(playerView)
-            //windowManager.addView(playerView, fullscreenParams)
-            windowManager.updateViewLayout(playerView, fullscreenParams)
+            windowManager.removeView(playerView)
+            windowManager.addView(playerView, fullscreenParams)
+            //windowManager.updateViewLayout(playerView, fullscreenParams)
             setupImmersiveMode()
         }
     }
