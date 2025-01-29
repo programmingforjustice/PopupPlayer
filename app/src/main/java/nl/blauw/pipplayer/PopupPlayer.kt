@@ -29,6 +29,8 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
     private var isPlaying: Boolean = false
     var isDisposed: Boolean = false
       private set
+    var isFullscreen: Boolean = false
+      private set
     
     init {
         player = playerFactory.create(contentUrl)
@@ -114,6 +116,10 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
         //val muteToggleButtonListener =  MuteToggleButtonListener(player)
         val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
         playerViewWrapper.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
+        
+        playerViewWrapper.setupFullscreenButton {
+            toggleFullscreen()
+        }
         
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
@@ -215,6 +221,24 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
         removePopupWindow()
         isDisposed = true
     }
+    
+    private fun toggleFullscreen() {
+        if (!isFullScreen) {
+            // 전체화면으로 변경
+            layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+            layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+            isFullScreen = true
+        } else {
+            // 원래 사이즈로 복귀
+            layoutParams.width = WindowManager.LayoutParams.WRAP_CONTENT
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT
+            layoutParams.flags = layoutParams.flags and WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN.inv()
+            isFullScreen = false
+        }
+        // 변경된 LayoutParams 반영
+        windowManager.updateViewLayout(playerView, layoutParams)
+    }    
     
     override fun toJsonString(): String {
         //player: currentPos, isPlaying

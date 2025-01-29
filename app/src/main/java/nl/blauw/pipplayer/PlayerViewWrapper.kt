@@ -27,6 +27,11 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         val muteToggleButton: ImageButton? = super.findViewById(R.id.mute_toggle_button)
         muteToggleButton?.setOnClickListener(action)
     }
+    
+    fun setupFullscreenButton(action: (View) -> Unit) {
+        val fullscreenButton: ImageButton? = super.findViewById(R.id.fullscreen_button)
+        fullscreenButton?.setOnClickListener(action)
+    }
 
     fun setupTouchListener(action: (View, MotionEvent) -> Boolean) {
         super.setOnTouchListener(action)
