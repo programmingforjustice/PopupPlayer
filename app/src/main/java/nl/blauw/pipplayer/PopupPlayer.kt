@@ -223,7 +223,7 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
     }
     
     private fun toggleFullscreen() {
-        if (!isFullScreen) {
+        if (!isFullscreen) {
             // 전체화면으로 변경
             layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT
             layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
