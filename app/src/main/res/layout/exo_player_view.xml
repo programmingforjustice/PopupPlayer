@@ -18,7 +18,9 @@
   <com.google.android.exoplayer2.ui.AspectRatioFrameLayout android:id="@id/exo_content_frame"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:layout_gravity="center">
+      android:layout_gravity="center"
+      android:background="@color/white"
+      app:surface_type="texture_view">
 
     <!-- Video surface will be inserted as the first child of the content frame. -->
 
