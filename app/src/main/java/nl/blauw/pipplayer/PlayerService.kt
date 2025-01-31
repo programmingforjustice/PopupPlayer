@@ -26,10 +26,6 @@ class PlayerService : Service() {
         private const val CHANNEL_ID = "PopupPlayerChannel"
     }
 
-    //private var playerController: PlayerController? = null
-    //private var popupManager: PopupManager? = null
-    //private var playerList: MutableList<PopupPlayer> = mutableListOf()
-
     override fun onCreate() {
         super.onCreate()
         PopupPlayerManager.initialize(this)
@@ -50,9 +46,6 @@ class PlayerService : Service() {
           ACTION_START_PIP -> {
             val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
             
-            /*var playerController = PlayerController(this).apply {
-              initialize(url)
-            }*/
             var popupPlayer = PopupPlayerManager.create(url).apply {
               show()
               play()
@@ -68,12 +61,7 @@ class PlayerService : Service() {
             
           }
         }
-        
     
-        
-        //Toast.makeText(this, "$url", Toast.LENGTH_SHORT).show()
-
-        
         return START_NOT_STICKY
     }
 
@@ -83,80 +71,6 @@ class PlayerService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
-    
-    /*fun saveCurrentPlayList() {
-      var jsonStringForPlayetList = 
-        playerList
-          .filter{ popupPlayer -> 
-            !popupPlayer.isDisposed
-          }
-          .map{ 
-            it.toJsonString() 
-          }
-          .joinToString(",", "[", "]")
-      
-      savePlayerListToFile(this,jsonStringForPlayetList)
-    }
-    
-    fun restorePlayList() {
-      var jsonStringForPlayetList: String? = readPlayerListFromFile(this)
-      jsonStringForPlayetList?.let {
-        val jsonArray = JSONArray(it)
-
-        // 각 객체의 "id" 값을 읽기
-        for (i in 0 until jsonArray.length()) {
-            val playerInfo: JSONObject = jsonArray.getJSONObject(i)
-            
-            var url = playerInfo.getString("mediaPath")
-            var popupPlayer = PopupPlayer(this, url)
-              
-            //player.isPlaying = playerInfo.getBoolean("isPlaying")
-            
-            val layoutParams = WindowManager.LayoutParams().apply {
-              x = playerInfo.getInt("x")
-              y = playerInfo.getInt("y")
-              width = playerInfo.getInt("width")
-              height = playerInfo.getInt("height")
-              type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                  WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-              else
-                  WindowManager.LayoutParams.TYPE_TOAST
-              flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-              format = PixelFormat.TRANSLUCENT
-            }
-            
-            popupPlayer.show(layoutParams)
-            popupPlayer.play(playerInfo.getLong("currentPosition"))
-            playerList.add(popupPlayer)
-        }
-      }
-    }
-  
-    fun savePlayerListToFile(context: Context, data: String) {
-        // 파일 이름 정의
-        val fileName = "playerList.txt"
-    
-        // 앱 전용 디렉토리에 파일 생성 및 데이터 저장
-        try {
-            context.openFileOutput(fileName, Context.MODE_PRIVATE).use { outputStream ->
-                outputStream.write(data.toByteArray())
-            }
-            println("File saved successfully to: ${context.filesDir}/$fileName")
-        } catch (e: Exception) {
-            e.printStackTrace()
-            println("Failed to save file.")
-        }
-    }
-    
-    fun readPlayerListFromFile(context: Context): String? {
-        val fileName = "playerList.txt"
-        return try {
-            context.openFileInput(fileName).bufferedReader().use { it.readText() }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }*/
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
