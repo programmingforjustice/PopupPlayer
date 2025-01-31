@@ -110,7 +110,8 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
         }
 
         playerViewWrapper.setupCrossButton {
-            dispose()
+            //dispose()
+            PopupPlayerManager.remove(this)
         }
         
         //val muteToggleButtonListener =  MuteToggleButtonListener(player)
@@ -222,8 +223,10 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
     }
     
     fun dispose() {
-        release()
-        isDisposed = true
+        if (!isDisposed) {
+            release()
+            isDisposed = true
+        }
     }
     
     fun toggleFullscreen() { // 외부 컴포넌트(예:알림)에서 호출
