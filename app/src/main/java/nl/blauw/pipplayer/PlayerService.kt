@@ -28,10 +28,11 @@ class PlayerService : Service() {
 
     //private var playerController: PlayerController? = null
     //private var popupManager: PopupManager? = null
-    private var playerList: MutableList<PopupPlayer> = mutableListOf()
+    //private var playerList: MutableList<PopupPlayer> = mutableListOf()
 
     override fun onCreate() {
         super.onCreate()
+        PopupPlayerManager.initialize(this)
         createNotificationChannel()
     }
 
@@ -52,18 +53,16 @@ class PlayerService : Service() {
             /*var playerController = PlayerController(this).apply {
               initialize(url)
             }*/
-            var popupPlayer = PopupPlayer(this, url).apply {
+            var popupPlayer = PopupPlayerManager.create(this, url).apply {
               show()
               play()
             }
-            playerList.add(popupPlayer)
-            
           }
           ACTION_SAVE_CURRENT_PLAYLIST -> {
-            saveCurrentPlayList()
+            PopupPlayerManager.savePlayList()
           }
           ACTION_RESTORE_CURRENT_PLAYLIST -> {
-            restorePlayList()
+            PopupPlayerManager.restorePlayList()
           }
           else -> {
             
@@ -79,20 +78,13 @@ class PlayerService : Service() {
     }
 
     override fun onDestroy() {
-        playerList
-          .filter{ popupPlayer -> 
-            !popupPlayer.isDisposed
-          }
-          .forEach { popupPlayer -> 
-            popupPlayer.dispose() 
-          }
-        playerList = mutableListOf()
+        PopupPlayerManager.clear()
         super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
     
-    fun saveCurrentPlayList() {
+    /*fun saveCurrentPlayList() {
       var jsonStringForPlayetList = 
         playerList
           .filter{ popupPlayer -> 
@@ -164,7 +156,7 @@ class PlayerService : Service() {
             e.printStackTrace()
             null
         }
-    }
+    }*/
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
