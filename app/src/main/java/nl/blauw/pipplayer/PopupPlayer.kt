@@ -239,7 +239,8 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
                 originalParams.type,
                 //WindowManager.LayoutParams.TYPE_TOAST,
                 originalParams.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv(),
-                PixelFormat.TRANSLUCENT
+                //PixelFormat.TRANSLUCENT
+                PixelFormat.OPAQUE
             ).apply {
                 gravity = Gravity.FILL
                 flags = flags or WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
