@@ -8,7 +8,7 @@ import java.util.Collections
 import org.json.JSONArray
 import org.json.JSONObject
 
-object PopupPlayerManager {
+object PopupPlayerManager : JsonSerializable {
     private const val PLAY_LIST_PATH = "play_list.txt"
     
     private lateinit var context: Context
@@ -24,9 +24,8 @@ object PopupPlayerManager {
         }
     }
     
-    fun savePlayList() {
-      var jsonStringForPlayetList = 
-        playerList
+    override fun toJsonString() {
+        return playerList
           .filter{ popupPlayer -> 
             !popupPlayer.isDisposed
           }
@@ -34,15 +33,14 @@ object PopupPlayerManager {
             it.toJsonString() 
           }
           .joinToString(",", "[", "]")
-      
-      //savePlayerListToFile(context,jsonStringForPlayetList)
-      FileUtils.writeToFile(context, PLAY_LIST_PATH, jsonStringForPlayetList)
-      
     }
     
-    fun restorePlayList() {
-      var jsonStringForPlayetList: String? = FileUtils.readFromFile(context, PLAY_LIST_PATH)
-      jsonStringForPlayetList?.let {
+    fun savePlayList() {
+      FileUtils.writeToFile(context, PLAY_LIST_PATH, toJsonString())
+    }
+    
+    fun fromJsonString(jsonString: String?) {
+        jsonString?.let {
         val jsonArray = JSONArray(it)
 
         // 각 객체의 "id" 값을 읽기
@@ -72,6 +70,12 @@ object PopupPlayerManager {
             playerList.add(popupPlayer)
         }
       }
+    }
+    
+    fun restorePlayList() {
+        FileUtils.readFromFile(context, PLAY_LIST_PATH)?.let {
+            fromJsonString(it)
+        }
     }
     
     fun getPopupPlayerList(): List<PopupPlayer> {
