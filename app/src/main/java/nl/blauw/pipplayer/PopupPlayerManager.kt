@@ -20,7 +20,9 @@ object PopupPlayerManager {
     private lateinit var context: Context
     private var playerList: MutableList<PopupPlayer> = mutableListOf()
     
-    fun initialize(context: Context) = this.context = context
+    fun initialize(context: Context) {
+        this.context = context
+    }
     
     fun create(mediaUrl: String): PopupPlayer {
         return PopupPlayer(context, mediaUrl).also {
