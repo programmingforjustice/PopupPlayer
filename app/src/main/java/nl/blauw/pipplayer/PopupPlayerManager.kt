@@ -24,7 +24,7 @@ object PopupPlayerManager : JsonSerializable {
         }
     }
     
-    override fun toJsonString() {
+    override fun toJsonString(): String {
         return playerList
           .filter{ popupPlayer -> 
             !popupPlayer.isDisposed
