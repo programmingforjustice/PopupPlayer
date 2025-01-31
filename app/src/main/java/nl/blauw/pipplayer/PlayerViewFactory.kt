@@ -1,7 +1,6 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
-import android.view.WindowManager
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 
