@@ -8,15 +8,6 @@ import java.util.Collections
 import org.json.JSONArray
 import org.json.JSONObject
 
-/*class PopupPlayerManager: private constructor() {
-    companion object {
-        //val instance: PopupPlayerManager by lazy { PopupPlayerMananger() }
-        val instance: PopupPlayerManager = PopupPlayerMananger()
-    }
-    
-    
-}*/
-
 object PopupPlayerManager {
     private const val PLAY_LIST_PATH = "play_list.txt"
     

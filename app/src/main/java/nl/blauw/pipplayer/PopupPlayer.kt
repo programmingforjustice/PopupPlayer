@@ -185,14 +185,14 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
                 player = playerFactory.create(contentUrl)
                 playerView = playerViewFactory.create(player)
                 
-                player.seekTo(currentPosition)
+                //player.seekTo(currentPosition)
                 (player as PlayerWrapper).setRenderedFirstFrameListener {
                       if (imageView.parent != null) {
                           windowManager.removeView(imageView)
                       }
                 }
                 show()
-                play()
+                play(currentPosition)
                 //playerController.play(imageView.layoutParams as? WindowManager.LayoutParams)
             }
             
@@ -204,7 +204,7 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             //windowManager.removeView(playerView)
-            dispose()
+            release()
 
             // 5. 동일한 위치에 ImageView를 추가
             /*val layoutParams = WindowManager.LayoutParams(
@@ -215,10 +215,14 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
         }
     }
     
-    fun dispose() {
+    fun release() {
         player.release()
         playerView.player = null
         removePopupWindow()
+    }
+    
+    fun dispose() {
+        release()
         isDisposed = true
     }
     
