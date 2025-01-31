@@ -1,6 +1,8 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import android.os.Build
+import android.graphics.PixelFormat
 import android.view.WindowManager
 import java.util.Collections
 import org.json.JSONArray
