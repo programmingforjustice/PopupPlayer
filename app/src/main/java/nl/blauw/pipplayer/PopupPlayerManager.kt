@@ -18,7 +18,7 @@ import org.json.JSONObject
 }*/
 
 object PopupPlayerManager {
-    private const val PLAY_LIST_PATH = "PlayList.db"
+    private const val PLAY_LIST_PATH = "PlayList.txt"
     
     private lateinit var context: Context
     private var playerList: MutableList<PopupPlayer> = mutableListOf()
