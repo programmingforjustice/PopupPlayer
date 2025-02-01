@@ -1,6 +1,9 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import android.graphics.PixelFormat
+import android.os.Bundle
+import android.view.SurfaceView
 import android.graphics.Color
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
