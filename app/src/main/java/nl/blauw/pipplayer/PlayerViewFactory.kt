@@ -20,7 +20,7 @@ class DefaultPlayerViewFactory(
         return PlayerViewWrapper(context).apply {
             this.player = player
         } 
-        .also { playerView -> 
+        /*.also { playerView -> 
             val videoSurfaceView = playerView.videoSurfaceView
             // videoSurfaceView가 SurfaceView인 경우에만 Z-Order를 최상위로 설정
             if (videoSurfaceView is SurfaceView) {
@@ -30,7 +30,7 @@ class DefaultPlayerViewFactory(
                 videoSurfaceView.holder.setFormat(PixelFormat.TRANSLUCENT)
                 videoSurfaceView?.setBackgroundColor(Color.WHITE) // 원하는 색상으로 변경
             }
-        }
+        }*/
     }
 }
 
