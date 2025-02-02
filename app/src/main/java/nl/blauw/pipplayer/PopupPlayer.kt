@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.content.Context
 import android.graphics.PixelFormat
+import android.graphics.Color
 import android.os.Build
 import android.view.Gravity
 import android.view.View
@@ -31,6 +32,10 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
       private set
     var isFullscreen: Boolean = false
       private set
+      
+     private view: View = View(context).apply {
+         setBackgroundColor(Color.WHITE)
+     }
     
     init {
         player = playerFactory.create(contentUrl)
@@ -262,13 +267,17 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
             
             //PopupPlayerManager.clear()
             //PopupPlayerManager.fromJsonString(playList)
-            windowManager.updateViewLayout(playerView, fullscreenParams)
+            windowManager.addView(view, fullscreenParams)
+            windowManager.removeView(playerView)
+            windowManager.addView(playerView, fullscreenParams)
+            //windowManager.updateViewLayout(playerView, fullscreenParams)
             setupImmersiveMode()
         }
     }
 
     private fun exitFullscreen() {
         layoutParams?.let {
+            windowManager.removeView(view)
             windowManager.updateViewLayout(playerView, it)
             playerView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
         }
