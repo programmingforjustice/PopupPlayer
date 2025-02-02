@@ -33,9 +33,9 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
     var isFullscreen: Boolean = false
       private set
       
-     private val view: View = View(context).apply {
+    /*private val view: View = View(context).apply {
          setBackgroundColor(Color.WHITE)
-     }
+     }*/
     
     init {
         player = playerFactory.create(contentUrl)
@@ -267,17 +267,14 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
             
             //PopupPlayerManager.clear()
             //PopupPlayerManager.fromJsonString(playList)
-            windowManager.addView(view, fullscreenParams)
-            windowManager.removeView(playerView)
-            windowManager.addView(playerView, fullscreenParams)
-            //windowManager.updateViewLayout(playerView, fullscreenParams)
+        
+            windowManager.updateViewLayout(playerView, fullscreenParams)
             setupImmersiveMode()
         }
     }
 
     private fun exitFullscreen() {
         layoutParams?.let {
-            windowManager.removeView(view)
             windowManager.updateViewLayout(playerView, it)
             playerView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
         }
