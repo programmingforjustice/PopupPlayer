@@ -33,7 +33,7 @@ class PopupPlayer @JvmOverloads constructor(private val context: Context, privat
     var isFullscreen: Boolean = false
       private set
       
-     private view: View = View(context).apply {
+     private val view: View = View(context).apply {
          setBackgroundColor(Color.WHITE)
      }
     
