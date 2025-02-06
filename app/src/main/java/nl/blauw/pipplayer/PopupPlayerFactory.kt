@@ -3,7 +3,7 @@ package nl.blauw.pipplayer
 
 import android.content.Context
 
-inteface PopupPlayerFactory {
+interface PopupPlayerFactory {
     fun canHandle(mediaUrl: String): Boolean
     fun create(context: Context, mediaUrl: String): PopupPlayer
 }

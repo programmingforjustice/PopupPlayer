@@ -70,7 +70,7 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
     }
     
     fun setupImageView() {
-        val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: thow IllegalStateException("cannot load image.")
+        val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap.run {
             layoutParams.height = height
             layoutParams.width = width
@@ -83,7 +83,7 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
     }
     
-    override fun show(params: WindowManager.LayoutParams) {
+    override fun show(params: WindowManager.LayoutParams?) {
         setupImageView()
         windowManager.addView(imageView, layoutParams)
     }
@@ -102,8 +102,8 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         // JSON 객체 생성
         val jsonObject = JSONObject().apply {
                 put("mediaPath", contentUrl)
-                put("currentPosition", player.currentPosition)
-                put("isPlaying", player.isPlaying)
+                // put("currentPosition", player.currentPosition)
+                // put("isPlaying", player.isPlaying)
                 put("x", layoutParams.x)
                 put("y", layoutParams.y)
                 put("width", layoutParams.width)
