@@ -46,7 +46,7 @@ class ImagePopupPlayerFactory : PopupPlayerFactory {
         }
     }
     
-    override fun create(mediaUrl: String): PopupPlayer {
+    override fun create(context: Context, mediaUrl: String): PopupPlayer {
         return ImagePopupPlayer(context, mediaUrl)
     }
 }

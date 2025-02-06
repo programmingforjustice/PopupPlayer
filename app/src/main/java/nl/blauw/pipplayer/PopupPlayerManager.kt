@@ -90,9 +90,9 @@ object PopupPlayerManager : JsonSerializable {
     
     fun clear() {
         playerList
-          .filter{ popupPlayer -> 
+          /*.filter{ popupPlayer -> 
             !popupPlayer.isDisposed
-          }
+          }*/
           .forEach { popupPlayer -> 
             popupPlayer.dispose() 
           }

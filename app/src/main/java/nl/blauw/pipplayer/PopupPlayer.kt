@@ -23,6 +23,7 @@ import org.json.JSONObject
 interface PopupPlayer {
     fun show(params: WindowManager.LayoutParams? = null)
     fun play(currentPosition: Long = 0)
+    fun dispose()
 }
 
 /*class VideoPopupPlayer: PopupPlayer {
@@ -90,6 +91,10 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
     
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
+    }
+    
+    override fun dispose() {
+        
     }
     
     override fun toJsonString(): String {
@@ -323,7 +328,7 @@ class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, p
         removePopupWindow()
     }
     
-    fun dispose() {
+    override fun dispose() {
         if (!isDisposed) {
             release()
             isDisposed = true
