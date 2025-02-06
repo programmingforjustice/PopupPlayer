@@ -49,7 +49,7 @@ object PopupPlayerManager : JsonSerializable {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
             
             var url = playerInfo.getString("mediaPath")
-            var popupPlayer = PopupPlayer(context, url)
+            var popupPlayer = factory.create(context, url)
               
             //player.isPlaying = playerInfo.getBoolean("isPlaying")
             
@@ -67,7 +67,7 @@ object PopupPlayerManager : JsonSerializable {
             }
             
             popupPlayer.show(layoutParams)
-            popupPlayer.play(playerInfo.getLong("currentPosition"))
+            popupPlayer.play(playerInfo.getLong("currentPosition") ?: 0)
             playerList.add(popupPlayer)
         }
       }
