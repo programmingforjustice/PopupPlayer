@@ -82,6 +82,10 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
         
         imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+        
+        imageView.setOnClickListener {
+            windowManager.removeView(imageView)
+        }
     }
     
     override fun show(params: WindowManager.LayoutParams?) {
