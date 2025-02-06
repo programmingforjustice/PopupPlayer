@@ -95,7 +95,8 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         
         imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
-        imageViewLayout.setOnClickListener {
+        val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
+        crossButton.setOnClickListener {
             windowManager.removeView(imageViewLayout)
         }
     }

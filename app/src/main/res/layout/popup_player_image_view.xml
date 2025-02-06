@@ -12,7 +12,7 @@
 
     <!-- control.xml 레이아웃 오버레이 -->
     <include
-        layout="@layout/exo_player_control_view"
+        layout="@layout/popup_player_image_view_control"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
