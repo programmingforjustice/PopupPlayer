@@ -32,10 +32,14 @@ interface PopupPlayer {
 }*/
 
 class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
-    private val imageView = ImageView(context)
+    private val imageView: ImageView
     
     private val windowManager: WindowManager
     private var layoutParams: WindowManager.LayoutParams
+    
+    init {
+        imageView = context.findViewById(R.popup_player_image_view) as ImageView
+    }
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
