@@ -8,7 +8,7 @@
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerFit" />
+        android:scaleType="fitCenter" />
 
     <!-- control.xml 레이아웃 오버레이 -->
     <include
