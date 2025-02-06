@@ -45,10 +45,17 @@ class DefaultPlayerFactory(
         val dataSourceFactory = DefaultDataSourceFactory(
             context, Util.getUserAgent(context, context.getString(R.string.app_name))
         )
+        
+        val mediaItem = MediaItem.Builder()
+            .setUri(contentUrl)
+            .setImageDurationMs(5000) // 이미지 표시 시간: 5000ms (5초)
+            .build()
+    
         val contentMediaSource: MediaSource = ProgressiveMediaSource.Factory(
             dataSourceFactory,
             DefaultExtractorsFactory()
-        ).createMediaSource(MediaItem.fromUri(contentUrl))
+        ).createMediaSource(mediaItem))
+        //.createMediaSource(MediaItem.fromUri(contentUrl))
 
         (player as PlayerWrapper).apply {
           enableExoPlayerFeatures().setMediaSource(contentMediaSource)
