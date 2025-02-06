@@ -34,6 +34,7 @@ interface PopupPlayer {
 
 class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
     private val imageViewLayout: View
+    privatw val controlLayout: View
     private val imageView: ImageView
     
     private val windowManager: WindowManager
@@ -46,6 +47,8 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
         
         // 예를 들어, inflatedView를 특정 ViewGroup에 추가할 경우:
+        controlLayout = imageViewLayout.findViewById<View>(R.id.player_image_view_control)
+        
         imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
     }
     
@@ -94,6 +97,13 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
         
         imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+        
+        imageViewLayout.setOnClickListener {
+            controlLayout.visibility = View.VISIBLE
+            controlLayout.postDelayed({
+                controlLayout.visibility = View.GONE
+            }, 2000)
+        }
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
