@@ -87,7 +87,7 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         bitmap.run {
             layoutParams.height = height
             layoutParams.width = width
-            imageView.tag = width.toDouble() / height //scaleFactor
+            imageViewLayout.tag = width.toDouble() / height //scaleFactor
             imageView.setImageBitmap(this)
         }
         
