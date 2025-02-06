@@ -2,6 +2,7 @@ package nl.blauw.pipplayer
 
 import android.net.Uri
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.content.Context
 import android.graphics.PixelFormat
@@ -19,7 +20,80 @@ import android.widget.Toast
 import java.io.File
 import org.json.JSONObject
 
-class PopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String, private var playerFactory: PlayerFactory = DefaultPlayerFactory(context), private var playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): JsonSerializable {
+interface PopupPlayer {
+    fun show()
+    fun play(currentPosition: Long = 0)
+}
+
+/*class VideoPopupPlayer: PopupPlayer {
+    override fun show() {}
+    override fun play(currentPosition: Long = 0) {}
+}*/
+
+class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
+    private val imageView = ImageView(context)
+    
+    private val windowManager: WindowManager
+    private var layoutParams: WindowManager.LayoutParams
+    
+    init {
+      windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
+    }
+    
+    init {
+      layoutParams = WindowManager.LayoutParams(
+            Utils.convertDpToPixelsInt(2f, context),
+            Utils.convertDpToPixelsInt(2f, context),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                WindowManager.LayoutParams.TYPE_TOAST,
+            DEFAULT_WINDOW_FLAGS,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.TOP or Gravity.LEFT
+            x = DEFAULT_POPUP_X
+            y = DEFAULT_POPUP_Y
+        }
+    }
+
+    companion object {
+        private const val MAX_POPUP_WIDTH = 400
+        private const val MAX_POPUP_HEIGHT = 400
+
+        private const val DEFAULT_POPUP_X = 100
+        private const val DEFAULT_POPUP_Y = 200
+
+        private const val CONTROLLER_SHOW_TIMEOUT = 2500
+
+        private const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+    }
+    
+    fun setupImageView() {
+        val bitmap: Bitmap = BitmapFactory.decodeFile(filePath) ?: thow IllegalStateException("cannot load image.")
+        bitmap.run {
+            layoutParams.height = height
+            layoutParams.width = width
+            imageView.tag = width.toDouble() / height //scaleFactor
+            imageView.setImageBitmap(this)
+        }
+        
+        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+        
+        imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+    }
+    
+    override fun show() {
+        setupImageView()
+        windowManager.addView(imageView, layoutParams)
+    }
+    
+    override fun play(currentPosition: Long = 0) {
+        //throw UnsupportedOperationException()
+    }
+}
+
+class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer, JsonSerializable {
     private var player: Player
     private var playerView: PlayerView
     

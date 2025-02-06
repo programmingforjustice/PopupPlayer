@@ -13,13 +13,14 @@ object PopupPlayerManager : JsonSerializable {
     
     private lateinit var context: Context
     private var playerList: MutableList<PopupPlayer> = mutableListOf()
+    private val factory = DefaultPopupPlayerFactory()
     
     fun initialize(context: Context) {
         this.context = context
     }
     
     fun create(mediaUrl: String): PopupPlayer {
-        return PopupPlayer(context, mediaUrl).also {
+        return factory.create(context, mediaUrl).also {
             playerList.add(it)
         }
     }
