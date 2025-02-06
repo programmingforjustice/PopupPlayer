@@ -27,11 +27,11 @@ object PopupPlayerManager : JsonSerializable {
     
     override fun toJsonString(): String {
         return playerList
-          .filter{ popupPlayer -> 
+          /*.filter{ popupPlayer -> 
             !popupPlayer.isDisposed
-          }
+          }*/
           .map{ 
-            it.toJsonString() 
+            (it as? JsonSerializable)?.toJsonString() 
           }
           .joinToString(",", "[", "]")
     }
