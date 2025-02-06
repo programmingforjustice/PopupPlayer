@@ -21,7 +21,7 @@ import java.io.File
 import org.json.JSONObject
 
 interface PopupPlayer {
-    fun show()
+    fun show(params: WindowManager.LayoutParams? = null)
     fun play(currentPosition: Long = 0)
 }
 
@@ -70,7 +70,7 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
     }
     
     fun setupImageView() {
-        val bitmap: Bitmap = BitmapFactory.decodeFile(filePath) ?: thow IllegalStateException("cannot load image.")
+        val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: thow IllegalStateException("cannot load image.")
         bitmap.run {
             layoutParams.height = height
             layoutParams.width = width
@@ -83,14 +83,36 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
     }
     
-    override fun show() {
+    override fun show(params: WindowManager.LayoutParams) {
         setupImageView()
         windowManager.addView(imageView, layoutParams)
     }
     
-    override fun play(currentPosition: Long = 0) {
+    override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
     }
+    
+    override fun toJsonString(): String {
+        //player: currentPos, isPlaying
+        //playerView: scaleFactor, videoSize
+        //layoutParams: x, y, width, height
+        // 고유한 플레이어 식별자 생성 (UUID 사용)
+        //val playerIdentifier = "instance-${UUID.randomUUID()}"
+    
+        // JSON 객체 생성
+        val jsonObject = JSONObject().apply {
+                put("mediaPath", contentUrl)
+                put("currentPosition", player.currentPosition)
+                put("isPlaying", player.isPlaying)
+                put("x", layoutParams.x)
+                put("y", layoutParams.y)
+                put("width", layoutParams.width)
+                put("height", layoutParams.height)
+            }
+    
+        // JSON 문자열로 변환
+        return jsonObject.toString()
+   }
 }
 
 class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer, JsonSerializable {
@@ -205,7 +227,7 @@ class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, p
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }
 
-    fun show(params: WindowManager.LayoutParams? = null) {
+    override fun show(params: WindowManager.LayoutParams?) {
         //layoutParams?.let { this.layoutParams = it }
         params?.apply {
           layoutParams.x = x 
@@ -220,7 +242,7 @@ class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, p
         windowManager.addView(playerView, layoutParams)
     }
     
-    fun play(currentPosition: Long = 0) {
+    override fun play(currentPosition: Long) {
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.prepare()
         player.seekTo(currentPosition)
