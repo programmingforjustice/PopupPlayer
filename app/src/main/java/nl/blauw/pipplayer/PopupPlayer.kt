@@ -34,7 +34,7 @@ interface PopupPlayer {
 
 class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
     private val imageViewLayout: View
-    privatw val controlLayout: View
+    private val controlLayout: View
     private val imageView: ImageView
     
     private val windowManager: WindowManager
