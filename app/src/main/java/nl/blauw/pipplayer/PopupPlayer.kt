@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.os.Build
 import android.view.Gravity
 import android.view.View
+import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.ImageButton
