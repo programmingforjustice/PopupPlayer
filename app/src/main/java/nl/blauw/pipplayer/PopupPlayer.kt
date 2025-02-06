@@ -32,13 +32,20 @@ interface PopupPlayer {
 }*/
 
 class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
+    private val imageViewLayout: View
     private val imageView: ImageView
     
     private val windowManager: WindowManager
     private var layoutParams: WindowManager.LayoutParams
     
     init {
-        imageView = context.findViewById(R.popup_player_image_view) as ImageView
+        // 예: activity나 fragment 내에서 inflate할 때
+        val inflater = LayoutInflater.from(context) // 또는 layoutInflater 사용
+        // inflate 메서드의 세번째 매개변수는 attachToRoot 여부를 나타냅니다.
+        imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
+        
+        // 예를 들어, inflatedView를 특정 ViewGroup에 추가할 경우:
+        imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
     }
     
     init {
@@ -87,14 +94,14 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         
         imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
-        imageView.setOnClickListener {
-            windowManager.removeView(imageView)
+        imageViewLayout.setOnClickListener {
+            windowManager.removeView(imageViewLayout)
         }
     }
     
     override fun show(params: WindowManager.LayoutParams?) {
         setupImageView()
-        windowManager.addView(imageView, layoutParams)
+        windowManager.addView(imageViewLayout, layoutParams)
     }
     
     override fun play(currentPosition: Long) {
