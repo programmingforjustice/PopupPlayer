@@ -93,7 +93,7 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
         
-        imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+        imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
