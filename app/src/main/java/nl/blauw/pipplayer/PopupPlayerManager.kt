@@ -67,7 +67,7 @@ object PopupPlayerManager : JsonSerializable {
             }
             
             popupPlayer.show(layoutParams)
-            popupPlayer.play(playerInfo.getLong("currentPosition") ?: 0)
+            popupPlayer.play(playerInfo.getLong("currentPosition"))
             playerList.add(popupPlayer)
         }
       }

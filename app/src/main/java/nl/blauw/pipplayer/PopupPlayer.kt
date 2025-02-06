@@ -107,8 +107,8 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         // JSON 객체 생성
         val jsonObject = JSONObject().apply {
                 put("mediaPath", contentUrl)
-                // put("currentPosition", player.currentPosition)
-                // put("isPlaying", player.isPlaying)
+                put("currentPosition", 0)
+                put("isPlaying", true)
                 put("x", layoutParams.x)
                 put("y", layoutParams.y)
                 put("width", layoutParams.width)
