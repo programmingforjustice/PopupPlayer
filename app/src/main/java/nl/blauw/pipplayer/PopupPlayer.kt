@@ -27,7 +27,7 @@ import org.json.JSONObject
     fun dispose()
 }*/
 
-abstract class PopupPlayer {
+abstract class PopupPlayer(protected val context: Context) {
     private val windowManager: WindowManager
     private var layoutParams: WindowManager.LayoutParams
     
@@ -88,7 +88,7 @@ abstract class PopupPlayer {
     override fun play(currentPosition: Long = 0) {}
 }*/
 
-class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
+class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
     private val imageViewLayout: View
     private val controlLayout: View
     private val imageView: ImageView
@@ -175,7 +175,7 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
    }
 }
 
-class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer, JsonSerializable {
+class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer(context), JsonSerializable {
     private var player: Player
     private var playerView: PlayerView
     
