@@ -175,7 +175,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     override fun fromJsonString(jsonString: String): PopupPlayer {
         var playerInfo = JSONObject(jsonString)
         var url = playerInfo.getString("mediaPath")
-        var popupPlayer = ImagePopupPlayerFactory().create(context, url)
+        var popupPlayer = ImagePopupPlayerFactory().create(context, url) as ImagePopupPlayer
           
         val layoutParams = WindowManager.LayoutParams().apply {
           x = playerInfo.getInt("x")
@@ -465,7 +465,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
    override fun fromJsonString(jsonString: String): PopupPlayer {
         var playerInfo = JSONObject(jsonString)
         var url = playerInfo.getString("mediaPath")
-        var popupPlayer = VideoPopupPlayerFactory().create(context, url)
+        var popupPlayer = VideoPopupPlayerFactory().create(context, url) as VideoPopupPlayer
           
         val layoutParams = WindowManager.LayoutParams().apply {
           x = playerInfo.getInt("x")
