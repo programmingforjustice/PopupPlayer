@@ -53,14 +53,17 @@ abstract class PopupPlayer(protected val context: Context) {
     }
 
     companion object {
+        @JvmStatic
         protected const val MAX_POPUP_WIDTH = 400
+        @JvmStatic
         protected const val MAX_POPUP_HEIGHT = 400
-
+        @JvmStatic
         protected const val DEFAULT_POPUP_X = 100
+        @JvmStatic
         protected const val DEFAULT_POPUP_Y = 200
-
+        @JvmStatic
         protected const val CONTROLLER_SHOW_TIMEOUT = 2500
-
+        @JvmStatic
         protected const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     }
 
