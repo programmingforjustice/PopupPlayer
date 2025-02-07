@@ -70,7 +70,6 @@ abstract class PopupPlayer(protected val context: Context) {
           layoutParams.y = y 
           layoutParams.width = width
           layoutParams.height = height
-          isPlaying = true
         }
         
         val view = createDisplayView()
@@ -280,6 +279,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         player.prepare()
         player.seekTo(currentPosition)
         player.playWhenReady = true
+        isPlaying = true
     }
 
     fun removePopupWindow() {
