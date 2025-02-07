@@ -99,12 +99,12 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
         imageViewLayout.setOnClickListener {
-            imageViewLayout.setOnClickListener(null)
+            imageViewLayout.isClickable = false
             controlLayout.visibility = View.VISIBLE
             
             val listener = this
             controlLayout.postDelayed({
-                imageViewLayout.setOnClickListener(listener)
+                imageViewLayout.isClickable = true
                 controlLayout.visibility = View.GONE
             }, 2500)
         }
