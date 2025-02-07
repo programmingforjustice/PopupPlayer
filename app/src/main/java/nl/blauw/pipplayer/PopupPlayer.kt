@@ -99,10 +99,14 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
         imageViewLayout.setOnClickListener {
+            imageViewLayout.setOnClickListener(null)
             controlLayout.visibility = View.VISIBLE
+            
+            val listener = this
             controlLayout.postDelayed({
+                imageViewLayout.setOnClickListener(listener)
                 controlLayout.visibility = View.GONE
-            }, 2000)
+            }, 2500)
         }
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
