@@ -181,7 +181,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     //private var layoutParams: WindowManager.LayoutParams
     
     private val imageView: ImageView = ImageView(context)
-    private var isPlaying: Boolean = false
+    var isPlaying: Boolean = false
     var isDisposed: Boolean = false
       private set
     var isFullscreen: Boolean = false
@@ -274,11 +274,11 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     }*/
     
     override fun play(currentPosition: Long) {
+        //isPlaying = true
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.prepare()
         player.seekTo(currentPosition)
         player.playWhenReady = true
-        isPlaying = true
     }
 
     fun removePopupWindow() {

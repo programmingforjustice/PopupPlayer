@@ -66,6 +66,10 @@ object PopupPlayerManager : JsonSerializable {
               format = PixelFormat.TRANSLUCENT
             }
             
+            if (popupPlayer is VideoPopupPlayer) {
+                popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
+            }
+            
             popupPlayer.show(layoutParams)
             popupPlayer.play(playerInfo.getLong("currentPosition"))
             playerList.add(popupPlayer)
