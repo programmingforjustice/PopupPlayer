@@ -24,7 +24,7 @@ public class TextAdapter extends RecyclerView.Adapter<TextAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_text, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.popup_player_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -50,7 +50,7 @@ public class TextAdapter extends RecyclerView.Adapter<TextAdapter.ViewHolder> {
 
         public ViewHolder(View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.textView);
+            textView = itemView.findViewById(R.id.textAppName);
         }
     }
 }
