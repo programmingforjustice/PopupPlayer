@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@drawable/popup_player_list_item_background"
-    android:margin="10dp">
+    android:layout_margin="10dp">
 
     <!-- 아이콘 (앱 썸네일) -->
     <ImageView
