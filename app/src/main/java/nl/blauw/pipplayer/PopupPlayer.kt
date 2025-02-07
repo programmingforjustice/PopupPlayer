@@ -21,36 +21,15 @@ import android.widget.Toast
 import java.io.File
 import org.json.JSONObject
 
-interface PopupPlayer {
+/*interface PopupPlayer {
     fun show(params: WindowManager.LayoutParams? = null)
     fun play(currentPosition: Long = 0)
     fun dispose()
-}
-
-/*class VideoPopupPlayer: PopupPlayer {
-    override fun show() {}
-    override fun play(currentPosition: Long = 0) {}
 }*/
 
-class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
-    private val imageViewLayout: View
-    private val controlLayout: View
-    private val imageView: ImageView
-    
+abstract class PopupPlayer {
     private val windowManager: WindowManager
     private var layoutParams: WindowManager.LayoutParams
-    
-    init {
-        // 예: activity나 fragment 내에서 inflate할 때
-        val inflater = LayoutInflater.from(context) // 또는 layoutInflater 사용
-        // inflate 메서드의 세번째 매개변수는 attachToRoot 여부를 나타냅니다.
-        imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
-        
-        // 예를 들어, inflatedView를 특정 ViewGroup에 추가할 경우:
-        controlLayout = imageViewLayout.findViewById<View>(R.id.player_image_view_control)
-        
-        imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
-    }
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
@@ -74,15 +53,56 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
     }
 
     companion object {
-        private const val MAX_POPUP_WIDTH = 400
-        private const val MAX_POPUP_HEIGHT = 400
+        protected const val MAX_POPUP_WIDTH = 400
+        protected const val MAX_POPUP_HEIGHT = 400
 
-        private const val DEFAULT_POPUP_X = 100
-        private const val DEFAULT_POPUP_Y = 200
+        protected const val DEFAULT_POPUP_X = 100
+        protected const val DEFAULT_POPUP_Y = 200
 
-        private const val CONTROLLER_SHOW_TIMEOUT = 2500
+        protected const val CONTROLLER_SHOW_TIMEOUT = 2500
 
-        private const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+        protected const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+    }
+
+    fun show(params: WindowManager.LayoutParams? = null) {
+        params?.apply {
+          layoutParams.x = x 
+          layoutParams.y = y 
+          layoutParams.width = width
+          layoutParams.height = height
+          isPlaying = true
+        }
+        
+        val view = createDisplayView()
+        windowManager.addView(view, layoutParams)
+    }
+    
+    abstract fun play(currentPosition: Long = 0)
+    abstract fun dispose()
+    
+    abstract fun createDisplayView(): View
+}
+
+/*class VideoPopupPlayer: PopupPlayer {
+    override fun show() {}
+    override fun play(currentPosition: Long = 0) {}
+}*/
+
+class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
+    private val imageViewLayout: View
+    private val controlLayout: View
+    private val imageView: ImageView
+    
+    init {
+        // 예: activity나 fragment 내에서 inflate할 때
+        val inflater = LayoutInflater.from(context) // 또는 layoutInflater 사용
+        // inflate 메서드의 세번째 매개변수는 attachToRoot 여부를 나타냅니다.
+        imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
+        
+        // 예를 들어, inflatedView를 특정 ViewGroup에 추가할 경우:
+        controlLayout = imageViewLayout.findViewById<View>(R.id.player_image_view_control)
+        
+        imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
     }
     
     fun setupImageView() {
@@ -102,7 +122,6 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
             imageViewLayout.isClickable = false
             controlLayout.visibility = View.VISIBLE
             
-            val listener = this
             controlLayout.postDelayed({
                 imageViewLayout.isClickable = true
                 controlLayout.visibility = View.GONE
@@ -115,10 +134,15 @@ class ImagePopupPlayer @JvmOverloads constructor(private val context: Context, p
         }
     }
     
-    override fun show(params: WindowManager.LayoutParams?) {
+    override fun createDisplayView(): View {
+        setupImageView()
+        return imageViewLayout
+    }
+    
+    /*override fun show(params: WindowManager.LayoutParams?) {
         setupImageView()
         windowManager.addView(imageViewLayout, layoutParams)
-    }
+    }*/
     
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
@@ -155,8 +179,8 @@ class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, p
     private var player: Player
     private var playerView: PlayerView
     
-    private val windowManager: WindowManager
-    private var layoutParams: WindowManager.LayoutParams
+    //private val windowManager: WindowManager
+    //private var layoutParams: WindowManager.LayoutParams
     
     private val imageView: ImageView = ImageView(context)
     private var isPlaying: Boolean = false
@@ -172,39 +196,6 @@ class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, p
     init {
         player = playerFactory.create(contentUrl)
         playerView = playerViewFactory.create(player)
-    }
-    
-    init {
-      windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
-    }
-    
-    init {
-      layoutParams = WindowManager.LayoutParams(
-            Utils.convertDpToPixelsInt(2f, context),
-            Utils.convertDpToPixelsInt(2f, context),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else
-                WindowManager.LayoutParams.TYPE_TOAST,
-            DEFAULT_WINDOW_FLAGS,
-            PixelFormat.TRANSLUCENT
-        ).apply {
-            gravity = Gravity.TOP or Gravity.LEFT
-            x = DEFAULT_POPUP_X
-            y = DEFAULT_POPUP_Y
-        }
-    }
-
-    companion object {
-        private const val MAX_POPUP_WIDTH = 400
-        private const val MAX_POPUP_HEIGHT = 400
-
-        private const val DEFAULT_POPUP_X = 100
-        private const val DEFAULT_POPUP_Y = 200
-
-        private const val CONTROLLER_SHOW_TIMEOUT = 2500
-
-        private const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     }
     
     private fun setupPlayer() {
@@ -262,21 +253,27 @@ class VideoPopupPlayer @JvmOverloads constructor(private val context: Context, p
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }
+    
+    override fun createDisplayView(): View {
+        setupPlayer()
+        setupPlayerView()
+        return playerView
+    }
 
-    override fun show(params: WindowManager.LayoutParams?) {
+    /*override fun show(params: WindowManager.LayoutParams?) {
         //layoutParams?.let { this.layoutParams = it }
-        params?.apply {
-          layoutParams.x = x 
-          layoutParams.y = y 
-          layoutParams.width = width
-          layoutParams.height = height
-          isPlaying = true
-        }
+        // params?.apply {
+        //   layoutParams.x = x 
+        //   layoutParams.y = y 
+        //   layoutParams.width = width
+        //   layoutParams.height = height
+        //   isPlaying = true
+        // }
         
         setupPlayer()
         setupPlayerView()
         windowManager.addView(playerView, layoutParams)
-    }
+    }*/
     
     override fun play(currentPosition: Long) {
         player.repeatMode = Player.REPEAT_MODE_ALL
