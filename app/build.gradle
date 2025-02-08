@@ -29,8 +29,8 @@ android {
         release {
             // 릴리즈 빌드 설정
             signingConfig signingConfigs.release
-            minifyEnabled true // ProGuard 활성화
-            shrinkResources true // 리소스 축소
+            minifyEnabled false // ProGuard 활성화
+            shrinkResources false // 리소스 축소
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
