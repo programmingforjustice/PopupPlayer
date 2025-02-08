@@ -13,7 +13,7 @@ object PopupPlayerManager : JsonSerializable {
     
     private lateinit var context: Context
     private var playerList: MutableList<PopupPlayer> = mutableListOf()
-    private lateinit var factory
+    private lateinit var factory: PopupPlayerFactory
     
     fun initialize(context: Context) {
         this.context = context
