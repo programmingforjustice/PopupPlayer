@@ -29,7 +29,7 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
         val jsonObject = JSONObject(jsonString)
-        val mediaUrl = jsonObject.getString("mediaPath") ?: throw IllegalStateExceprion("cannot find mediaUrl from jsonString.")
+        val mediaUrl = jsonObject.getString("mediaPath") ?: throw IllegalStateException("cannot find mediaUrl from jsonString.")
         
         val factory = findFactory(mediaUrl)
         return factory.fromJsonString(jsonString)
@@ -45,7 +45,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
-        return VideoPopupPlayer(mediaUrl)
+        return VideoPopupPlayer(context, mediaUrl)
     }
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
