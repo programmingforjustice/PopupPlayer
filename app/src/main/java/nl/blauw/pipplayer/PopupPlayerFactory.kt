@@ -12,8 +12,8 @@ abstract class PopupPlayerFactory(protected val context: Context): JsonDeseriali
 
 class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     val popupPlayerFactoryList = listOf(
-        VideoPopupPlayerFactory(),
-        ImagePopupPlayerFactory()
+        VideoPopupPlayerFactory(context),
+        ImagePopupPlayerFactory(context)
     )
     
     override fun canHandle(mediaUrl: String): Boolean = true
