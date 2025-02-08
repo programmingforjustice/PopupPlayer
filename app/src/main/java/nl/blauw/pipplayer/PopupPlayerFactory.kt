@@ -6,11 +6,11 @@ import android.view.WindowManager
 import org.json.JSONObject
 
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
-    fun canHandle(mediaUrl: String): Boolean
-    fun create(mediaUrl: String): PopupPlayer
+    abstract fun canHandle(mediaUrl: String): Boolean
+    abstract fun create(mediaUrl: String): PopupPlayer
 }
 
-class DefaultPopupPlayerFactory : PopupPlayerFactory {
+class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     val popupPlayerFactoryList = listOf(
         VideoPopupPlayerFactory(),
         ImagePopupPlayerFactory()
