@@ -21,7 +21,7 @@ object PopupPlayerManager : JsonSerializable {
     }
     
     fun create(mediaUrl: String): PopupPlayer {
-        return factory.create(context, mediaUrl).also {
+        return factory.create(mediaUrl).also {
             playerList.add(it)
         }
     }
