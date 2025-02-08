@@ -51,7 +51,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun fromJsonString(jsonString: String): PopupPlayer {
         val playerInfo = JSONObject(jsonString)
         var url = playerInfo.getString("mediaPath")
-        val popupPlayer = create(context, jsonString) as VideoPopupPlayer
+        val popupPlayer = create(jsonString) as VideoPopupPlayer
         val layoutParams = WindowManager.LayoutParams().apply {
           x = playerInfo.getInt("x")
           y = playerInfo.getInt("y")
@@ -90,7 +90,7 @@ class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun fromJsonString(jsonString: String): PopupPlayer {
         val playerInfo = JSONObject(jsonString)
         var url = playerInfo.getString("mediaPath")
-        val popupPlayer = create(context, jsonString) as ImagePopupPlayer
+        val popupPlayer = create(jsonString) as ImagePopupPlayer
         val layoutParams = WindowManager.LayoutParams().apply {
           x = playerInfo.getInt("x")
           y = playerInfo.getInt("y")
