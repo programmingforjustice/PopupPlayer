@@ -24,7 +24,7 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
     
     override fun create(mediaUrl: String): PopupPlayer {
         val factory = findFactory(mediaUrl)
-        return factory.create(context, mediaUrl)
+        return factory.create(mediaUrl)
     }
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
@@ -45,7 +45,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
-        return VideoPopupPlayer(context, mediaUrl)
+        return VideoPopupPlayer(mediaUrl)
     }
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
