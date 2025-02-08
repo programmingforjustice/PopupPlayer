@@ -18,7 +18,7 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
     
     override fun canHandle(mediaUrl: String): Boolean = true
     
-    private fun findFactory(mediaUrl: String) {
+    private fun findFactory(mediaUrl: String): PopupPlayerFactory {
         return popupPlayerFactoryList.firstOrNull { it.canHandle(mediaUrl) } ?: throw IllegalArgumentException("Unsupported video or image extensions.")
     }
     
@@ -36,7 +36,7 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
     }
 }
 
-class VideoPopupPlayerFactory : PopupPlayerFactory {
+class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUrl: String): Boolean {
         return mediaUrl.lowercase().let {
             it.endsWith(".mp4") 
@@ -72,7 +72,7 @@ class VideoPopupPlayerFactory : PopupPlayerFactory {
     }
 }
 
-class ImagePopupPlayerFactory : PopupPlayerFactory {
+class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUrl: String): Boolean {
         return mediaUrl.lowercase().let {
             it.endsWith(".jpg") 
