@@ -2,6 +2,7 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import android.view.WindowManager
 import org.json.JSONObject
 
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
