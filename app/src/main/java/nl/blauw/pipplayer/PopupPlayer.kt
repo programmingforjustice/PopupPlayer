@@ -86,7 +86,7 @@ abstract class PopupPlayer(protected val context: Context) {
     override fun play(currentPosition: Long = 0) {}
 }*/
 
-class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable, JsonDeserializable<PopupPlayer> {
+class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
     private val imageViewLayout: View
     private val controlLayout: View
     private val imageView: ImageView
@@ -171,31 +171,6 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         // JSON 문자열로 변환
         return jsonObject.toString()
    }
-   
-    override fun fromJsonString(jsonString: String): PopupPlayer {
-        var playerInfo = JSONObject(jsonString)
-        var url = playerInfo.getString("mediaPath")
-        var popupPlayer = ImagePopupPlayerFactory().create(context, url) as ImagePopupPlayer
-          
-        val layoutParams = WindowManager.LayoutParams().apply {
-          x = playerInfo.getInt("x")
-          y = playerInfo.getInt("y")
-          width = playerInfo.getInt("width")
-          height = playerInfo.getInt("height")
-          type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-          else
-              WindowManager.LayoutParams.TYPE_TOAST
-          flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-          format = PixelFormat.TRANSLUCENT
-        }
-        
-        //popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
-        popupPlayer.show(layoutParams)
-        //popupPlayer.play(playerInfo.getLong("currentPosition"))
-        //playerList.add(popupPlayer)  
-        return popupPlayer
-    }
 }
 
 class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer(context), JsonSerializable, JsonDeserializable<PopupPlayer> {
@@ -461,29 +436,4 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         // JSON 문자열로 변환
         return jsonObject.toString()
    }
-   
-   override fun fromJsonString(jsonString: String): PopupPlayer {
-        var playerInfo = JSONObject(jsonString)
-        var url = playerInfo.getString("mediaPath")
-        var popupPlayer = VideoPopupPlayerFactory().create(context, url) as VideoPopupPlayer
-          
-        val layoutParams = WindowManager.LayoutParams().apply {
-          x = playerInfo.getInt("x")
-          y = playerInfo.getInt("y")
-          width = playerInfo.getInt("width")
-          height = playerInfo.getInt("height")
-          type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-          else
-              WindowManager.LayoutParams.TYPE_TOAST
-          flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-          format = PixelFormat.TRANSLUCENT
-        }
-        
-        popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
-        popupPlayer.show(layoutParams)
-        popupPlayer.play(playerInfo.getLong("currentPosition"))
-        //playerList.add(popupPlayer)  
-        return popupPlayer
-    }
 }

@@ -13,10 +13,11 @@ object PopupPlayerManager : JsonSerializable {
     
     private lateinit var context: Context
     private var playerList: MutableList<PopupPlayer> = mutableListOf()
-    private val factory = DefaultPopupPlayerFactory()
+    private lateinit val factory
     
     fun initialize(context: Context) {
         this.context = context
+        this.factory = DefaultPopupPlayerFactory(context)
     }
     
     fun create(mediaUrl: String): PopupPlayer {
@@ -47,31 +48,7 @@ object PopupPlayerManager : JsonSerializable {
         // 각 객체의 "id" 값을 읽기
         for (i in 0 until jsonArray.length()) {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
-            
-            var url = playerInfo.getString("mediaPath")
-            var popupPlayer = factory.create(context, url)
-              
-            //player.isPlaying = playerInfo.getBoolean("isPlaying")
-            
-            val layoutParams = WindowManager.LayoutParams().apply {
-              x = playerInfo.getInt("x")
-              y = playerInfo.getInt("y")
-              width = playerInfo.getInt("width")
-              height = playerInfo.getInt("height")
-              type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                  WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-              else
-                  WindowManager.LayoutParams.TYPE_TOAST
-              flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-              format = PixelFormat.TRANSLUCENT
-            }
-            
-            if (popupPlayer is VideoPopupPlayer) {
-                popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
-            }
-            
-            popupPlayer.show(layoutParams)
-            popupPlayer.play(playerInfo.getLong("currentPosition"))
+            var popupPlayer = factory.fromJsonString(playerInfo.toString())
             playerList.add(popupPlayer)
         }
       }
