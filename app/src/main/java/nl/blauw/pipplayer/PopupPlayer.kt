@@ -144,6 +144,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
         
         controlLayout.visibility = View.VISIBLE
+        controlLayout.removeCallbacks(::hideControlLayout)
         controlLayout.postDelayed(::hideControlLayout
             , 2500)
     }
