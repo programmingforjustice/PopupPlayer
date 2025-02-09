@@ -79,6 +79,17 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
           }
         });
+        
+    Button saveListButton = (Button) findViewById(R.id.button_savelist);
+    saveListButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this, PlayerListActivity.class);
+            intent.putExtra("fileName", "play_list.txt");
+            startActivity(intent);
+          }
+        });
 
     refreshButton = (Button) findViewById(R.id.button_refresh);
     refreshButton.setOnClickListener(
