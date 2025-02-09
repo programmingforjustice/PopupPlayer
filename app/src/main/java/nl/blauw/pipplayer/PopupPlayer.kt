@@ -129,7 +129,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         return imageViewLayout
     }
     
-    private fun hideControlLayout() {
+    private fun hideControlLayout(view: View?) {
         //imageViewLayout.isClickable = true
         controlLayout.visibility = View.GONE
     }
