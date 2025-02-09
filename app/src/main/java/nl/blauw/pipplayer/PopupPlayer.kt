@@ -91,6 +91,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private val controlLayout: View
     private val imageView: ImageView
     
+    private val startTime: Long = 0
+    
     init {
         // 예: activity나 fragment 내에서 inflate할 때
         val inflater = LayoutInflater.from(context) // 또는 layoutInflater 사용
@@ -131,7 +133,9 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
     private fun hideControlLayout() {
         //imageViewLayout.isClickable = true
-        controlLayout.visibility = View.GONE
+        if (System.currentTimeMillis() - startTime >= 2500) {
+            controlLayout.visibility = View.GONE
+        }
     }
     
     private fun toggleControlLayout(view: View?) {
@@ -143,6 +147,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             return
         }
         
+        startTime = System.currentTimeMillis()
         controlLayout.visibility = View.VISIBLE
         controlLayout.removeCallbacks(::hideControlLayout)
         controlLayout.postDelayed(::hideControlLayout
