@@ -69,7 +69,7 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
 class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     init {
-        onFromJsonString = { (popupPlayer, layoutParams, playerInfo) -> 
+        onFromJsonString = { popupPlayer, layoutParams, playerInfo -> 
             (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
         }
     }
