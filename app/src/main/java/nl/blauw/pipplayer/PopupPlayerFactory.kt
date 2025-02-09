@@ -8,7 +8,7 @@ import android.view.WindowManager
 import org.json.JSONObject
 
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
-    protected var onFromJsonString: ((PopupPlayer, WindowManager.LayoutParams, JSONObject) -> Unit)? = null
+    protected var onFromJsonString: ((popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, playerInfo: JSONObject) -> Unit)? = null
 
     abstract fun canHandle(mediaUrl: String): Boolean
     abstract fun create(mediaUrl: String): PopupPlayer
@@ -69,7 +69,7 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
 class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     init {
-        onFromJsonString = { (popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, playerInfo: JSONObject) -> 
+        onFromJsonString = { (popupPlayer, layoutParams, playerInfo) -> 
             (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
         }
     }
