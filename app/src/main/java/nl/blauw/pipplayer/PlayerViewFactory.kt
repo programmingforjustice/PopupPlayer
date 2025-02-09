@@ -18,8 +18,10 @@ class DefaultPlayerViewFactory(
 
     override fun create(player: Player): PlayerView {
         return PlayerViewWrapper(context).apply {
+            setSurfaceType(SurfaceType.TEXTURE_VIEW)
+            alpha = 0.5f // 0(투명) ~ 1(불투명)
             this.player = player
-        } 
+        }
         /*.also { playerView -> 
             val videoSurfaceView = playerView.videoSurfaceView
             // videoSurfaceView가 SurfaceView인 경우에만 Z-Order를 최상위로 설정
