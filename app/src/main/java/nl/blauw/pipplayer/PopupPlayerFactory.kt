@@ -8,9 +8,11 @@ import android.view.WindowManager
 import org.json.JSONObject
 
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
+    protected var onFromJsonString: (()PopupPlayer, WindowManager.LayoutParams, JSONObject) -> Unit)? = null
+
     abstract fun canHandle(mediaUrl: String): Boolean
     abstract fun create(mediaUrl: String): PopupPlayer
-    protected abstract fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, jsonObject: JSONObject)
+    /*protected open fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, jsonObject: JSONObject) {}*/
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
         val playerInfo = JSONObject(jsonString)
@@ -29,7 +31,7 @@ abstract class PopupPlayerFactory(protected val context: Context): JsonDeseriali
           format = PixelFormat.TRANSLUCENT
         }
         
-        fromJsonString(popupPlayer, layoutParams, playerInfo)
+        onFromJsonString?.invoke(popupPlayer, layoutParams, playerInfo)
         
         //popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
         popupPlayer.show(layoutParams)
@@ -65,6 +67,13 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
 }
 
 class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
+    
+    init {
+        onFromJsonString = { (popupPlayer, layoutParams, playerInfo) -> 
+            (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
+        }
+    }
+    
     override fun canHandle(mediaUrl: String): Boolean {
         return mediaUrl.lowercase().let {
             it.endsWith(".mp4") 
@@ -76,9 +85,9 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
         return VideoPopupPlayer(context, mediaUrl)
     }
     
-    override fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, playerInfo: JSONObject) {
+    /*fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, playerInfo: JSONObject) {
         (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
-    }
+    }*/
 }
 
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
@@ -94,9 +103,5 @@ class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     override fun create(mediaUrl: String): PopupPlayer {
         return ImagePopupPlayer(context, mediaUrl)
-    }
-    
-    override fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, jsonObject: JSONObject) {
-                   
     }
 }
