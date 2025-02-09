@@ -6,7 +6,7 @@ import android.os.Bundle
 import java.io.File
 import kotlin.io.*
 
-public class PlayerListActivity : AppCompatActivity() {
+class PlayerListActivity : AppCompatActivity() {
 
 	private lateinit var binding: ActivityPlayListBinding
 	
@@ -17,8 +17,11 @@ public class PlayerListActivity : AppCompatActivity() {
          binding = ActivityPlayListBinding.inflate(layoutInflater)
          val view = binding.root
          setContentView(view)
+         
+         val fileName = getIntent().getStringExtra("fileName") ?: throw IllegalStateException("cannot get filename from intent.")
 		 
-		 klembordFile = File(applicationContext.filesDir.path, "playlist.content")
+		 //klembordFile = File(applicationContext.filesDir.path, "playlist.content")
+		 klembordFile = File(applicationContext.filesDir.path, fileName)
     }
 	
 	override fun onPause() {

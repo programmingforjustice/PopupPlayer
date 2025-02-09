@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
           @Override
           public void onClick(View view) {
             Intent intent = new Intent(MainActivity.this, PlayerListActivity.class);
+            intent.putExtra("fileName", "playlist.content")
             startActivity(intent);
           }
         });
