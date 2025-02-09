@@ -155,7 +155,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
-        toggleControlLayout()
+        toggleControlLayout(null)
     }
     
     override fun dispose() {
