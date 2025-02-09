@@ -74,7 +74,7 @@ class PlayerService : Service() {
     }
     
     private fun startPopupPlayer(intent: Intent?) {
-        val url = intent?.getStringExtra("data") ?: IllegalStateException("cannot read mediaUrl from intent.")
+        val url = intent?.getStringExtra("data") ?: throw IllegalStateException("cannot get mediaUrl from intent.")
         
         PopupPlayerManager.create(url).apply {
             show()
