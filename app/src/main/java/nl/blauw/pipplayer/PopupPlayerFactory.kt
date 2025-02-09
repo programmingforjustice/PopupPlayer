@@ -88,6 +88,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     /*fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, playerInfo: JSONObject) {
         (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
     }*/
+    
 }
 
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
