@@ -49,7 +49,7 @@ class PlayerService : Service() {
         
         val command = intent?.getStringExtra(COMMAND) ?: return START_NOT_STICKY
         
-        commandMap[command]?.invoke(intent) ?: throw IllegalArgumentException("unknown command received.")
+        commandMap[command]?.invoke(intent) ?: throw IllegalStateException("unknown command received.")
         /*when (command) {
           ACTION_START_PIP -> {
             val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
