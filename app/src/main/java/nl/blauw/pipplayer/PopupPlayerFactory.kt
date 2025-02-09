@@ -10,6 +10,32 @@ import org.json.JSONObject
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
     abstract fun canHandle(mediaUrl: String): Boolean
     abstract fun create(mediaUrl: String): PopupPlayer
+    protected abstract fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, jsonObject: JSONObject)
+    
+    override fun fromJsonString(jsonString: String): PopupPlayer {
+        val playerInfo = JSONObject(jsonString)
+        var url = playerInfo.getString("mediaPath")
+        val popupPlayer = create(url)
+        val layoutParams = WindowManager.LayoutParams().apply {
+          x = playerInfo.getInt("x")
+          y = playerInfo.getInt("y")
+          width = playerInfo.getInt("width")
+          height = playerInfo.getInt("height")
+          type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+          else
+              WindowManager.LayoutParams.TYPE_TOAST
+          flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+          format = PixelFormat.TRANSLUCENT
+        }
+        
+        fromJsonString(popupPlayer, layoutParams, playerInfo)
+        
+        //popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
+        popupPlayer.show(layoutParams)
+        popupPlayer.play(playerInfo.getLong("currentPosition"))
+        return popupPlayer
+    }
 }
 
 class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
@@ -50,27 +76,8 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
         return VideoPopupPlayer(context, mediaUrl)
     }
     
-    override fun fromJsonString(jsonString: String): PopupPlayer {
-        val playerInfo = JSONObject(jsonString)
-        var url = playerInfo.getString("mediaPath")
-        val popupPlayer = create(url) as VideoPopupPlayer
-        val layoutParams = WindowManager.LayoutParams().apply {
-          x = playerInfo.getInt("x")
-          y = playerInfo.getInt("y")
-          width = playerInfo.getInt("width")
-          height = playerInfo.getInt("height")
-          type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-          else
-              WindowManager.LayoutParams.TYPE_TOAST
-          flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-          format = PixelFormat.TRANSLUCENT
-        }
-        
-        popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
-        popupPlayer.show(layoutParams)
-        popupPlayer.play(playerInfo.getLong("currentPosition"))
-        return popupPlayer       
+    override fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, playerInfo: JSONObject) {
+        (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
     }
 }
 
@@ -89,26 +96,7 @@ class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
         return ImagePopupPlayer(context, mediaUrl)
     }
     
-    override fun fromJsonString(jsonString: String): PopupPlayer {
-        val playerInfo = JSONObject(jsonString)
-        var url = playerInfo.getString("mediaPath")
-        val popupPlayer = create(url) as ImagePopupPlayer
-        val layoutParams = WindowManager.LayoutParams().apply {
-          x = playerInfo.getInt("x")
-          y = playerInfo.getInt("y")
-          width = playerInfo.getInt("width")
-          height = playerInfo.getInt("height")
-          type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-          else
-              WindowManager.LayoutParams.TYPE_TOAST
-          flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-          format = PixelFormat.TRANSLUCENT
-        }
-        
-        //popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
-        popupPlayer.show(layoutParams)
-        //popupPlayer.play(playerInfo.getLong("currentPosition"))
-        return popupPlayer           
+    override fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, jsonObject: JSONObject) {
+                   
     }
 }
