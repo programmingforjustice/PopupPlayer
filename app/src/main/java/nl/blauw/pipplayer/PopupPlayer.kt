@@ -91,7 +91,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private val controlLayout: View
     private val imageView: ImageView
     
-    private val startTime: Long = 0
+    private var startTime: Long = 0
     
     init {
         // 예: activity나 fragment 내에서 inflate할 때
