@@ -48,47 +48,22 @@ class PlayerService : Service() {
         startForeground(1, notification);
         
         val command = intent?.getStringExtra(COMMAND) ?: return START_NOT_STICKY
-        
         commandMap[command]?.invoke(intent) ?: throw IllegalStateException("unknown command received.")
-        /*when (command) {
-          ACTION_START_PIP -> {
-            val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
-            
-            var popupPlayer = PopupPlayerManager.create(url).apply {
-              show()
-              play()
-            }
-          }
-          ACTION_SAVE_CURRENT_PLAYLIST -> {
-            PopupPlayerManager.savePlayList()
-          }
-          ACTION_RESTORE_CURRENT_PLAYLIST -> {
-            PopupPlayerManager.restorePlayList()
-          }
-          else -> {
-            
-          }
-        }*/
-    
+
         return START_NOT_STICKY
     }
     
     private fun startPopupPlayer(intent: Intent?) {
         val url = intent?.getStringExtra("data") ?: throw IllegalStateException("cannot get mediaUrl from intent.")
-        
         PopupPlayerManager.create(url).apply {
             show()
             play()
         }
     }
     
-    private fun savePlayList(intent: Intent?) {
-        PopupPlayerManager.savePlayList()
-    }
+    private fun savePlayList(intent: Intent?) = PopupPlayerManager.savePlayList()
     
-    private fun restorePlayList(intent: Intent?) {
-        PopupPlayerManager.restorePlayList()
-    }
+    private fun restorePlayList(intent: Intent?) = PopupPlayerManager.restorePlayList()
 
     override fun onDestroy() {
         PopupPlayerManager.clear()
