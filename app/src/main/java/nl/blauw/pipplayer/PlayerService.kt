@@ -17,6 +17,12 @@ import com.google.android.exoplayer2.ExoPlayer
 
 class PlayerService : Service() {
 
+    private val commandMap = mapOf(
+        ACTION_START_PIP to ::startPopupPlayer,
+        ACTION_SAVE_CURRENT_PLAYLIST to ::savePlayList,
+        ACTION_RESTORE_CURRENT_PLAYLIST to ::restorePlayList
+    )
+
     companion object {
         const val ACTION_START_PIP = "nl.blauw.pipplayer.ACTION_START_PIP"
         const val ACTION_SAVE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.SAVE_CURRENT_PLAYLIST"
@@ -41,8 +47,10 @@ class PlayerService : Service() {
             .build();
         startForeground(1, notification);
         
-        val command = intent?.getStringExtra(COMMAND)
-        when (command) {
+        val command = intent?.getStringExtra(COMMAND) ?: return START_NOT_STICKY
+        
+        commandMap[command]?.invoke(intent) ?: throw IllegalArgumentException("unknown command received.")
+        /*when (command) {
           ACTION_START_PIP -> {
             val url = intent?.getStringExtra("data") ?: return START_NOT_STICKY
             
@@ -60,9 +68,26 @@ class PlayerService : Service() {
           else -> {
             
           }
-        }
+        }*/
     
         return START_NOT_STICKY
+    }
+    
+    private fun startPopupPlayer(intent: Intent?) {
+        val url = intent?.getStringExtra("data") ?: IllegalStateException("cannot read mediaUrl from intent.")
+        
+        PopupPlayerManager.create(url).apply {
+            show()
+            play()
+        }
+    }
+    
+    private fun savePlayList(intent: Intent?) {
+        PopupPlayerManager.savePlayList()
+    }
+    
+    private fun restorePlayList(intent: Intent?) {
+        PopupPlayerManager.restorePlayList()
     }
 
     override fun onDestroy() {
