@@ -116,15 +116,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
-        imageViewLayout.setOnClickListener {
-            imageViewLayout.isClickable = false
-            controlLayout.visibility = View.VISIBLE
-            
-            controlLayout.postDelayed({
-                imageViewLayout.isClickable = true
-                controlLayout.visibility = View.GONE
-            }, 2500)
-        }
+        imageViewLayout.setOnClickListener(::toggleControlLayout)
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
@@ -137,6 +129,25 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         return imageViewLayout
     }
     
+    private fun hideControlLayout() {
+        //imageViewLayout.isClickable = true
+        controlLayout.visibility = View.GONE
+    }
+    
+    private fun toggleControlLayout() {
+        //imageViewLayout.isClickable = false
+        if (controlLayout.visibility == View.VISIBLE) {
+            controlLayout.removeCallbacks(::hideControlLayout)
+            controlLayout.visibility = View.GONE
+            //imageViewLayout.isClickable = true
+            return
+        }
+        
+        controlLayout.visibility = View.VISIBLE
+        controlLayout.postDelayed(::hideControlLayout
+            , 2500)
+    }
+    
     /*override fun show(params: WindowManager.LayoutParams?) {
         setupImageView()
         windowManager.addView(imageViewLayout, layoutParams)
@@ -144,6 +155,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
+        toggleControlLayout()
     }
     
     override fun dispose() {
