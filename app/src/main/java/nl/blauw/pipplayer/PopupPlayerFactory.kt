@@ -8,7 +8,7 @@ import android.view.WindowManager
 import org.json.JSONObject
 
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
-    protected var onFromJsonString: (()PopupPlayer, WindowManager.LayoutParams, JSONObject) -> Unit)? = null
+    protected var onFromJsonString: ((PopupPlayer, WindowManager.LayoutParams, JSONObject) -> Unit)? = null
 
     abstract fun canHandle(mediaUrl: String): Boolean
     abstract fun create(mediaUrl: String): PopupPlayer
