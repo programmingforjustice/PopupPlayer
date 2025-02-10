@@ -199,7 +199,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     //private var layoutParams: WindowManager.LayoutParams
     
     //private val imageView: ImageView = ImageView(context)
-    private val imageView: ImageView?
+    private var imageView: ImageView? = null
     var isPlaying: Boolean = false
     var isDisposed: Boolean = false
       private set
