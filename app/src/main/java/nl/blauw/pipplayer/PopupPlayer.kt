@@ -111,7 +111,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             layoutParams.height = height
             layoutParams.width = width
             imageViewLayout.tag = width.toDouble() / height //scaleFactor
-            imageView?.setImageBitmap(this)
+            imageView.setImageBitmap(this)
         }
         
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
@@ -199,7 +199,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     //private var layoutParams: WindowManager.LayoutParams
     
     //private val imageView: ImageView = ImageView(context)
-    private var imageView: ImageView? = null
+    private var imageView: ImageView = ImageView(context)
     var isPlaying: Boolean = false
     var isDisposed: Boolean = false
       private set
@@ -321,6 +321,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
      * PlayerView를 제거하고 ImageView로 대체하는 메서드
      */
     private fun replacePlayerViewWithImageView() {
+        if (imageView.parent != null) return
+        
         playerView.isClickable = false
         // 1. 현재 재생 중인 위치 확인
         val currentPosition = player.currentPosition
@@ -329,12 +331,12 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
         if (bitmap != null) {
             // 3. ImageView에 추출한 프레임 설정
-            imageView = ImageView(context)
-            imageView?.setImageBitmap(bitmap)
-            imageView?.scaleType = ImageView.ScaleType.FIT_CENTER
+            //imageView = ImageView(context)
+            imageView.setImageBitmap(bitmap)
+            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
-            imageView?.setOnClickListener {
-                imageView?.isClickable = false
+            imageView.setOnClickListener {
+                imageView.isClickable = false
                 
                 player = playerFactory.create(contentUrl)
                 playerView = playerViewFactory.create(player)
@@ -342,7 +344,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 
                 //player.seekTo(currentPosition)
                 (player as PlayerWrapper).setRenderedFirstFrameListener {
-                      if (imageView?.parent != null) {
+                      if (imageView.parent != null) {
                           windowManager.removeView(imageView)
                           playerView.isClickable = true
                       }
@@ -354,8 +356,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             
             layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
 
-            imageView?.tag = playerView.tag
-            imageView?.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+            imageView.tag = playerView.tag
+            imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
             
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
