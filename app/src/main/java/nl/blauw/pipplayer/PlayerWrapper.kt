@@ -84,52 +84,10 @@ class PlayerWrapper(private val player: Player): Player by player {
     fun enableExoPlayerFeatures(): ExoPlayerFeatureAccessor = 
         if (player is ExoPlayer) ExoPlayerFeatureAccessor(player) else throw UnsupportedOperationException("player instance is not ExoPlayer type.")
     
-    /*fun setMediaSource(mediaSource: MediaSource) {
-        if (player is ExoPlayer) {
-          player.setMediaSource(mediaSource)
-        } else {
-          throw UnsupportedOperationException("player instance is not ExoPlayer type.")
-        }
-    }*/
-    
     override fun release() {
         player.release()
         isReleased = true
     }
-
-    /*fun createPlayer() {
-        val loadControl = DefaultLoadControl.Builder()
-            .setBufferDurationsMs(
-                1000, // 최소 버퍼
-                2000, // 최대 버퍼
-                250,  // 재생 시작 전 버퍼
-                500   // 재버퍼링 후 버퍼
-            ).build()
-
-        val renderersFactory = DefaultRenderersFactory(context)
-            .setEnableDecoderFallback(true)
-            //.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
-
-        player = ExoPlayer.Builder(context, renderersFactory)
-            .setLoadControl(loadControl)
-            .build()
-            
-        player.addListener(playerListener)
-    }*/
-
-    // fun loadMediaSource(contentUrl: String) {
-    //     this.contentUrl = contentUrl
-        
-    //     val dataSourceFactory = DefaultDataSourceFactory(
-    //         context, Util.getUserAgent(context, context.getString(R.string.app_name))
-    //     )
-    //     val contentMediaSource: MediaSource = ProgressiveMediaSource.Factory(
-    //         dataSourceFactory,
-    //         DefaultExtractorsFactory()
-    //     ).createMediaSource(MediaItem.fromUri(contentUrl))
-
-    //     player.setMediaSource(contentMediaSource)
-    // }
     
     fun setVideoSizeChangedListener(action: ((VideoSize) -> Unit)?) {
         playerListener.onVideoSizeChangedListener = action
@@ -144,25 +102,7 @@ class PlayerWrapper(private val player: Player): Player by player {
         playerListener.onIsPlayingChangedListener = action
     }
     
-    /*override fun play() {
-        player.prepare()
-        player.repeatMode = Player.REPEAT_MODE_ALL
-        player.playWhenReady = true
-    }*/
-    
     /*fun applyToPlayer(command: (player: Player) -> Unit) {
         command(player)
-    }*/
-    
-    /*fun createPlayerViewManager(): PlayerViewManager {
-      return playerViewManagerFactory.create(player)
-    }*/
-
-    /*fun getPlayer(): Player {
-        return player
-    }
-
-    fun releasePlayer() {
-        if (::player.isInitialized) player.release()
     }*/
 }
