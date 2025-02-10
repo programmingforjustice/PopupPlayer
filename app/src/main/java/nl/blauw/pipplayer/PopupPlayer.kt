@@ -111,7 +111,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             layoutParams.height = height
             layoutParams.width = width
             imageViewLayout.tag = width.toDouble() / height //scaleFactor
-            imageView.setImageBitmap(this)
+            imageView?.setImageBitmap(this)
         }
         
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
@@ -330,11 +330,11 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         if (bitmap != null) {
             // 3. ImageView에 추출한 프레임 설정
             imageView = ImageView(context)
-            imageView.setImageBitmap(bitmap)
-            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
+            imageView?.setImageBitmap(bitmap)
+            imageView?.scaleType = ImageView.ScaleType.FIT_CENTER
             
-            imageView.setOnClickListener {
-                imageView.isClickable = false
+            imageView?.setOnClickListener {
+                imageView?.isClickable = false
                 
                 player = playerFactory.create(contentUrl)
                 playerView = playerViewFactory.create(player)
@@ -342,7 +342,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 
                 //player.seekTo(currentPosition)
                 (player as PlayerWrapper).setRenderedFirstFrameListener {
-                      if (imageView.parent != null) {
+                      if (imageView?.parent != null) {
                           windowManager.removeView(imageView)
                           playerView.isClickable = true
                       }
@@ -354,8 +354,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             
             layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
 
-            imageView.tag = playerView.tag
-            imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+            imageView?.tag = playerView.tag
+            imageView?.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
             
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
