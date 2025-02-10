@@ -336,11 +336,13 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 
                 player = playerFactory.create(contentUrl)
                 playerView = playerViewFactory.create(player)
+                playerView.isClickable = false
                 
                 //player.seekTo(currentPosition)
                 (player as PlayerWrapper).setRenderedFirstFrameListener {
                       if (imageView.parent != null) {
                           windowManager.removeView(imageView)
+                          playerView.isClickable = true
                       }
                 }
                 show()
