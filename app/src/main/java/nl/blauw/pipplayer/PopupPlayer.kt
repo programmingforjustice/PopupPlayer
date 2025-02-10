@@ -198,7 +198,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     //private val windowManager: WindowManager
     //private var layoutParams: WindowManager.LayoutParams
     
-    private val imageView: ImageView = ImageView(context)
+    //private val imageView: ImageView = ImageView(context)
+    private val imageView: ImageView?
     var isPlaying: Boolean = false
     var isDisposed: Boolean = false
       private set
@@ -328,6 +329,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
         if (bitmap != null) {
             // 3. ImageView에 추출한 프레임 설정
+            imageView = ImageView(context)
             imageView.setImageBitmap(bitmap)
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
