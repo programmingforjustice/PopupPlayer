@@ -332,7 +332,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
             imageView.setOnClickListener {
-                imageView.setOnClickListener(null)
+                imageView.isClickable = false
                 
                 player = playerFactory.create(contentUrl)
                 playerView = playerViewFactory.create(player)
@@ -356,7 +356,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             // 4. PlayerView를 WindowManager에서 제거
             //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
             //windowManager.removeView(playerView)
-            release()
+            //release()
 
             // 5. 동일한 위치에 ImageView를 추가
             /*val layoutParams = WindowManager.LayoutParams(
@@ -364,6 +364,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 WindowManager.LayoutParams.MATCH_PARENT
             )*/
             windowManager.addView(imageView, layoutParams)
+            
+            release()
         }
     }
     
