@@ -320,10 +320,10 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
      * PlayerView를 제거하고 ImageView로 대체하는 메서드
      */
     private fun replacePlayerViewWithImageView() {
+        playerView.isClickable = false
         // 1. 현재 재생 중인 위치 확인
         val currentPosition = player.currentPosition
         val videoUri = Uri.fromFile(File(contentUrl)) ?: return
-
         // 2. 현재 정지된 프레임을 추출
         val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
         if (bitmap != null) {
@@ -367,6 +367,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             
             release()
         }
+        playerView.isClickable = true
     }
     
     fun release() {
