@@ -81,11 +81,6 @@ abstract class PopupPlayer(protected val context: Context) {
     abstract fun createDisplayView(): View
 }
 
-/*class VideoPopupPlayer: PopupPlayer {
-    override fun show() {}
-    override fun play(currentPosition: Long = 0) {}
-}*/
-
 class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
     private val imageViewLayout: View
     private val controlLayout: View
@@ -94,14 +89,9 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private var startTime: Long = 0
     
     init {
-        // 예: activity나 fragment 내에서 inflate할 때
-        val inflater = LayoutInflater.from(context) // 또는 layoutInflater 사용
-        // inflate 메서드의 세번째 매개변수는 attachToRoot 여부를 나타냅니다.
+        val inflater = LayoutInflater.from(context) 
         imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
-        
-        // 예를 들어, inflatedView를 특정 ViewGroup에 추가할 경우:
         controlLayout = imageViewLayout.findViewById<View>(R.id.player_image_view_control)
-        
         imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
     }
     
@@ -154,11 +144,6 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             , 2500)
     }
     
-    /*override fun show(params: WindowManager.LayoutParams?) {
-        setupImageView()
-        windowManager.addView(imageViewLayout, layoutParams)
-    }*/
-    
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
         toggleControlLayout(null)
@@ -198,18 +183,13 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     //private val windowManager: WindowManager
     //private var layoutParams: WindowManager.LayoutParams
     
-    //private val imageView: ImageView = ImageView(context)
-    private var imageView: ImageView = ImageView(context)
+    private val imageView: ImageView = ImageView(context)
     var isPlaying: Boolean = false
     var isDisposed: Boolean = false
       private set
     var isFullscreen: Boolean = false
       private set
       
-    /*private val view: View = View(context).apply {
-         setBackgroundColor(Color.WHITE)
-     }*/
-    
     init {
         player = playerFactory.create(contentUrl)
         playerView = playerViewFactory.create(player)
@@ -235,10 +215,6 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                     }
             }
         }
-        
-        // playerManager.setRenderedFirstFrameListener {
-        //     windowManager.addView(playerView, layoutParams)
-         //}
          
          playerWrapper.setOnIsPlayingChangedListener {
                 replacePlayerViewWithImageView()
@@ -276,24 +252,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         setupPlayerView()
         return playerView
     }
-
-    /*override fun show(params: WindowManager.LayoutParams?) {
-        //layoutParams?.let { this.layoutParams = it }
-        // params?.apply {
-        //   layoutParams.x = x 
-        //   layoutParams.y = y 
-        //   layoutParams.width = width
-        //   layoutParams.height = height
-        //   isPlaying = true
-        // }
-        
-        setupPlayer()
-        setupPlayerView()
-        windowManager.addView(playerView, layoutParams)
-    }*/
     
     override fun play(currentPosition: Long) {
-        //isPlaying = true
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.prepare()
         player.seekTo(currentPosition)
@@ -331,7 +291,6 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
         if (bitmap != null) {
             // 3. ImageView에 추출한 프레임 설정
-            //imageView = ImageView(context)
             imageView.setImageBitmap(bitmap)
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
@@ -351,24 +310,12 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 }
                 show()
                 play(currentPosition)
-                //playerController.play(imageView.layoutParams as? WindowManager.LayoutParams)
             }
             
             layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
 
             imageView.tag = playerView.tag
             imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
-            
-            // 4. PlayerView를 WindowManager에서 제거
-            //val windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
-            //windowManager.removeView(playerView)
-            //release()
-
-            // 5. 동일한 위치에 ImageView를 추가
-            /*val layoutParams = WindowManager.LayoutParams(
-                WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.MATCH_PARENT
-            )*/
             windowManager.addView(imageView, layoutParams)
             
             release()
@@ -389,7 +336,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
     }
     
-    fun toggleFullscreen() { // 외부 컴포넌트(예:알림)에서 호출
+    fun toggleFullscreen() { 
         if (isFullscreen) {
             exitFullscreen()
         } else {
@@ -413,15 +360,6 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 flags = flags or WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
                 windowAnimations = android.R.style.Animation_Translucent
             }
-            
-            //windowManager.removeView(playerView)
-            //val playList = PopupPlayerManager.toJsonString()
-            
-            //windowManager.addView(playerView, fullscreenParams)
-            //setupImmersiveMode()
-            
-            //PopupPlayerManager.clear()
-            //PopupPlayerManager.fromJsonString(playList)
         
             windowManager.updateViewLayout(playerView, fullscreenParams)
             setupImmersiveMode()

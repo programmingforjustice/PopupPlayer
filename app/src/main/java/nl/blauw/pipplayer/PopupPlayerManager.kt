@@ -45,7 +45,6 @@ object PopupPlayerManager : JsonSerializable {
         jsonString?.let {
         val jsonArray = JSONArray(it)
 
-        // 각 객체의 "id" 값을 읽기
         for (i in 0 until jsonArray.length()) {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
             var popupPlayer = factory.fromJsonString(playerInfo.toString())

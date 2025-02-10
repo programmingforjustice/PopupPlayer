@@ -12,7 +12,6 @@ abstract class PopupPlayerFactory(protected val context: Context): JsonDeseriali
 
     abstract fun canHandle(mediaUrl: String): Boolean
     abstract fun create(mediaUrl: String): PopupPlayer
-    /*protected open fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, jsonObject: JSONObject) {}*/
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
         val playerInfo = JSONObject(jsonString)
@@ -84,11 +83,6 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun create(mediaUrl: String): PopupPlayer {
         return VideoPopupPlayer(context, mediaUrl)
     }
-    
-    /*fun fromJsonString(popupPlayer: PopupPlayer, layoutParams: WindowManager.LayoutParams, playerInfo: JSONObject) {
-        (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
-    }*/
-    
 }
 
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
