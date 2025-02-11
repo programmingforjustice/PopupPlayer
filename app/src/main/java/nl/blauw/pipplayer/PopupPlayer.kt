@@ -391,7 +391,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         val jsonObject = JSONObject().apply {
                 put("mediaPath", contentUrl)
                 put("currentPosition", player.currentPosition)
-                put("isPlaying", player.isPlaying)
+                put("isPlaying", isPlaying)
                 put("x", layoutParams.x)
                 put("y", layoutParams.y)
                 put("width", layoutParams.width)
