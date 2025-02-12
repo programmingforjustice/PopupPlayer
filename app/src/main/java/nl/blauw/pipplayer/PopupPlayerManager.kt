@@ -24,7 +24,7 @@ object PopupPlayerManager : JsonSerializable {
     fun create(mediaUrl: String): PopupPlayer {
         return factory.create(mediaUrl).also {
             playerList.add(it)
-            orderList.add(0,it)
+            orderList.add(it)
         }
     }
     
@@ -51,7 +51,7 @@ object PopupPlayerManager : JsonSerializable {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
             var popupPlayer = factory.fromJsonString(playerInfo.toString())
             playerList.add(popupPlayer)
-            orderList.add(0, popupPlayer)
+            orderList.add(popupPlayer)
         }
       }
     }
@@ -60,7 +60,7 @@ object PopupPlayerManager : JsonSerializable {
         val order = orderList.indexOf(player)
         if (order == -1) throw IllegalArgumentException("the specified PopupPlayer instance is not managed by PopupPlayerManager.")
         
-        val escalatedOrder = Math.max(0, order-1)
+        val escalatedOrder = Math.min(orderList.size-1, order+1)
         val temp = orderList[escalatedOrder]
         orderList[escalatedOrder] = orderList[order]
         orderList[order] = temp
@@ -97,6 +97,7 @@ object PopupPlayerManager : JsonSerializable {
     fun remove(popupPlayer: PopupPlayer) {
         popupPlayer.dispose()
         playerList.remove(popupPlayer)
+        orderList.remove(popupPlayer)
     }
     
     fun clear() {
