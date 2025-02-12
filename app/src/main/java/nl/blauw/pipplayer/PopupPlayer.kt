@@ -76,6 +76,7 @@ abstract class PopupPlayer(protected val context: Context) {
     }
     
     abstract fun play(currentPosition: Long = 0)
+    abstract fun removePopupWindow() 
     abstract fun dispose()
     
     abstract fun createDisplayView(): View
@@ -147,6 +148,10 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
         toggleControlLayout(null)
+    }
+    
+    override fun removePopupWindow() {
+        
     }
     
     override fun dispose() {
@@ -243,6 +248,11 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             toggleFullscreen()
         }
         
+        playerViewWrapper.setupOrderEscalationButton {
+            PopupPlayerManager.escalateOrder(this)
+            PopupPlayerManager.showAllPopupPlayerByOrder()
+        }
+        
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }
@@ -260,7 +270,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         player.playWhenReady = true
     }
 
-    fun removePopupWindow() {
+    override fun removePopupWindow() {
         windowManager.removeViewImmediate(playerView)
     }
     

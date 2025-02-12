@@ -24,6 +24,11 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         val fullscreenButton: ImageButton? = super.findViewById(R.id.fullscreen_button)
         fullscreenButton?.setOnClickListener(action)
     }
+    
+    fun setupOrderEscalationButton(action: (View) -> Unit) {
+        val orderEscalationButton: ImageButton? = super.findViewById(R.id.order_escalation_button)
+        orderEscalationButton?.setOnClickListener(action)
+    }
 
     fun setupTouchListener(action: (View, MotionEvent) -> Boolean) {
         super.setOnTouchListener(action)

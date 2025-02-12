@@ -13,6 +13,7 @@ object PopupPlayerManager : JsonSerializable {
     
     private lateinit var context: Context
     private var playerList: MutableList<PopupPlayer> = mutableListOf()
+    private var orderList: MutableList<PopupPlayer> = mutableListOf()
     private lateinit var factory: PopupPlayerFactory
     
     fun initialize(context: Context) {
@@ -23,6 +24,7 @@ object PopupPlayerManager : JsonSerializable {
     fun create(mediaUrl: String): PopupPlayer {
         return factory.create(mediaUrl).also {
             playerList.add(it)
+            orderList.add(0,it)
         }
     }
     
@@ -49,8 +51,37 @@ object PopupPlayerManager : JsonSerializable {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
             var popupPlayer = factory.fromJsonString(playerInfo.toString())
             playerList.add(popupPlayer)
+            orderList.add(0,it)
         }
       }
+    }
+    
+    fun escalateOrder(player: PopupPlayer) {
+        val order = orderList.indexOf(player)
+        if (index == -1) throw IllegalArgumenrException("the specified PopupPlayer instance is not managed by PopupPlayerManager.")
+        
+        val escalatedOrder = Math.max(0, index-1)
+        val temp = orderList[escalatedOrder]
+        orderList[escalatedOrder] = orderList[order]
+        orderList[order] = temp
+    }
+    
+    fun showAllPopupPlayerByOrder() {
+        closeAllPopupPlayerWindow()
+        orderList.forEach { popupPlayer ->
+            popupPlayer.show()
+            //popupPlayer.play()
+        }
+    }
+    
+    fun closePopupPlayerWindow(player: PopupPlayer) {
+        player.removePopupWindow()
+    }
+    
+    fun closeAllPopupPlayerWindow() {
+        playerList.forEach { popupPlayer -> 
+            closePopupPlayerWindow(popupPlayer)
+        }
     }
     
     fun restorePlayList() {
@@ -77,5 +108,6 @@ object PopupPlayerManager : JsonSerializable {
             popupPlayer.dispose() 
           }
         playerList = mutableListOf()
+        orderList = mutableListOf()
     }
 }
