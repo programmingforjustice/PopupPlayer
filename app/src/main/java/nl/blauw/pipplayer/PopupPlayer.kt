@@ -367,6 +367,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             //windowManager.addView(playerView, fullscreenParams)
             player.stop()
             playerView.player = null
+            playerView.player = player
             play(player.currentPosition)
         }
     }
