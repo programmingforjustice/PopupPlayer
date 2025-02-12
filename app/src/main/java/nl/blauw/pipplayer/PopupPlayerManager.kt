@@ -51,16 +51,16 @@ object PopupPlayerManager : JsonSerializable {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
             var popupPlayer = factory.fromJsonString(playerInfo.toString())
             playerList.add(popupPlayer)
-            orderList.add(0,it)
+            orderList.add(0, popupPlayer)
         }
       }
     }
     
     fun escalateOrder(player: PopupPlayer) {
         val order = orderList.indexOf(player)
-        if (index == -1) throw IllegalArgumenrException("the specified PopupPlayer instance is not managed by PopupPlayerManager.")
+        if (order == -1) throw IllegalArgumenrException("the specified PopupPlayer instance is not managed by PopupPlayerManager.")
         
-        val escalatedOrder = Math.max(0, index-1)
+        val escalatedOrder = Math.max(0, order-1)
         val temp = orderList[escalatedOrder]
         orderList[escalatedOrder] = orderList[order]
         orderList[order] = temp
