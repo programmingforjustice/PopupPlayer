@@ -362,11 +362,12 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             }
         
             windowManager.updateViewLayout(playerView, fullscreenParams)
-            setupImmersiveMode()
-            //removePopupWindow()
-            //windowManager.addView(playerView, fullscreenParams)
+            //setupImmersiveMode()
+            
+            removePopupWindow()
             player.stop()
             playerView.player = null
+            windowManager.addView(playerView, fullscreenParams)
             playerView.player = player
             play(player.currentPosition)
         }
