@@ -39,7 +39,7 @@ class AudioCodecMuteToggleButtonListener(player: Player, isMuted: Boolean) : Vie
     }
 }
 
-class AudioToggleHelper(val player: Player, isMuted: Boolean) {
+class AudioToggleHelper(val player: Player,  var isMuted: Boolean) {
 
     // var player: Player = player
     //     set(value) {
@@ -47,11 +47,15 @@ class AudioToggleHelper(val player: Player, isMuted: Boolean) {
     //         updateAudioCodecStatus()
     //     }
         
-    var isMuted: Boolean = isMuted
+    /*var isMuted: Boolean = isMuted
         set(value) {
             field = value
             updateAudioCodecStatus()
-        }
+        }*/
+        
+    init {
+        updateAudioCodecStatus()
+    }
 
     fun toggleMute() {
         isMuted = !isMuted
