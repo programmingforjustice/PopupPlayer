@@ -245,7 +245,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         //val muteToggleButtonListener =  MuteToggleButtonListener(player)
         //val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player, isMuted)
         audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player, isMuted)
-        playerViewWrapper.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
+        playerViewWrapper.setupMuteToggleButton (audioCodecMuteToggleButtonListener?::onClick)
         
         playerViewWrapper.setupFullscreenButton {
             toggleFullscreen()
