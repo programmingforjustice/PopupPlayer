@@ -187,7 +187,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     private val imageView: ImageView = ImageView(context)
     
     //private val muteToggleButtonListener =  MuteToggleButtonListener(player)
-    private var audioCodecMuteToggleButtonListener: View.OnClickListener? = null
+    private lateinit var audioCodecMuteToggleButtonListener: View.OnClickListener
     
     var isPlaying: Boolean = false
     var isMuted: Boolean = true
