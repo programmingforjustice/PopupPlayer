@@ -15,7 +15,7 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         crossButton?.setOnClickListener(action)
     }
     
-    fun setupMuteToggleButton(action: (View) -> Unit) {
+    fun setupMuteToggleButton(action: ((View) -> Unit)?) {
         val muteToggleButton: ImageButton? = super.findViewById(R.id.mute_toggle_button)
         muteToggleButton?.setOnClickListener(action)
     }
