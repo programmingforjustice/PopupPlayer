@@ -184,11 +184,11 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
 class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer(context), JsonSerializable {
     private var player: Player
     private var playerView: PlayerView
-    
-    //private val windowManager: WindowManager
-    //private var layoutParams: WindowManager.LayoutParams
-    
     private val imageView: ImageView = ImageView(context)
+    
+    //private val muteToggleButtonListener =  MuteToggleButtonListener(player)
+    private val audioCodecMuteToggleButtonListener: View.OnClickListener
+    
     var isPlaying: Boolean = false
     var isDisposed: Boolean = false
       private set
@@ -198,6 +198,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     init {
         player = playerFactory.create(contentUrl)
         playerView = playerViewFactory.create(player)
+        audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
     }
     
     private fun setupPlayer() {
@@ -241,7 +242,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
         
         //val muteToggleButtonListener =  MuteToggleButtonListener(player)
-        val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
+        //val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
         playerViewWrapper.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
         
         playerViewWrapper.setupFullscreenButton {
