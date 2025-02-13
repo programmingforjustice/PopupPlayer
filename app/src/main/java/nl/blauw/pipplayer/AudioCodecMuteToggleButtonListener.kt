@@ -16,7 +16,7 @@ class AudioCodecMuteToggleButtonListener(private val muteToggleButton: ImageButt
         }
     }*/
     
-    var isMuted: Boolean
+    var isMuted: Boolean = isMuted
         get() = audioToggleHelper.isMuted
         private set
         /*set(value) {
