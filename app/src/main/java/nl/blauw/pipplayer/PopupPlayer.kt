@@ -271,7 +271,11 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
 
     override fun removePopupWindow() {
-        windowManager.removeViewImmediate(playerView)
+        if (playerView.parent != null)
+            windowManager.removeViewImmediate(playerView)
+        else if (imageView.parent != null)
+            windowManager.removeViewImmediate(imageView)
+        
     }
     
     private fun getFrameAtCurrentPosition(videoUri: Uri, currentPosition: Long): Bitmap? {
@@ -308,8 +312,9 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 imageView.isClickable = false
                 
                 player = playerFactory.create(contentUrl)
-                playerView = playerViewFactory.create(player)
-                playerView.isClickable = false
+                playerView.player = player
+                //playerView = playerViewFactory.create(player)
+                //playerView.isClickable = false
                 
                 //player.seekTo(currentPosition)
                 (player as PlayerWrapper).setRenderedFirstFrameListener {
