@@ -7,7 +7,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.C
 
-class AudioCodecMuteToggleButtonListener(private val muteToggleButton: ImageButton, player: Player, isMuted: Boolean) : View.OnClickListener {
+class AudioCodecMuteToggleButtonListener(player: Player, isMuted: Boolean) : View.OnClickListener {
     private var audioToggleHelper = AudioToggleHelper(player, isMuted)
     
     /*init {
