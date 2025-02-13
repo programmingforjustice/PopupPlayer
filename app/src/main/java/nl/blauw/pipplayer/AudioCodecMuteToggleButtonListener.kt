@@ -7,12 +7,21 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.C
 
-class AudioCodecMuteToggleButtonListener(private val player: Player) : View.OnClickListener {
-    private var audioToggleHelper = AudioToggleHelper(player)
+class AudioCodecMuteToggleButtonListener(private val muteToggleButton: ImageButton, player: Player, isMuted: Boolean) : View.OnClickListener {
+    private var audioToggleHelper = AudioToggleHelper(player, isMuted)
     
-    init {
-      audioToggleHelper.toggleMute()
-    }
+    /*init {
+        if (isMuted) {
+            audioToggleHelper.toggleMute()
+        }
+    }*/
+    
+    var isMuted: Boolean
+        get() = audioToggleHelper.isMuted
+        private set
+        /*set(value) {
+            audioToggleHelper.isMuted = value
+        }*/
 
     override fun onClick(v: View) {
         toggleMute(v as ImageButton)
@@ -30,18 +39,30 @@ class AudioCodecMuteToggleButtonListener(private val player: Player) : View.OnCl
     }
 }
 
-class AudioToggleHelper(private val player: Player) {
+class AudioToggleHelper(val player: Player, isMuted: Boolean) {
 
-    var isMuted: Boolean = false
-        private set
+    // var player: Player = player
+    //     set(value) {
+    //         field = value
+    //         updateAudioCodecStatus()
+    //     }
+        
+    var isMuted: Boolean = isMuted
+        set(value) {
+            field = value
+            updateAudioCodecStatus()
+        }
 
     fun toggleMute() {
         isMuted = !isMuted
-        
+        updateAudioCodecStatus()
+    }
+    
+    private fun updateAudioCodecStatus() {
         val trackSelector = (player as? PlayerWrapper)?.enableExoPlayerFeatures()?.trackSelector as? DefaultTrackSelector
         val parametersBuilder = trackSelector?.buildUponParameters()
         
-        parametersBuilder?.setRendererDisabled(C.TRACK_TYPE_AUDIO, if (isMuted) true else false)
+        parametersBuilder?.setRendererDisabled(C.TRACK_TYPE_AUDIO, isMuted)
         parametersBuilder?.build()?.let {
             trackSelector.setParameters(it)
         }

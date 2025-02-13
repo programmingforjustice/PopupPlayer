@@ -190,6 +190,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     private val audioCodecMuteToggleButtonListener: View.OnClickListener
     
     var isPlaying: Boolean = false
+    var isMuted: Boolean = true
     var isDisposed: Boolean = false
       private set
     var isFullscreen: Boolean = false
@@ -198,7 +199,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     init {
         player = playerFactory.create(contentUrl)
         playerView = playerViewFactory.create(player)
-        audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
+        //audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
     }
     
     private fun setupPlayer() {
@@ -242,7 +243,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
         
         //val muteToggleButtonListener =  MuteToggleButtonListener(player)
-        //val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
+        //val audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player, isMuted)
+        audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player, isMuted)
         playerViewWrapper.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
         
         playerViewWrapper.setupFullscreenButton {
@@ -259,14 +261,6 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     override fun createDisplayView(): View {
-        /*if (playerView.player == null)
-            setupPlayer()
-            setupPlayerView()
-            return playerView
-        else {
-            return imageView
-        }*/
-        
         return playerView.takeIf {playerView.player != null} ?.also {
                 setupPlayer()
                 setupPlayerView()
@@ -323,6 +317,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 
                 player = playerFactory.create(contentUrl)
                 playerView.player = player
+                
                 //playerView = playerViewFactory.create(player)
                 //playerView.isClickable = false
                 
@@ -333,6 +328,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                           playerView.isClickable = true
                       }
                 }
+                
+                isMuted = audioCodecMuteToggleButtonListener.isMuted
                 show()
                 play(currentPosition)
             }
