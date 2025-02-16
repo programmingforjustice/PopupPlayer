@@ -122,6 +122,7 @@ class NewMainActivity : AppCompatActivity() {
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id
                 )
                 items.add(MediaItem(uri = contentUri, displayName = name, mimeType = mimeType))
+                ++count
             }
         }
 
@@ -150,6 +151,7 @@ class NewMainActivity : AppCompatActivity() {
                     MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id
                 )
                 items.add(MediaItem(uri = contentUri, displayName = name, mimeType = mimeType))
+                ++count
             }
         }
 
