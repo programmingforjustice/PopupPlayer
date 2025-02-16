@@ -3,6 +3,8 @@ package nl.blauw.pipplayer
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.ContentUris
+import android.content.ContentResolver
+import android.net.Uri
 import android.os.Bundle
 import android.os.Build
 import android.provider.MediaStore
