@@ -94,7 +94,7 @@ class NewMainActivity : AppCompatActivity() {
     }
 
     // 사진과 동영상 항목을 쿼리하여 List<MediaItem>으로 반환
-    private fun fetchMediaItems(): List<MediaItem> {
+    /*private fun fetchMediaItems(): List<MediaItem> {
         val items = mutableListOf<MediaItem>()
 
         // 사진 쿼리
@@ -155,6 +155,75 @@ class NewMainActivity : AppCompatActivity() {
             }
         }
 
+        return items
+    }*/
+    
+    private fun fetchMediaItems(): List<MediaItem> {
+        val items = mutableListOf<MediaItem>()
+    
+        // MediaStore.Files를 사용하여 이미지와 동영상을 모두 쿼리
+        val projection = arrayOf(
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Files.FileColumns.DATE_ADDED,
+            MediaStore.Files.FileColumns.MEDIA_TYPE
+        )
+    
+        // 이미지와 동영상만 선택 (SQLite 쿼리의 WHERE절처럼)
+        val selection = ("${MediaStore.Files.FileColumns.MEDIA_TYPE}=? OR " +
+                         "${MediaStore.Files.FileColumns.MEDIA_TYPE}=?")
+        val selectionArgs = arrayOf(
+            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
+            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString()
+        )
+    
+        val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
+    
+        // 쿼리 URI (API 25 이하에서는 URI에 "limit" 파라미터를 추가)
+        val queryUri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            MediaStore.Files.getContentUri("external").buildUpon()
+                .appendQueryParameter("limit", "20")
+                .build()
+        } else {
+            MediaStore.Files.getContentUri("external")
+        }
+    
+        val cursor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // API 26 이상: Bundle을 사용하여 LIMIT과 정렬, selection 조건을 전달
+            val queryArgs = Bundle().apply {
+                putString(ContentResolver.QUERY_ARG_SQL_SELECTION, selection)
+                putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, selectionArgs)
+                putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, sortOrder)
+                putInt(ContentResolver.QUERY_ARG_LIMIT, 20)
+            }
+            contentResolver.query(queryUri, projection, queryArgs, null)
+        } else {
+            // API 25 이하: 기존 방식 (URI에 limit 파라미터가 이미 포함됨)
+            contentResolver.query(queryUri, projection, selection, selectionArgs, sortOrder)
+        }
+    
+        cursor?.use {
+            val idColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
+            val nameColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
+            val mimeTypeColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
+            val mediaTypeColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+            while (it.moveToNext()) {
+                val id = it.getLong(idColumn)
+                val name = it.getString(nameColumn) ?: "Unknown"
+                val mimeType = it.getString(mimeTypeColumn) ?: ""
+                val mediaType = it.getInt(mediaTypeColumn)
+                val contentUri = when (mediaType) {
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> 
+                        ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> 
+                        ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
+                    else -> Uri.EMPTY
+                }
+                items.add(MediaItem(uri = contentUri, displayName = name, mimeType = mimeType))
+            }
+        }
+    
         return items
     }
 
