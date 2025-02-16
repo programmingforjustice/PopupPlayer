@@ -96,7 +96,7 @@ class NewMainActivity : AppCompatActivity() {
     // 사진과 동영상 항목을 쿼리하여 List<MediaItem>으로 반환
     private fun fetchMediaItems(): List<MediaItem> {
         val items = mutableListOf<MediaItem>()
-
+        val limit = "LIMIT 20"
         // 사진 쿼리
         val imageProjection = arrayOf(
             MediaStore.Images.Media._ID,
@@ -108,7 +108,7 @@ class NewMainActivity : AppCompatActivity() {
             imageProjection,
             null,
             null,
-            null
+            limit
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
@@ -135,7 +135,7 @@ class NewMainActivity : AppCompatActivity() {
             videoProjection,
             null,
             null,
-            null
+            limit
         )?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
