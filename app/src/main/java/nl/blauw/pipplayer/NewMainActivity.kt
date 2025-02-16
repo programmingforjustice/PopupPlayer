@@ -97,31 +97,32 @@ class NewMainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PERMISSION_READ_MEDIA)
         }
                             
-        //lifecycleScope.launch {
+        lifecycleScope.launch {
         if (currentSelectedItemId == R.id.nav_folders) {
-            /*debug("start - query media items.")
+            //debug("start - query media items.")
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
-            debug("finish - query media items.")*/
-            debug("start - query media items.")
+            //debug("finish - query media items.")
+            
+            //debug("start - query media items.")
             val mediaItems = fetchMediaItems()
-            debug("finish - query media items.")
+            //debug("finish - query media items.")
             if (mediaItems.isNotEmpty()) {
-                debug("mediaItems.size = ${mediaItems.size}")
-                debug("start - recyclerview setup")
+                //debug("mediaItems.size = ${mediaItems.size}")
+                //debug("start - recyclerview setup")
                 binding.recyclerView.visibility = View.VISIBLE
-                debug("recyclerview - layoutManager")
+                //debug("recyclerview - layoutManager")
                 binding.recyclerView.layoutManager = LinearLayoutManager(this@NewMainActivity)
                 //binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 
-                debug("recyclerview - MediaAdapter")
+                //debug("recyclerview - MediaAdapter")
                 mediaAdapter = MediaAdapter(mediaItems)
                 binding.recyclerView.adapter = mediaAdapter
-                debug("end - recyclerview setup")
+                //debug("end - recyclerview setup")
             } else {
                 binding.recyclerView.visibility = View.GONE
             }
         }
-        //}
+        }
     }
     
     private fun fetchMediaItems(): List<MediaItem> {
