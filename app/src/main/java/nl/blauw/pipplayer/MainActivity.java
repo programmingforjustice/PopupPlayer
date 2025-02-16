@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
   private Button saveButton;
   
   private Button restoreButton;
+  
+  private Button newMainActivityButton;
 
   private Button exitButton;
 
@@ -121,6 +123,16 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, PlayerService.class);
             intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_RESTORE_CURRENT_PLAYLIST);
             startForegroundService(intent);
+          }
+        });
+        
+    newMainActivityButton = (Button) findViewById(R.id.button_new_main_activity);
+    newMainActivityButton.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this, NewMainActivity.class);
+            startActivity(intent);
           }
         });
 
