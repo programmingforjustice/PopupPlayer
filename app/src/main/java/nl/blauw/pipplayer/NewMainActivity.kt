@@ -63,7 +63,7 @@ class NewMainActivity : AppCompatActivity() {
                     binding.recyclerView.visibility = View.GONE
                 }
             }
-            menuItem.setChecked(false)
+            //menuItem.setChecked(false)
             binding.drawerLayout.closeDrawers()
             true
         }
@@ -171,10 +171,10 @@ class NewMainActivity : AppCompatActivity() {
     }
 
     // 툴바 액션 아이템(돋보기) 메뉴 구성
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
-    }
+    }*/
     
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == RequestCodes.PERMISSION_READ_MEDIA) {
