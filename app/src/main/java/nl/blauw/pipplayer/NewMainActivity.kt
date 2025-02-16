@@ -36,7 +36,7 @@ class NewMainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         // ActionBarDrawerToggle (햄버거 아이콘) 설정
-        val toggle = ActionBarDrawerToggle(
+        /*val toggle = ActionBarDrawerToggle(
             this,
             binding.drawerLayout,
             binding.toolbar,
@@ -44,7 +44,12 @@ class NewMainActivity : AppCompatActivity() {
             R.string.navigation_drawer_close
         )
         binding.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
+        toggle.syncState()*/
+        
+        binding.navigationView.setOnClickListener{
+            // START = left,  END = right
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
 
         // NavigationView 헤더의 TextView 가져오기
         val headerView = binding.navigationView.getHeaderView(0)
@@ -65,7 +70,7 @@ class NewMainActivity : AppCompatActivity() {
             }
             //menuItem.setChecked(false)
             binding.drawerLayout.closeDrawers()
-            false
+            true
         }
     }
 
