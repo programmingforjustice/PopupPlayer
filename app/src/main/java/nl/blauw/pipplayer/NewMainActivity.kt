@@ -67,7 +67,7 @@ class NewMainActivity : AppCompatActivity() {
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
             if (mediaItems.isNotEmpty()) {
                 binding.recyclerView.visibility = View.VISIBLE
-                binding.recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
+                binding.recyclerView.layoutManager = LinearLayoutManager(this@NewMainActivity)
                 mediaAdapter = MediaAdapter(mediaItems)
                 binding.recyclerView.adapter = mediaAdapter
             } else {
