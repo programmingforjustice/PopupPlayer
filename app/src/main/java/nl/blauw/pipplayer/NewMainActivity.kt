@@ -63,6 +63,7 @@ class NewMainActivity : AppCompatActivity() {
                     binding.recyclerView.visibility = View.GONE
                 }
             }
+            menuItem.setChecked(false)
             binding.drawerLayout.closeDrawers()
             true
         }
