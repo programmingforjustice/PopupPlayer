@@ -108,7 +108,7 @@ class NewMainActivity : AppCompatActivity() {
             if (mediaItems.isNotEmpty()) {
                 debug("mediaItems.size = ${mediaItems.size}")
                 debug("start - recyclerview setup")
-                //binding.recyclerView.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.VISIBLE
                 debug("recyclerview - layoutManager")
                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
                 
