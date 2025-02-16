@@ -62,14 +62,13 @@ class NewMainActivity : AppCompatActivity() {
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
                 /*if (menuItem.itemId != currentSelectedItemId) {
                     currentSelectedItemId = menuItem.itemId*/
+                    currentSelectedItemId = menuItem.itemId
                     headerTitle.text = "Selected Menu: ${menuItem.title}"
         
                     when (menuItem.itemId) {
                         R.id.nav_folders -> {
                             // MediaStore API를 사용하여 사진과 동영상 목록을 가져와 RecyclerView에 출력
-                        lifecycleScope.launch {
-                            if (menuItem.itemId != currentSelectedItemId) loadMediaItems()
-                        }
+                        loadMediaItems()
                             //debug("select - folders menu")
                         }
                         else -> {
@@ -78,14 +77,14 @@ class NewMainActivity : AppCompatActivity() {
                     }
                 //}
             //menuItem.setChecked(false)
-            currentSelectedItemId = menuItem.itemId
+            currentSelectedItemId = -1
             binding.drawerLayout.closeDrawers()
             true
         }
     }
 
     // MediaStore를 통해 미디어 항목을 가져오는 함수
-    private suspend fun loadMediaItems() {
+    private fun loadMediaItems() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13 이상에서는 각각의 권한을 요청해야 합니다.
             ActivityCompat.requestPermissions(this, arrayOf(
@@ -97,8 +96,9 @@ class NewMainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, 
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PERMISSION_READ_MEDIA)
         }
-        
-        //lifecycleScope.launch {
+                            
+        lifecycleScope.launch {
+        if (currentSelectedItemId == R.id.nav_folders) {
             debug("start - query media items.")
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
             debug("finish - query media items.")
@@ -110,7 +110,8 @@ class NewMainActivity : AppCompatActivity() {
             } else {
                 binding.recyclerView.visibility = View.GONE
             }
-        //}
+        }
+        }
     }
     
     private fun fetchMediaItems(): List<MediaItem> {
