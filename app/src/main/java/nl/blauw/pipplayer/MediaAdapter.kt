@@ -1,9 +1,9 @@
-package com.example.app
+package nl.blauw.pipplayer
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.app.databinding.ItemFileBinding
+import nl.blauw.pipplayer.databinding.ItemFileBinding
 
 class MediaAdapter(private val items: List<MediaItem>) :
     RecyclerView.Adapter<MediaAdapter.ViewHolder>() {

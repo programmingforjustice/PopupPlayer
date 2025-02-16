@@ -1,4 +1,4 @@
-package com.example.app
+package nl.blauw.pipplayer
 
 import android.net.Uri
 

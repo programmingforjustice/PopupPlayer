@@ -1,4 +1,4 @@
-package com.example.app
+package nl.blauw.pipplayer
 
 import android.content.ContentUris
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.app.databinding.ActivityNewMainBinding
+import nl.blauw.pipplayer.databinding.ActivityNewMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
