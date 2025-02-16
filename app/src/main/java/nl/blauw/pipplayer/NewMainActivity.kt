@@ -141,8 +141,8 @@ class NewMainActivity : AppCompatActivity() {
         val selection = ("${MediaStore.Files.FileColumns.MEDIA_TYPE}=? OR " +
                          "${MediaStore.Files.FileColumns.MEDIA_TYPE}=?")
         val selectionArgs = arrayOf(
-            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
-            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString()
+            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString()
         )
     
         //val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
