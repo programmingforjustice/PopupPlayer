@@ -5,7 +5,11 @@
 	<color name="yellow">#FFFFFF00</color>
 	<color name="white">#FFFFFFFF</color>
 	
-	<color name="lightBlue">#add8e6</color>
+	
+	
+	
+	
+    <color name="light_blue">#ADD8E6</color>
     <color name="white_50">#80FFFFFF</color>
     <color name="white_20">#33FFFFFF</color>
     <color name="blue_50">#800000FF</color>
