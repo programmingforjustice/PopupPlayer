@@ -106,10 +106,13 @@ class NewMainActivity : AppCompatActivity() {
             val mediaItems = fetchMediaItems()
             debug("finish - query media items.")
             if (mediaItems.isNotEmpty()) {
+                debug("mediaItems.size = {mediaItems.size}")
+                debug("start - recyclerview setup")
                 binding.recyclerView.visibility = View.VISIBLE
                 binding.recyclerView.layoutManager = LinearLayoutManager(this@NewMainActivity)
                 mediaAdapter = MediaAdapter(mediaItems)
                 binding.recyclerView.adapter = mediaAdapter
+                debug("end - recyclerview setup")
             } else {
                 binding.recyclerView.visibility = View.GONE
             }
