@@ -108,7 +108,7 @@ class NewMainActivity : AppCompatActivity() {
             if (mediaItems.isNotEmpty()) {
                 debug("mediaItems.size = ${mediaItems.size}")
                 debug("start - recyclerview setup")
-                binding.recyclerView.visibility = View.VISIBLE
+                //binding.recyclerView.visibility = View.VISIBLE
                 debug("recyclerview - layoutManager")
                 /*binding.recyclerView.layoutManager = LinearLayoutManager(this@NewMainActivity)*/
                 
@@ -205,7 +205,8 @@ class NewMainActivity : AppCompatActivity() {
         if (requestCode == RequestCodes.PERMISSION_READ_MEDIA) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // 권한이 허용됨
-                loadMediaItems()
+                //loadMediaItems()
+                Toast.makeText(this, "permission is allowed.", Toast.LENGTH_SHORT).show()
             } else {
                 // 권한이 거부됨
                 Toast.makeText(this, "권한이 필요합니다.", Toast.LENGTH_SHORT).show()
