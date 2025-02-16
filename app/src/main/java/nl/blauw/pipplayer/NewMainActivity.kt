@@ -112,8 +112,8 @@ class NewMainActivity : AppCompatActivity() {
                 debug("recyclerview - layoutManager")
                 binding.recyclerView.layoutManager = LinearLayoutManager(this)
                 
-                //mediaAdapter = MediaAdapter(mediaItems)
-                //debug("recyclerview - MediaAdapter")
+                mediaAdapter = MediaAdapter(mediaItems)
+                debug("recyclerview - MediaAdapter")
                 //binding.recyclerView.adapter = mediaAdapter
                 //debug("end - recyclerview setup")
             } else {
