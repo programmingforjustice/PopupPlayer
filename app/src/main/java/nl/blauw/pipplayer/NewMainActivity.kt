@@ -128,7 +128,7 @@ class NewMainActivity : AppCompatActivity() {
         } else {
             MediaStore.Files.getContentUri("external")
         }
-        debug("start - obtain query results.")
+        //debug("start - obtain query results.")
         val cursor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // API 26 이상: Bundle을 사용하여 LIMIT과 정렬, selection 조건을 전달
             val queryArgs = Bundle().apply {
@@ -142,13 +142,13 @@ class NewMainActivity : AppCompatActivity() {
             // API 25 이하: 기존 방식 (URI에 limit 파라미터가 이미 포함됨)
             contentResolver.query(queryUri, projection, selection, selectionArgs, sortOrder)
         }
-        debug("finish - obtain query results.")
+        //debug("finish - obtain query results.")
         cursor?.use {
             val idColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
             val nameColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
             val mimeTypeColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
             val mediaTypeColumn = it.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
-            debug("start - iterate query results.")
+            //debug("start - iterate query results.")
             while (it.moveToNext()) {
                 val id = it.getLong(idColumn)
                 val name = it.getString(nameColumn) ?: "Unknown"
@@ -164,7 +164,7 @@ class NewMainActivity : AppCompatActivity() {
                 items.add(MediaItem(uri = contentUri, displayName = name, mimeType = mimeType))
             }
         }
-        debug("finish - iterate query results.")
+        //debug("finish - iterate query results.")
     
         return items
     }
