@@ -26,6 +26,8 @@ class NewMainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewMainBinding
     private lateinit var mediaAdapter: MediaAdapter
+    private var currentSelectedItemId: Int = -1 // 초기 선택 항목 ID로 설정
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,21 +60,25 @@ class NewMainActivity : AppCompatActivity() {
 
         // 네비게이션 드로어 메뉴 항목 선택 처리
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
-            headerTitle.text = "Selected Menu: ${menuItem.title}"
-
-            when (menuItem.itemId) {
-                R.id.nav_folders -> {
-                    // MediaStore API를 사용하여 사진과 동영상 목록을 가져와 RecyclerView에 출력
-                    //loadMediaItems(
-                    debug("select - folders menu")
+        
+            if (menuItem.itemId != currentSelectedItemId) {
+                currentSelectedItemId = menuItem.itemId
+                headerTitle.text = "Selected Menu: ${menuItem.title}"
+    
+                when (menuItem.itemId) {
+                    R.id.nav_folders -> {
+                        // MediaStore API를 사용하여 사진과 동영상 목록을 가져와 RecyclerView에 출력
+                        //loadMediaItems(
+                        debug("select - folders menu")
+                    }
+                    else -> {
+                        binding.recyclerView.visibility = View.GONE
+                    }
                 }
-                else -> {
-                    binding.recyclerView.visibility = View.GONE
-                }
+                //menuItem.setChecked(false)
+                binding.drawerLayout.closeDrawers()
+                true
             }
-            //menuItem.setChecked(false)
-            binding.drawerLayout.closeDrawers()
-            true
         }
     }
 
