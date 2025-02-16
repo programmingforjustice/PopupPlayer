@@ -65,7 +65,7 @@ class NewMainActivity : AppCompatActivity() {
             }
             //menuItem.setChecked(false)
             binding.drawerLayout.closeDrawers()
-            true
+            false
         }
     }
 
