@@ -69,10 +69,10 @@ class NewMainActivity : AppCompatActivity() {
                 Manifest.permission.READ_MEDIA_IMAGES,
                 Manifest.permission.READ_MEDIA_VIDEO,
                 Manifest.permission.READ_MEDIA_AUDIO
-            ), REQUEST_CODE)
+            ), RequestCodes.PERMISSION_READ_MEDIA)
         } else {
             ActivityCompat.requestPermissions(this, 
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PERMISSION_READ_MEDIA)
         }
         
         lifecycleScope.launch {
@@ -153,5 +153,17 @@ class NewMainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
+    }
+    
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == RequestCodes.PERMISSION_READ_MEDIA) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // 권한이 허용됨
+                loadMediaItems()
+            } else {
+                // 권한이 거부됨
+                Toast.makeText(this, "권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
