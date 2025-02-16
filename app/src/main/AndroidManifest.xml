@@ -32,6 +32,9 @@
 
     <activity android:name=".PlayerListActivity">
     </activity>
+    
+    <activity android:name=".NewMainActivity">
+    </activity>
 
     <service android:name=".PlayerService" android:exported="true"
       android:enabled="true">
