@@ -142,7 +142,7 @@ class NewMainActivity : AppCompatActivity() {
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
             val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
             val mimeTypeColumn = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE)
-            var count = 20
+            var count = 0
             while (cursor.moveToNext() && count < 20) {
                 val id = cursor.getLong(idColumn)
                 val name = cursor.getString(nameColumn) ?: "Unknown"
