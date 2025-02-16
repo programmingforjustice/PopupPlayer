@@ -37,7 +37,7 @@ class NewMainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         // ActionBarDrawerToggle (햄버거 아이콘) 설정
-        /*val toggle = ActionBarDrawerToggle(
+        val toggle = ActionBarDrawerToggle(
             this,
             binding.drawerLayout,
             binding.toolbar,
@@ -45,12 +45,12 @@ class NewMainActivity : AppCompatActivity() {
             R.string.navigation_drawer_close
         )
         binding.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()*/
+        toggle.syncState()
         
-        binding.navigationView.setOnClickListener{
+        /*binding.navigationView.setOnClickListener{
             // START = left,  END = right
             binding.drawerLayout.openDrawer(GravityCompat.START)
-        }
+        }*/
 
         // NavigationView 헤더의 TextView 가져오기
         val headerView = binding.navigationView.getHeaderView(0)
@@ -63,7 +63,8 @@ class NewMainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.nav_folders -> {
                     // MediaStore API를 사용하여 사진과 동영상 목록을 가져와 RecyclerView에 출력
-                    loadMediaItems()
+                    //loadMediaItems(
+                    debug("select - folders menu")
                 }
                 else -> {
                     binding.recyclerView.visibility = View.GONE
