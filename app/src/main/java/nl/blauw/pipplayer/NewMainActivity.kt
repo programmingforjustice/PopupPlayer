@@ -85,7 +85,7 @@ class NewMainActivity : AppCompatActivity() {
     }
 
     // MediaStore를 통해 미디어 항목을 가져오는 함수
-    private fun loadMediaItems() {
+    private suspend fun loadMediaItems() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13 이상에서는 각각의 권한을 요청해야 합니다.
             ActivityCompat.requestPermissions(this, arrayOf(
