@@ -22,7 +22,7 @@ class NewMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // View Binding 초기화
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityNewMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // 툴바 설정
