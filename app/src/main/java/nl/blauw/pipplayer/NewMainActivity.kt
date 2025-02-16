@@ -102,7 +102,8 @@ class NewMainActivity : AppCompatActivity() {
             /*debug("start - query media items.")
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
             debug("finish - query media items.")*/
-            fetchMediaItems()
+            
+            val mediaItems = fetchMediaItems()
             
             if (mediaItems.isNotEmpty()) {
                 binding.recyclerView.visibility = View.VISIBLE
