@@ -17,12 +17,12 @@
             android:layout_height="wrap_content"
             android:background="@color/light_blue">
 
-            <!--androidx.appcompat.widget.Toolbar
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/light_blue" 
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" /-->
+                android:background="@color/light_blue"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <!-- 콘텐츠 영역: RecyclerView를 중앙에 배치 -->
