@@ -67,7 +67,7 @@ class NewMainActivity : AppCompatActivity() {
                     when (menuItem.itemId) {
                         R.id.nav_folders -> {
                             // MediaStore API를 사용하여 사진과 동영상 목록을 가져와 RecyclerView에 출력
-                            loadMediaItems(
+                            loadMediaItems()
                             //debug("select - folders menu")
                         }
                         else -> {
