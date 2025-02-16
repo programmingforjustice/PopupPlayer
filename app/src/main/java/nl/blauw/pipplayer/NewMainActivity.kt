@@ -97,11 +97,13 @@ class NewMainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PERMISSION_READ_MEDIA)
         }
                             
-        lifecycleScope.launch {
+        //lifecycleScope.launch {
         if (currentSelectedItemId == R.id.nav_folders) {
-            debug("start - query media items.")
+            /*debug("start - query media items.")
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
-            debug("finish - query media items.")
+            debug("finish - query media items.")*/
+            fetchMediaItems()
+            
             if (mediaItems.isNotEmpty()) {
                 binding.recyclerView.visibility = View.VISIBLE
                 binding.recyclerView.layoutManager = LinearLayoutManager(this@NewMainActivity)
@@ -111,7 +113,7 @@ class NewMainActivity : AppCompatActivity() {
                 binding.recyclerView.visibility = View.GONE
             }
         }
-        }
+        //}
     }
     
     private fun fetchMediaItems(): List<MediaItem> {
