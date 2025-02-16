@@ -109,8 +109,11 @@ class NewMainActivity : AppCompatActivity() {
                 debug("mediaItems.size = ${mediaItems.size}")
                 debug("start - recyclerview setup")
                 binding.recyclerView.visibility = View.VISIBLE
+                debug("recyclerview - layoutManager")
                 binding.recyclerView.layoutManager = LinearLayoutManager(this@NewMainActivity)
+                
                 mediaAdapter = MediaAdapter(mediaItems)
+                debug("recyclerview - MediaAdapter")
                 binding.recyclerView.adapter = mediaAdapter
                 debug("end - recyclerview setup")
             } else {
