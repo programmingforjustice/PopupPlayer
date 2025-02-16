@@ -104,7 +104,7 @@ class NewMainActivity : AppCompatActivity() {
             //debug("finish - query media items.")
             
             //debug("start - query media items.")
-            val mediaItems = fetchMediaItems()
+            //val mediaItems = fetchMediaItems()
             //debug("finish - query media items.")
             if (mediaItems.isNotEmpty()) {
                 //debug("mediaItems.size = ${mediaItems.size}")
