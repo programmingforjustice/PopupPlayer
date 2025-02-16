@@ -60,22 +60,25 @@ class NewMainActivity : AppCompatActivity() {
 
         // 네비게이션 드로어 메뉴 항목 선택 처리
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
-                if (menuItem.itemId != currentSelectedItemId) {
-                    currentSelectedItemId = menuItem.itemId
+                /*if (menuItem.itemId != currentSelectedItemId) {
+                    currentSelectedItemId = menuItem.itemId*/
                     headerTitle.text = "Selected Menu: ${menuItem.title}"
         
                     when (menuItem.itemId) {
                         R.id.nav_folders -> {
                             // MediaStore API를 사용하여 사진과 동영상 목록을 가져와 RecyclerView에 출력
-                            loadMediaItems()
+                        lifecycleScope.launch {
+                            if (menuItem.itemId != currentSelectedItemId) loadMediaItems()
+                        }
                             //debug("select - folders menu")
                         }
                         else -> {
                             binding.recyclerView.visibility = View.GONE
                         }
                     }
-                }
+                //}
             //menuItem.setChecked(false)
+            currentSelectedItemId = menuItem.itemId
             binding.drawerLayout.closeDrawers()
             true
         }
@@ -95,7 +98,7 @@ class NewMainActivity : AppCompatActivity() {
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PERMISSION_READ_MEDIA)
         }
         
-        lifecycleScope.launch {
+        //lifecycleScope.launch {
             debug("start - query media items.")
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
             debug("finish - query media items.")
@@ -107,7 +110,7 @@ class NewMainActivity : AppCompatActivity() {
             } else {
                 binding.recyclerView.visibility = View.GONE
             }
-        }
+        //}
     }
     
     private fun fetchMediaItems(): List<MediaItem> {
