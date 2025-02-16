@@ -63,6 +63,18 @@ class NewMainActivity : AppCompatActivity() {
 
     // MediaStore를 통해 미디어 항목을 가져오는 함수
     private fun loadMediaItems() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // Android 13 이상에서는 각각의 권한을 요청해야 합니다.
+            ActivityCompat.requestPermissions(this, arrayOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.READ_MEDIA_AUDIO
+            ), REQUEST_CODE)
+        } else {
+            ActivityCompat.requestPermissions(this, 
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+        }
+        
         lifecycleScope.launch {
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
             if (mediaItems.isNotEmpty()) {
