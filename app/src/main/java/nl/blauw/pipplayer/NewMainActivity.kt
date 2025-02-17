@@ -174,7 +174,7 @@ class NewMainActivity : AppCompatActivity() {
         // 쿼리 URI (API 25 이하에서는 URI에 "limit" 파라미터를 추가)
         val queryUri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             MediaStore.Files.getContentUri("external").buildUpon()
-                .appendQueryParameter("limit", "20")
+                //.appendQueryParameter("limit", "20")
                 .build()
         } else {
             MediaStore.Files.getContentUri("external")
@@ -186,7 +186,7 @@ class NewMainActivity : AppCompatActivity() {
                 putString(ContentResolver.QUERY_ARG_SQL_SELECTION, selection)
                 putStringArray(ContentResolver.QUERY_ARG_SQL_SELECTION_ARGS, selectionArgs)
                 putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, sortOrder)
-                putInt(ContentResolver.QUERY_ARG_LIMIT, 20)
+                //putInt(ContentResolver.QUERY_ARG_LIMIT, 20)
             }
             contentResolver.query(queryUri, projection, queryArgs, null)
         } else {
