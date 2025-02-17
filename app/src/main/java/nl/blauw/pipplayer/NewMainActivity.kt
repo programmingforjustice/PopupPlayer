@@ -1,6 +1,8 @@
 package nl.blauw.pipplayer
 
 import android.Manifest
+import android.content.Context
+import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
 import android.content.ContentUris
 import android.content.ContentResolver
