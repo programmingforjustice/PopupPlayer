@@ -82,19 +82,39 @@ class NewMainActivity : AppCompatActivity() {
             true
         }
     }
-
-    // MediaStore를 통해 미디어 항목을 가져오는 함수
-    private fun loadMediaItems() {
+    
+    fun hasReadMediaPermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val readImages = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+            val readVideo = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VIDEO) == PackageManager.PERMISSION_GRANTED
+            val readAudio = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED
+    
+            // 세 가지 권한 모두 확인
+            readImages && readVideo && readAudio
+        } else {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        }
+    }
+    
+    private fun requestReadMediaPermission(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13 이상에서는 각각의 권한을 요청해야 합니다.
-            ActivityCompat.requestPermissions(this, arrayOf(
+            ActivityCompat.requestPermissions(context, arrayOf(
                 Manifest.permission.READ_MEDIA_IMAGES,
                 Manifest.permission.READ_MEDIA_VIDEO,
                 Manifest.permission.READ_MEDIA_AUDIO
             ), RequestCodes.PERMISSION_READ_MEDIA)
         } else {
-            ActivityCompat.requestPermissions(this, 
+            ActivityCompat.requestPermissions(context, 
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PERMISSION_READ_MEDIA)
+        }
+    }
+
+    // MediaStore를 통해 미디어 항목을 가져오는 함수
+    private fun loadMediaItems() {
+        if (!hasReadMediaPermission(this)) {
+            requestReadMediaPermisson(this)
+            return
         }
                             
         lifecycleScope.launch {
@@ -207,7 +227,7 @@ class NewMainActivity : AppCompatActivity() {
         if (requestCode == RequestCodes.PERMISSION_READ_MEDIA) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // 권한이 허용됨
-                //loadMediaItems()
+                loadMediaItems()
                 //Toast.makeText(this, "permission is allowed.", Toast.LENGTH_SHORT).show()
             } else {
                 // 권한이 거부됨
