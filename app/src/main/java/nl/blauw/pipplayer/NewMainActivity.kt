@@ -116,7 +116,7 @@ class NewMainActivity : AppCompatActivity() {
     // MediaStore를 통해 미디어 항목을 가져오는 함수
     private fun loadMediaItems() {
         if (!hasReadMediaPermission(this)) {
-            requestReadMediaPermisson(this)
+            requestReadMediaPermission(this)
             return
         }
                             
