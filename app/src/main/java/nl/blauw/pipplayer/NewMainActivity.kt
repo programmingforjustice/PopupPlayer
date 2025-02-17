@@ -26,7 +26,7 @@ class NewMainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewMainBinding
     private lateinit var mediaAdapter: MediaAdapter
-    private var currentSelectedItemId: Int = -1 // 초기 선택 항목 ID로 설정
+   // private var currentSelectedItemId: Int = -1 // 초기 선택 항목 ID로 설정
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,7 @@ class NewMainActivity : AppCompatActivity() {
         binding.navigationView.setNavigationItemSelectedListener { menuItem ->
                 /*if (menuItem.itemId != currentSelectedItemId) {
                     currentSelectedItemId = menuItem.itemId*/
-                    currentSelectedItemId = menuItem.itemId
+                    //currentSelectedItemId = menuItem.itemId
                     headerTitle.text = "Selected Menu: ${menuItem.title}"
         
                     when (menuItem.itemId) {
@@ -77,7 +77,7 @@ class NewMainActivity : AppCompatActivity() {
                     }
                 //}
             //menuItem.setChecked(false)
-            currentSelectedItemId = -1
+            //currentSelectedItemId = -1
             binding.drawerLayout.closeDrawers()
             true
         }
