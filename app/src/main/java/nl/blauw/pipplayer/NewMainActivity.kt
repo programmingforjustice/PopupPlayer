@@ -3,6 +3,7 @@ package nl.blauw.pipplayer
 import android.Manifest
 import android.content.Context
 import androidx.core.content.ContextCompat
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.content.ContentUris
 import android.content.ContentResolver
@@ -98,16 +99,16 @@ class NewMainActivity : AppCompatActivity() {
         }
     }
     
-    private fun requestReadMediaPermission(context: Context) {
+    private fun requestReadMediaPermission(activity: Activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             // Android 13 이상에서는 각각의 권한을 요청해야 합니다.
-            ActivityCompat.requestPermissions(context, arrayOf(
+            ActivityCompat.requestPermissions(activity, arrayOf(
                 Manifest.permission.READ_MEDIA_IMAGES,
                 Manifest.permission.READ_MEDIA_VIDEO,
                 Manifest.permission.READ_MEDIA_AUDIO
             ), RequestCodes.PERMISSION_READ_MEDIA)
         } else {
-            ActivityCompat.requestPermissions(context, 
+            ActivityCompat.requestPermissions(activity, 
                 arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), RequestCodes.PERMISSION_READ_MEDIA)
         }
     }
