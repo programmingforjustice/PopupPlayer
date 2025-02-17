@@ -168,8 +168,8 @@ class NewMainActivity : AppCompatActivity() {
             MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString()
         )
     
-        //val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
-        val sortOrder: String? = null
+        val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
+        //val sortOrder: String? = null
     
         // 쿼리 URI (API 25 이하에서는 URI에 "limit" 파라미터를 추가)
         val queryUri = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
