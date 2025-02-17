@@ -98,7 +98,7 @@ class NewMainActivity : AppCompatActivity() {
         }
                             
         lifecycleScope.launch {
-        if (currentSelectedItemId == R.id.nav_folders) {
+        //if (currentSelectedItemId == R.id.nav_folders) {
             //debug("start - query media items.")
             val mediaItems = withContext(Dispatchers.IO) { fetchMediaItems() }
             //debug("finish - query media items.")
@@ -121,7 +121,7 @@ class NewMainActivity : AppCompatActivity() {
             } else {
                 binding.recyclerView.visibility = View.GONE
             }
-        }
+        //}
         }
     }
     
@@ -208,7 +208,7 @@ class NewMainActivity : AppCompatActivity() {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 // 권한이 허용됨
                 //loadMediaItems()
-                Toast.makeText(this, "permission is allowed.", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "permission is allowed.", Toast.LENGTH_SHORT).show()
             } else {
                 // 권한이 거부됨
                 Toast.makeText(this, "권한이 필요합니다.", Toast.LENGTH_SHORT).show()
