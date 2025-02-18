@@ -317,7 +317,9 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
             imageView.scaleType = ImageView.ScaleType.FIT_CENTER
             
             imageView.setOnClickListener {
-                imageView.isClickable = false
+                //imageView.isClickable = false
+                windowManager.removeView(imageView)
+                playerView.isClickable = true
                 
                 player = playerFactory.create(contentUrl)
                 playerView.player = player
@@ -326,12 +328,12 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 //playerView.isClickable = false
                 
                 //player.seekTo(currentPosition)
-                (player as PlayerWrapper).setRenderedFirstFrameListener {
+                /*(player as PlayerWrapper).setRenderedFirstFrameListener {
                       if (imageView.parent != null) {
                           windowManager.removeView(imageView)
                           playerView.isClickable = true
                       }
-                }
+                }*/
                 
                 isMuted = audioCodecMuteToggleButtonListener.isMuted
                 show()
