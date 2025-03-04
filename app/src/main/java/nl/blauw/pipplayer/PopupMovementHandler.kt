@@ -17,8 +17,8 @@ class PopupMovementHandler(
 
     private val displayWidth: Int
     private val displayHeight: Int
-    private var offsetX = 0f
-    private var offsetY = 0f
+    private var offsetX = 0
+    private var offsetY = 0
     private var flagActionMove = false
     
     init {
