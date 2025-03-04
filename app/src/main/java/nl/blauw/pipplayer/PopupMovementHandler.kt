@@ -17,8 +17,8 @@ class PopupMovementHandler(
 
     private val displayWidth: Int
     private val displayHeight: Int
-    private var offsetX = 0
-    private var offsetY = 0
+    private var offsetX = 0f
+    private var offsetY = 0f
     private var flagActionMove = false
     
     init {
@@ -39,8 +39,8 @@ class PopupMovementHandler(
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 flagActionMove = false
-                offsetX = minOf(maxOf(0, (params.x - event.rawX).toInt()), displayWidth)
-                offsetY = minOf(maxOf(0, (params.y - event.rawY).toInt()), displayHeight)
+                offsetX = minOf(maxOf(0f, params.x - event.rawX), displayWidth)
+                offsetY = minOf(maxOf(0f, params.y - event.rawY), displayHeight)
                 return false
             }
 
