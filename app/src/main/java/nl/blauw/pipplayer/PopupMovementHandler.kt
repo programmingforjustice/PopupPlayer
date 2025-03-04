@@ -46,8 +46,8 @@ class PopupMovementHandler(
 
             MotionEvent.ACTION_MOVE -> {
                 flagActionMove = true
-                params.x = minOf(maxOf(0, (event.rawX + offsetX).toInt()), displayWidth)
-                params.y = minOf(maxOf(0, (event.rawY + offsetY).toInt()), displayHeight)
+                params.x = minOf(maxOf(0, (event.rawX + offsetX).toInt()), displayWidth - params.width)
+                params.y = minOf(maxOf(0, (event.rawY + offsetY).toInt()), displayHeight - params.height)
                 windowManager.updateViewLayout(view, params)
                 return true
             }
