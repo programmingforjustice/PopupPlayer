@@ -7,6 +7,7 @@ import android.view.WindowManager
 import android.os.Bundle
 import android.os.Build
 import android.util.DisplayMetrics
+import android.view.WindowMetrics
 
 class PopupMovementHandler(
     context: Context,
