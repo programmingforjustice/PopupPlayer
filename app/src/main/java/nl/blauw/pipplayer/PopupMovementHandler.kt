@@ -39,8 +39,8 @@ class PopupMovementHandler(
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 flagActionMove = false
-                offsetX = minOf(maxOf(0f, params.x - event.rawX), displayWidth)
-                offsetY = minOf(maxOf(0f, params.y - event.rawY), displayHeight)
+                offsetX = minOf(maxOf(0., params.x - event.rawX), displayWidth)
+                offsetY = minOf(maxOf(0., params.y - event.rawY), displayHeight)
                 return false
             }
 
