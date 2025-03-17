@@ -212,7 +212,7 @@ class NewMainActivity : AppCompatActivity() {
                         ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id)
                     else -> Uri.EMPTY
                 }
-                items.add(MediaItem(uri = contentUri, displayName = name, mimeType = mimeType))
+                items.add(MediaItem(id = id, contentUri = contentUri, displayName = name, mediaType = mediaType,  mimeType = mimeType))
             }
         }
         //debug("finish - iterate query results.")

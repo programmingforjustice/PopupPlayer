@@ -1,5 +1,3 @@
-package nl.blauw.pipplayer
-
 import android.net.Uri
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -21,173 +19,7 @@ import android.widget.Toast
 import java.io.File
 import org.json.JSONObject
 
-/*interface PopupPlayer {
-    fun show(params: WindowManager.LayoutParams? = null)
-    fun play(currentPosition: Long = 0)
-    fun dispose()
-}*/
-
-abstract class PopupPlayer(protected val context: Context) {
-    protected val windowManager: WindowManager
-    protected var layoutParams: WindowManager.LayoutParams
-    
-    init {
-      windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
-    }
-    
-    init {
-      layoutParams = WindowManager.LayoutParams(
-            Utils.convertDpToPixelsInt(2f, context),
-            Utils.convertDpToPixelsInt(2f, context),
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else
-                WindowManager.LayoutParams.TYPE_TOAST,
-            DEFAULT_WINDOW_FLAGS,
-            PixelFormat.TRANSLUCENT
-        ).apply {
-            gravity = Gravity.TOP or Gravity.LEFT
-            x = DEFAULT_POPUP_X
-            y = DEFAULT_POPUP_Y
-        }
-    }
-
-    companion object {
-        const val MAX_POPUP_WIDTH = 400
-        const val MAX_POPUP_HEIGHT = 400
-
-        const val DEFAULT_POPUP_X = 100
-        const val DEFAULT_POPUP_Y = 200
-
-        const val CONTROLLER_SHOW_TIMEOUT = 2500
-        const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-    }
-
-    fun show(params: WindowManager.LayoutParams? = null) {
-        params?.apply {
-          layoutParams.x = x 
-          layoutParams.y = y 
-          layoutParams.width = width
-          layoutParams.height = height
-        }
-        
-        val view = createDisplayView()
-        windowManager.addView(view, layoutParams)
-    }
-    
-    abstract fun play(currentPosition: Long = 0)
-    abstract fun removePopupWindow() 
-    abstract fun dispose()
-    
-    abstract fun createDisplayView(): View
-    
-    abstract fun exportCurrentFrame(): ImageView
-}
-
-class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
-    private val imageViewLayout: View
-    private val controlLayout: View
-    private val imageView: ImageView
-    
-    private var startTime: Long = 0
-    
-    init {
-        val inflater = LayoutInflater.from(context) 
-        imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
-        controlLayout = imageViewLayout.findViewById<View>(R.id.player_image_view_control)
-        imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
-    }
-    
-    fun setupImageView() {
-        val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
-        bitmap.run {
-            layoutParams.height = height
-            layoutParams.width = width
-            imageViewLayout.tag = width.toDouble() / height //scaleFactor
-            imageView.setImageBitmap(this)
-        }
-        
-        imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-        
-        imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
-        
-        imageViewLayout.setOnClickListener(::toggleControlLayout)
-        
-        val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
-        crossButton.setOnClickListener {
-            windowManager.removeView(imageViewLayout)
-        }
-    }
-    
-    override fun createDisplayView(): View {
-        setupImageView()
-        return imageViewLayout
-    }
-    
-    private fun hideControlLayout() {
-        //imageViewLayout.isClickable = true
-        if (System.currentTimeMillis() - startTime >= 2500) {
-            controlLayout.visibility = View.GONE
-        }
-    }
-    
-    private fun toggleControlLayout(view: View?) {
-        //imageViewLayout.isClickable = false
-        if (controlLayout.visibility == View.VISIBLE) {
-            controlLayout.removeCallbacks(::hideControlLayout)
-            controlLayout.visibility = View.GONE
-            //imageViewLayout.isClickable = true
-            return
-        }
-        
-        startTime = System.currentTimeMillis()
-        controlLayout.visibility = View.VISIBLE
-        controlLayout.removeCallbacks(::hideControlLayout)
-        controlLayout.postDelayed(::hideControlLayout
-            , 2500)
-    }
-    
-    override fun play(currentPosition: Long) {
-        //throw UnsupportedOperationException()
-        toggleControlLayout(null)
-    }
-    
-    override fun removePopupWindow() {
-        
-    }
-    
-    override fun dispose() {
-        
-    }
-    
-    override fun exportCurrentFrame(): ImageView {
-        return imageView
-    }
-    
-    override fun toJsonString(): String {
-        //player: currentPos, isPlaying
-        //playerView: scaleFactor, videoSize
-        //layoutParams: x, y, width, height
-        // 고유한 플레이어 식별자 생성 (UUID 사용)
-        //val playerIdentifier = "instance-${UUID.randomUUID()}"
-    
-        // JSON 객체 생성
-        val jsonObject = JSONObject().apply {
-                put("mediaPath", contentUrl)
-                put("currentPosition", 0)
-                put("isPlaying", true)
-                put("x", layoutParams.x)
-                put("y", layoutParams.y)
-                put("width", layoutParams.width)
-                put("height", layoutParams.height)
-            }
-    
-        // JSON 문자열로 변환
-        return jsonObject.toString()
-   }
-}
-
-class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer(context), JsonSerializable {
+class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer(context), JsonSerializable {
     private var player: Player
     private var playerView: PlayerView
     private val imageView: ImageView = ImageView(context)
@@ -201,6 +33,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
       private set
     var isFullscreen: Boolean = false
       private set
+      
+    var onIsPlayingChangedListener: (() -> Unit)? = null
       
     init {
         player = playerFactory.create(contentUrl)
@@ -230,7 +64,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
          
          playerWrapper.setOnIsPlayingChangedListener {
-                replacePlayerViewWithImageView()
+                //replacePlayerViewWithImageView()
+                    onIsPlayingChangedListener?.invoke()
         }
     }
 
@@ -445,53 +280,6 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 put("mediaPath", contentUrl)
                 put("currentPosition", player.currentPosition)
                 put("isPlaying", isPlaying)
-                put("x", layoutParams.x)
-                put("y", layoutParams.y)
-                put("width", layoutParams.width)
-                put("height", layoutParams.height)
-            }
-    
-        // JSON 문자열로 변환
-        return jsonObject.toString()
-   }
-}
-
-class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
-    private var popupPlayer: PopupPlayer = null
-    private var currentPosition: Long = 0
-    
-    init {
-        popupPlayer = VideoPopupPlayer(context, contentUrl)
-    }
-    
-    override fun createDisplayView(): View {
-        return popupPlayer.createDisplayView()
-    }
-    
-    override fun play(currentPosition: Long) {
-        popupPlayer.play(currentPosition)
-    }
-    
-    override fun removePopupWindow() {
-        popupPlayer.removePopupWindow()
-    }
-    
-    override fun dispose() {
-        popupPlayer.dispose()
-    }
-    
-    override fun toJsonString(): String {
-        //player: currentPos, isPlaying
-        //playerView: scaleFactor, videoSize
-        //layoutParams: x, y, width, height
-        // 고유한 플레이어 식별자 생성 (UUID 사용)
-        //val playerIdentifier = "instance-${UUID.randomUUID()}"
-    
-        // JSON 객체 생성
-        val jsonObject = JSONObject().apply {
-                put("mediaPath", contentUrl)
-                put("currentPosition", 0)
-                put("isPlaying", true)
                 put("x", layoutParams.x)
                 put("y", layoutParams.y)
                 put("width", layoutParams.width)
