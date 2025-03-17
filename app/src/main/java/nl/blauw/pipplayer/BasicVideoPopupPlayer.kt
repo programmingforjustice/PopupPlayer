@@ -1,3 +1,5 @@
+package nl.blauw.pipplayer
+
 import android.net.Uri
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
