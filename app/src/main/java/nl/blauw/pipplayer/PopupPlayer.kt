@@ -358,9 +358,9 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     override fun exportCurrentFrame(): ImageView {
-        val currentPosition = player.currentPosition
-        val videoUri = Uri.fromFile(File(contentUrl)) ?: return
         val imageView = ImageView(context)
+        val currentPosition = player.currentPosition
+        val videoUri = Uri.fromFile(File(contentUrl)) ?: return imageView
         val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
         if (bitmap != null) {
             imageView.setImageBitmap(bitmap)
@@ -478,6 +478,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     
     override fun dispose() {
         popupPlayer.dispose()
+    }
+    
+    override fun exportCurrentFrame(): ImageView {
+        return imageView(context)
     }
     
     override fun toJsonString(): String {
