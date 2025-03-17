@@ -481,7 +481,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     }
     
     override fun exportCurrentFrame(): ImageView {
-        return imageView(context)
+        return ImageView(context)
     }
     
     override fun toJsonString(): String {
