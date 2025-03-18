@@ -194,16 +194,11 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         playerView.isClickable = true
     }
     
-    override fun exportCurrentFrame(): ImageView {
-        val imageView = ImageView(context)
+    override fun exportCurrentFrame(): Bitmap? {
         val currentPosition = player.currentPosition
-        val videoUri = Uri.fromFile(File(contentUrl)) ?: return imageView
-        val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap)
-            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-        }
-        return imageView
+        val videoUri = Uri.fromFile(File(contentUrl)) ?: return null
+        return getFrameAtCurrentPosition(videoUri, currentPosition)
+        
     }
     
     fun release() {

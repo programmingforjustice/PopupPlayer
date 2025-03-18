@@ -81,10 +81,10 @@ abstract class PopupPlayer(protected val context: Context) {
     
     abstract fun createDisplayView(): View
     
-    abstract fun exportCurrentFrame(): ImageView
+    abstract fun exportCurrentFrame(): Bitmap?
 }
 
-class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
+class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, bitmap: Bitmap? = null): PopupPlayer(context), JsonSerializable {
     private val imageViewLayout: View
     private val controlLayout: View
     private val imageView: ImageView
@@ -99,7 +99,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     fun setupImageView() {
-        val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
+        //val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
+        bitmap = bitmap ?: BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap.run {
             layoutParams.height = height
             layoutParams.width = width
@@ -160,8 +161,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
     }
     
-    override fun exportCurrentFrame(): ImageView {
-        return imageView
+    override fun exportCurrentFrame(): Bitmap? {
+        return bitmap
     }
     
     override fun toJsonString(): String {
@@ -357,16 +358,10 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         playerView.isClickable = true
     }
     
-    override fun exportCurrentFrame(): ImageView {
-        val imageView = ImageView(context)
+    override fun exportCurrentFrame(): Bitmap? {
         val currentPosition = player.currentPosition
-        val videoUri = Uri.fromFile(File(contentUrl)) ?: return imageView
-        val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
-        if (bitmap != null) {
-            imageView.setImageBitmap(bitmap)
-            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-        }
-        return imageView
+        val videoUri = Uri.fromFile(File(contentUrl)) ?: return null
+        return getFrameAtCurrentPosition(videoUri, currentPosition)
     }
     
     fun release() {
@@ -480,29 +475,11 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
         popupPlayer.dispose()
     }
     
-    override fun exportCurrentFrame(): ImageView {
-        return ImageView(context)
+    override fun exportCurrentFrame(): Bitmap? {
+        return popupPlayer.exportCurrentFrame()
     }
     
     override fun toJsonString(): String {
-        //player: currentPos, isPlaying
-        //playerView: scaleFactor, videoSize
-        //layoutParams: x, y, width, height
-        // 고유한 플레이어 식별자 생성 (UUID 사용)
-        //val playerIdentifier = "instance-${UUID.randomUUID()}"
-    
-        // JSON 객체 생성
-        val jsonObject = JSONObject().apply {
-                put("mediaPath", contentUrl)
-                put("currentPosition", 0)
-                put("isPlaying", true)
-                put("x", layoutParams.x)
-                put("y", layoutParams.y)
-                put("width", layoutParams.width)
-                put("height", layoutParams.height)
-            }
-    
-        // JSON 문자열로 변환
-        return jsonObject.toString()
+        popupPlayer.toJsonString()
    }
 }
