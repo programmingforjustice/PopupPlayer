@@ -84,7 +84,7 @@ abstract class PopupPlayer(protected val context: Context) {
     abstract fun exportCurrentFrame(): Bitmap?
 }
 
-class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, bitmap: Bitmap? = null): PopupPlayer(context), JsonSerializable {
+class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private var bitmap: Bitmap? = null): PopupPlayer(context), JsonSerializable {
     private val imageViewLayout: View
     private val controlLayout: View
     private val imageView: ImageView
