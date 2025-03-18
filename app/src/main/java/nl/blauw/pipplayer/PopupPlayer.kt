@@ -480,6 +480,6 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     }
     
     override fun toJsonString(): String {
-        return (popupPlayer as? JsonSerializable)?.toJsonString()
+        return (popupPlayer as? JsonSerializable)?.toJsonString() ?: ""
    }
 }
