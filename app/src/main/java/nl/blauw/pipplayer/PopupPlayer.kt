@@ -116,7 +116,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
-            //windowManager.removeView(imageViewLayout)
+            windowManager.removeView(imageViewLayout)
             PopupPlayerManager.remove(this)
         }
     }
@@ -460,8 +460,8 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
         popupPlayer = BasicVideoPopupPlayer(context, contentUrl).apply {
             setOnIsPlayingChangedListener {
                 var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame())
-                imagePopupPlayer.show(popupPlayer.layoutParams)
-                popupPlayer = imagePopupPlayer
+                imagePopupPlayer.show(this@AdaptivePopupPlayer.popupPlayer.layoutParams)
+                this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
                 //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
             }
         }
