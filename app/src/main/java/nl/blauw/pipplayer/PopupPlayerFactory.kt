@@ -81,7 +81,9 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
-        return VideoPopupPlayer(context, mediaUrl)
+        //return VideoPopupPlayer(context, mediaUrl)
+        return BasicVideoPopupPlayer(context, mediaUrl)
+        
     }
 }
 
