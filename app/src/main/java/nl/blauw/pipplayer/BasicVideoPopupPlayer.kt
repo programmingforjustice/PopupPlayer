@@ -126,11 +126,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     }
 
     override fun removePopupWindow() {
-        if (playerView.parent != null)
-            windowManager.removeViewImmediate(playerView)
-        else if (imageView.parent != null)
-            windowManager.removeViewImmediate(imageView)
-        
+        windowManager.removeViewImmediate(playerView)
     }
     
     private fun getFrameAtCurrentPosition(videoUri: Uri, currentPosition: Long): Bitmap? {
