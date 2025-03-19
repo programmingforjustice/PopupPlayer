@@ -29,7 +29,7 @@ import org.json.JSONObject
 
 abstract class PopupPlayer(protected val context: Context) {
     protected val windowManager: WindowManager
-    protected var layoutParams: WindowManager.LayoutParams
+    var layoutParams: WindowManager.LayoutParams
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
@@ -116,7 +116,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
-            windowManager.removeView(imageViewLayout)
+            //windowManager.removeView(imageViewLayout)
+            PopupPlayerManager.remove(this)
         }
     }
     
@@ -458,8 +459,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     init {
         popupPlayer = BasicVideoPopupPlayer(context, contentUrl).apply {
             setOnIsPlayingChangedListener {
-                this@AdaptivePopupPlayer.popupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame())
-                popupPlayer.show()
+                var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame())
+                imagePopupPlayer.show(popupPlayer.layoutParams)
+                popupPlayer = imagePopupPlayer
+                //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
             }
         }
     }
