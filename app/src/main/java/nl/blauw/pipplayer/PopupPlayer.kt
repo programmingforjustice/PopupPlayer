@@ -456,7 +456,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     private var currentPosition: Long = 0
     
     init {
-        popupPlayer = VideoPopupPlayer(context, contentUrl)
+        popupPlayer = BasicVideoPopupPlayer(context, contentUrl)
     }
     
     override fun createDisplayView(): View {
