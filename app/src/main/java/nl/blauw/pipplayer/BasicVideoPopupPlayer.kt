@@ -24,7 +24,7 @@ import org.json.JSONObject
 class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer(context), JsonSerializable {
     private var player: Player
     private var playerView: PlayerView
-    private val imageView: ImageView = ImageView(context)
+    //private val imageView: ImageView = ImageView(context)
     
     //private val muteToggleButtonListener =  MuteToggleButtonListener(player)
     private lateinit var audioCodecMuteToggleButtonListener: AudioCodecMuteToggleButtonListener
@@ -42,6 +42,10 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         player = playerFactory.create(contentUrl)
         playerView = playerViewFactory.create(player)
         //audioCodecMuteToggleButtonListener =  AudioCodecMuteToggleButtonListener(player)
+    }
+    
+    fun setOnIsPlayingChangedListener(action: (() -> Unit)?) {
+        onIsPlayingChangedListener = action
     }
     
     private fun setupPlayer() {
@@ -198,7 +202,6 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         val currentPosition = player.currentPosition
         val videoUri = Uri.fromFile(File(contentUrl)) ?: return null
         return getFrameAtCurrentPosition(videoUri, currentPosition)
-        
     }
     
     fun release() {
