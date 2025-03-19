@@ -29,7 +29,7 @@ import org.json.JSONObject
 
 abstract class PopupPlayer(protected val context: Context) {
     protected val windowManager: WindowManager
-    var layoutParams: WindowManager.LayoutParams
+    val layoutParams: WindowManager.LayoutParams
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
