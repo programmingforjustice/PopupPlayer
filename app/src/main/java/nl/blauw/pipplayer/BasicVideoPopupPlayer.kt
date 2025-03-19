@@ -112,10 +112,10 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     }
     
     override fun createDisplayView(): View {
-        return playerView.takeIf {playerView.player != null} ?.also {
+        return playerView.also {
                 setupPlayer()
                 setupPlayerView()
-        } ?: imageView
+        }
     }
     
     override fun play(currentPosition: Long) {
