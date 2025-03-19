@@ -348,7 +348,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 play(currentPosition)
             }
             
-            layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
+            /*layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")*/
 
             imageView.tag = playerView.tag
             imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
