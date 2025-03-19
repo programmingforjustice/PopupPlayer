@@ -141,58 +141,6 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
             retriever.release()
         }
     }
-
-    /**
-     * PlayerView를 제거하고 ImageView로 대체하는 메서드
-     */
-    private fun replacePlayerViewWithImageView() {
-        if (imageView.parent != null) return
-        
-        playerView.isClickable = false
-        // 1. 현재 재생 중인 위치 확인
-        val currentPosition = player.currentPosition
-        val videoUri = Uri.fromFile(File(contentUrl)) ?: return
-        // 2. 현재 정지된 프레임을 추출
-        val bitmap = getFrameAtCurrentPosition(videoUri, currentPosition)
-        if (bitmap != null) {
-            // 3. ImageView에 추출한 프레임 설정
-            imageView.setImageBitmap(bitmap)
-            imageView.scaleType = ImageView.ScaleType.FIT_CENTER
-            
-            imageView.setOnClickListener {
-                //imageView.isClickable = false
-                windowManager.removeView(imageView)
-                playerView.isClickable = true
-                
-                player = playerFactory.create(contentUrl)
-                playerView.player = player
-                
-                //playerView = playerViewFactory.create(player)
-                //playerView.isClickable = false
-                
-                //player.seekTo(currentPosition)
-                /*(player as PlayerWrapper).setRenderedFirstFrameListener {
-                      if (imageView.parent != null) {
-                          windowManager.removeView(imageView)
-                          playerView.isClickable = true
-                      }
-                }*/
-                
-                isMuted = audioCodecMuteToggleButtonListener.isMuted
-                show()
-                play(currentPosition)
-            }
-            
-            layoutParams = (playerView.layoutParams as? WindowManager.LayoutParams) ?: throw IllegalStateException("cannot get LayoutParams from PlayerView.")
-
-            imageView.tag = playerView.tag
-            imageView.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
-            windowManager.addView(imageView, layoutParams)
-            
-            release()
-        }
-        playerView.isClickable = true
-    }
     
     override fun exportCurrentFrame(): Bitmap? {
         val currentPosition = player.currentPosition
