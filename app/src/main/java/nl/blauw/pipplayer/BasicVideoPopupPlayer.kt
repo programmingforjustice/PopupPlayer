@@ -36,7 +36,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     var isFullscreen: Boolean = false
       private set
       
-    var onIsPlayingChangedListener: (() -> Unit)? = null
+    private var onIsPlayingChangedListener: (() -> Unit)? = null
       
     init {
         player = playerFactory.create(contentUrl)
