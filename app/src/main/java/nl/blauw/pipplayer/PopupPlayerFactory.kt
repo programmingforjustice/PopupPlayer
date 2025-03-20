@@ -17,7 +17,8 @@ abstract class PopupPlayerFactory(protected val context: Context): JsonDeseriali
         val playerInfo = JSONObject(jsonString)
         var url = playerInfo.getString("mediaPath")
         val popupPlayer = create(url)
-        val layoutParams = WindowManager.LayoutParams().apply {
+        //val layoutParams = WindowManager.LayoutParams().apply {
+        popupPlayer.layoutParams = WindowManager.LayoutParams().apply {
           x = playerInfo.getInt("x")
           y = playerInfo.getInt("y")
           width = playerInfo.getInt("width")
@@ -33,8 +34,8 @@ abstract class PopupPlayerFactory(protected val context: Context): JsonDeseriali
         onFromJsonString?.invoke(popupPlayer, layoutParams, playerInfo)
         
         //popupPlayer.isPlaying = playerInfo.getBoolean("isPlaying")
-        popupPlayer.show(layoutParams)
-        popupPlayer.play(playerInfo.getLong("currentPosition"))
+        // popupPlayer.show(layoutParams)
+        // popupPlayer.play(playerInfo.getLong("currentPosition"))
         return popupPlayer
     }
 }

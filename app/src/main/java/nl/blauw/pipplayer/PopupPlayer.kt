@@ -465,6 +465,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
 class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
     private lateinit var popupPlayer: PopupPlayer
     private var currentPosition: Long = 0
+    private var state: String? = null
     
     init {
         createPopupWindow()
@@ -495,6 +496,34 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
             }
         }
     }
+    
+    /*private fun createPopupWindow() {
+        var factory = DefaultPopupPlayerFactory(context)
+        this@AdaptivePopupPlayer.popupPlayer = BasicVideoPopupPlayer(context, contentUrl).apply {
+            setOnIsPlayingChangedListener {
+                state = (popupPlayer as JsonSerializable).toJsonString()
+                //currentPosition = this@AdaptivePopupPlayer.popupPlayer.getCurrentPosition() 
+                
+                var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
+                        setOnClickListener {
+                       //var layoutParams = this@AdaptivePopupPlayer.popupPlayer.layoutParams
+                       this@AdaptivePopupPlayer.popupPlayer.dispose()
+                        createPopupWindow()
+                        
+                       (this@AdaptivePopupPlayer.popupPlayer as? BasicVideoPopupPlayer)?.isPlaying = true
+                       this@AdaptivePopupPlayer.popupPlayer.show(layoutParams)
+                       this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
+                            
+                        }
+                }
+                
+                imagePopupPlayer.show(this@AdaptivePopupPlayer.popupPlayer.layoutParams)
+                this@AdaptivePopupPlayer.popupPlayer.dispose()
+                this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
+                //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
+            }
+        }
+    }*/
     
     override fun createDisplayView(): View {
         return popupPlayer.createDisplayView()
