@@ -480,8 +480,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
                        var layoutParams = this@AdaptivePopupPlayer.popupPlayer.layoutParams
                        this@AdaptivePopupPlayer.popupPlayer.dispose()
                         createPopupWindow()
-                        this@AdaptivePopupPlayer.popupPlayer.show(layoutParams)
-                            this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
+                        
+                       this@AdaptivePopupPlayer.popupPlayer.isPlaying = true
+                       this@AdaptivePopupPlayer.popupPlayer.show(layoutParams)
+                       this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
                             
                         }
                 }
