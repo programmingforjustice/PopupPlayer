@@ -64,14 +64,13 @@ abstract class PopupPlayer(protected val context: Context) {
     }
 
     fun show(params: WindowManager.LayoutParams? = null) {
+        val view = createDisplayView()
         params?.apply {
           layoutParams.x = x 
           layoutParams.y = y 
           layoutParams.width = width
           layoutParams.height = height
         }
-        
-        val view = createDisplayView()
         windowManager.addView(view, layoutParams)
     }
     
@@ -110,7 +109,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
         
-        //imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+        imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
         imageViewLayout.setOnClickListener(::toggleControlLayout)
         
