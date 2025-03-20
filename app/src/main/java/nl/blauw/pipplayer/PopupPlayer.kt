@@ -481,7 +481,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
                        this@AdaptivePopupPlayer.popupPlayer.dispose()
                         createPopupWindow()
                         
-                       this@AdaptivePopupPlayer.popupPlayer.isPlaying = true
+                       (this@AdaptivePopupPlayer.popupPlayer as? BasicVideoPopupPlayer)?.isPlaying = true
                        this@AdaptivePopupPlayer.popupPlayer.show(layoutParams)
                        this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
                             
