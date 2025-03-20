@@ -95,7 +95,7 @@ object PopupPlayerManager : JsonSerializable {
     }
     
     fun remove(popupPlayer: PopupPlayer) {
-        popupPlayer.dispose()
+        //popupPlayer.dispose()
         playerList.remove(popupPlayer)
         orderList.remove(popupPlayer)
     }

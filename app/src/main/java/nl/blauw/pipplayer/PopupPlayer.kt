@@ -472,7 +472,11 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
             setOnIsPlayingChangedListener {
                 var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
                         setOnClickListener {
-                            createPopupWindow()
+                          this@AdaptivePopupPlayer.popupPlayer.dispose()
+                        createPopupWindow()
+                        this@AdaptivePopupPlayer.popupPlayer.show()
+                            this@AdaptivePopupPlayer.popupPlayer.play()
+                            
                         }
                 }
                 
