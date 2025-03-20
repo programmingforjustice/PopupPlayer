@@ -85,7 +85,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         }
 
         playerViewWrapper.setupCrossButton {
-            //dispose()
+            dispose()
             PopupPlayerManager.remove(this)
         }
         
