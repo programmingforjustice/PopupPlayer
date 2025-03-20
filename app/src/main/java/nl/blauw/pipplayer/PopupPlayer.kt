@@ -134,7 +134,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
     }
     
-    fun setClickListener(action: (() -> Unit)?) {
+    fun setOnClickListener(action: (() -> Unit)?) {
         onClickListener = action
     }
     
