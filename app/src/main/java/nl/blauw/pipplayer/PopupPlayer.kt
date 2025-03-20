@@ -90,6 +90,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
     private var startTime: Long = 0
     
+    private var onClickListener: (() -> Unit)? = null
+    
     init {
         val inflater = LayoutInflater.from(context) 
         imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
@@ -115,7 +117,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
-            windowManager.removeView(imageViewLayout)
+            windowManager.removeViewImmediate(imageViewLayout)
             PopupPlayerManager.remove(this)
         }
     }
@@ -132,7 +134,12 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
     }
     
+    fun setClickListener(action: (() -> Unit)?) {
+        onClickListener = action
+    }
+    
     private fun toggleControlLayout(view: View?) {
+        onClickListener?.invoke()
         //imageViewLayout.isClickable = false
         if (controlLayout.visibility == View.VISIBLE) {
             controlLayout.removeCallbacks(::hideControlLayout)
@@ -154,11 +161,12 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     override fun removePopupWindow() {
-        
+        windowManager.removeViewImmediate(imageViewLayout)
     }
     
     override fun dispose() {
-        
+        removePopupWindow()
+        PopupPlayerManager.remove(this)
     }
     
     override fun exportCurrentFrame(): Bitmap? {
@@ -456,10 +464,20 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     private var currentPosition: Long = 0
     
     init {
+        createPopupWindow()
+    }
+    
+    private fun createPopupWindow() {
         popupPlayer = BasicVideoPopupPlayer(context, contentUrl).apply {
             setOnIsPlayingChangedListener {
-                var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame())
+                var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
+                    setOnClickListener {
+                        createPopupWindow()
+                    }
+                }
+                
                 imagePopupPlayer.show(this@AdaptivePopupPlayer.popupPlayer.layoutParams)
+                this@AdaptivePopupPlayer.popupPlayer.dispose()
                 this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
                 //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
             }
