@@ -110,7 +110,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
         
-        imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
+        //imageViewLayout.setOnTouchListener(PlayerTouchListener(context, windowManager, layoutParams))
         
         imageViewLayout.setOnClickListener(::toggleControlLayout)
         
