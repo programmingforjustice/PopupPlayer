@@ -118,6 +118,8 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         }
     }
     
+    override fun getCurrentPosition(): Long = player.currentPosition
+    
     override fun play(currentPosition: Long) {
         player.repeatMode = Player.REPEAT_MODE_ALL
         player.prepare()

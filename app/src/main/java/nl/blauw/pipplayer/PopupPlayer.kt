@@ -74,12 +74,11 @@ abstract class PopupPlayer(protected val context: Context) {
         windowManager.addView(view, layoutParams)
     }
     
+    abstract fun getCurrentPosition(): Long
     abstract fun play(currentPosition: Long = 0)
     abstract fun removePopupWindow() 
     abstract fun dispose()
-    
     abstract fun createDisplayView(): View
-    
     abstract fun exportCurrentFrame(): Bitmap?
 }
 
@@ -154,6 +153,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         controlLayout.postDelayed(::hideControlLayout
             , 2500)
     }
+    
+    override fun getCurrentPosition(): Long = 0
     
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
@@ -285,6 +286,8 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
                 setupPlayerView()
         } ?: imageView
     }
+    
+    override fun getCurrentPosition(): Long = player.currentPosition
     
     override fun play(currentPosition: Long) {
         player.repeatMode = Player.REPEAT_MODE_ALL
@@ -470,13 +473,15 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     private fun createPopupWindow() {
         this@AdaptivePopupPlayer.popupPlayer = BasicVideoPopupPlayer(context, contentUrl).apply {
             setOnIsPlayingChangedListener {
+                currentPosition = this@AdaptivePopupPlayer.popupPlayer.getCurrentPosition() 
+                
                 var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
                         setOnClickListener {
                        var layoutParams = this@AdaptivePopupPlayer.popupPlayer.layoutParams
                        this@AdaptivePopupPlayer.popupPlayer.dispose()
                         createPopupWindow()
                         this@AdaptivePopupPlayer.popupPlayer.show(layoutParams)
-                            this@AdaptivePopupPlayer.popupPlayer.play()
+                            this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
                             
                         }
                 }
@@ -492,6 +497,8 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     override fun createDisplayView(): View {
         return popupPlayer.createDisplayView()
     }
+    
+    override fun getCurrentPosition(): Long = popupPlayer.getCurrentPosition()
     
     override fun play(currentPosition: Long) {
         popupPlayer.play(currentPosition)
