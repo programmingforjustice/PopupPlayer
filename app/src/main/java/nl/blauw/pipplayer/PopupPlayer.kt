@@ -511,6 +511,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
             setOnClose {
                 PopupPlayerManager.remove(this@AdaptivePopupPlayer)
             }
+            this.isPlaying = this@AdaptivePopupPlayer.isPlaying
         }
     }
     
