@@ -473,6 +473,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     private var currentPosition: Long = 0
     private var state: String? = null
     var isPlaying = false
+        set(value) {
+            field = value
+            (PopupPlayer as BasicVideoPopupPlayer).isPlaying = value
+        }
     
     init {
         createPopupWindow()
