@@ -475,7 +475,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     var isPlaying = false
         set(value) {
             field = value
-            (PopupPlayer as BasicVideoPopupPlayer).isPlaying = value
+            (popupPlayer as BasicVideoPopupPlayer).isPlaying = value
         }
     
     init {
@@ -511,7 +511,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
             setOnClose {
                 PopupPlayerManager.remove(this@AdaptivePopupPlayer)
             }
-            this.isPlaying = this@AdaptivePopupPlayer.isPlaying
+            //this.isPlaying = this@AdaptivePopupPlayer.isPlaying
         }
     }
     
