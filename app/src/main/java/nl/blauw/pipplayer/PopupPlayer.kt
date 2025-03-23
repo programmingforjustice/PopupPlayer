@@ -472,6 +472,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     private lateinit var popupPlayer: PopupPlayer
     private var currentPosition: Long = 0
     private var state: String? = null
+    var isPlaying = false
     
     init {
         createPopupWindow()
@@ -506,6 +507,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
             setOnClose {
                 PopupPlayerManager.remove(this@AdaptivePopupPlayer)
             }
+            this.isPlaying = this@AdaptivePopupPlayer.isPlaying
         }
     }
     
