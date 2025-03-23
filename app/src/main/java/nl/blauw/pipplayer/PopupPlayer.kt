@@ -64,13 +64,13 @@ abstract class PopupPlayer(protected val context: Context) {
     }
 
     fun show(params: WindowManager.LayoutParams? = null) {
-        val view = createDisplayView()
         params?.apply {
           layoutParams.x = x 
           layoutParams.y = y 
           layoutParams.width = width
           layoutParams.height = height
         }
+        val view = createDisplayView(params)
         windowManager.addView(view, layoutParams)
     }
     
@@ -78,7 +78,7 @@ abstract class PopupPlayer(protected val context: Context) {
     abstract fun play(currentPosition: Long = 0)
     abstract fun removePopupWindow() 
     abstract fun dispose()
-    abstract fun createDisplayView(): View
+    abstract fun createDisplayView(params: WindowManager.LayoutParams? = null): View
     abstract fun exportCurrentFrame(): Bitmap?
 }
 
@@ -99,12 +99,14 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
     }
     
-    fun setupImageView() {
+    fun setupImageView(params: WindowManager.LayoutParams? = null) {
         //val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap = bitmap ?: BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap?.run {
-            layoutParams.height = height
-            layoutParams.width = width
+            params?.let {
+                layoutParams.height = height
+                layoutParams.width = width
+            }
             imageViewLayout.tag = width.toDouble() / height //scaleFactor
             imageView.setImageBitmap(this)
         }
@@ -123,8 +125,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
     }
     
-    override fun createDisplayView(): View {
-        setupImageView()
+    override fun createDisplayView(params: WindowManager.LayoutParams? = null): View {
+        setupImageView(params)
         return imageViewLayout
     }
     
@@ -286,7 +288,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }
     
-    override fun createDisplayView(): View {
+    override fun createDisplayView(params: WindowManager.LayoutParams? = null): View {
         return playerView.takeIf {playerView.player != null} ?.also {
                 setupPlayer()
                 setupPlayerView()
@@ -543,8 +545,8 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
         }
     }*/
     
-    override fun createDisplayView(): View {
-        return popupPlayer.createDisplayView()
+    override fun createDisplayView(params: WindowManager.LayoutParams? = null): View {
+        return popupPlayer.createDisplayView(params)
     }
     
     override fun getCurrentPosition(): Long = popupPlayer.getCurrentPosition()
