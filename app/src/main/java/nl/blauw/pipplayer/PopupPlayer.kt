@@ -90,6 +90,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private var startTime: Long = 0
     
     private var onClickListener: (() -> Unit)? = null
+    private var onClose: (() -> Unit)? = null
     
     init {
         val inflater = LayoutInflater.from(context) 
@@ -116,6 +117,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
+            onClose?.invoke()
             windowManager.removeViewImmediate(imageViewLayout)
             PopupPlayerManager.remove(this)
         }
@@ -135,6 +137,10 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
     fun setOnClickListener(action: (() -> Unit)?) {
         onClickListener = action
+    }
+    
+    fun setOnClose(action: (() -> Unit)?) {
+        onClose = action
     }
     
     private fun toggleControlLayout(view: View?) {
@@ -487,12 +493,18 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
                        this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
                             
                         }
+                        setOnClose {
+                            PopupPlayerManager.remove(this@AdaptivePopupPlayer)
+                        }
                 }
                 
                 imagePopupPlayer.show(this@AdaptivePopupPlayer.popupPlayer.layoutParams)
                 this@AdaptivePopupPlayer.popupPlayer.dispose()
                 this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
                 //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
+            }
+            setOnClose {
+                PopupPlayerManager.remove(this@AdaptivePopupPlayer)
             }
         }
     }

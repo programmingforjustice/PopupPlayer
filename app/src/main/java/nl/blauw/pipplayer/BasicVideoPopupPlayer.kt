@@ -37,6 +37,8 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
       private set
       
     private var onIsPlayingChangedListener: (() -> Unit)? = null
+    
+    private var onClose: (() -> Unit)? = null
       
     init {
         player = playerFactory.create(contentUrl)
@@ -46,6 +48,10 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     
     fun setOnIsPlayingChangedListener(action: (() -> Unit)?) {
         onIsPlayingChangedListener = action
+    }
+    
+    fun setOnClose(action: (() -> Unit)?) {
+        onClose = action
     }
     
     private fun setupPlayer() {
@@ -85,6 +91,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         }
 
         playerViewWrapper.setupCrossButton {
+            onClose?.invoke()
             dispose()
             PopupPlayerManager.remove(this)
         }
