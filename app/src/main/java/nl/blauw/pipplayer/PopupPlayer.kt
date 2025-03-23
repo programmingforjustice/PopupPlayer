@@ -99,7 +99,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         imageView = imageViewLayout.findViewById<ImageView>(R.id.player_image_view)
     }
     
-    fun setupImageView(params: WindowManager.LayoutParams? = null) {
+    fun setupImageView(params: WindowManager.LayoutParams?) {
         //val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap = bitmap ?: BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap?.run {
@@ -125,7 +125,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
     }
     
-    override fun createDisplayView(params: WindowManager.LayoutParams? = null): View {
+    override fun createDisplayView(params: WindowManager.LayoutParams?): View {
         setupImageView(params)
         return imageViewLayout
     }
@@ -288,7 +288,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }
     
-    override fun createDisplayView(params: WindowManager.LayoutParams? = null): View {
+    override fun createDisplayView(params: WindowManager.LayoutParams?): View {
         return playerView.takeIf {playerView.player != null} ?.also {
                 setupPlayer()
                 setupPlayerView()
@@ -545,7 +545,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
         }
     }*/
     
-    override fun createDisplayView(params: WindowManager.LayoutParams? = null): View {
+    override fun createDisplayView(params: WindowManager.LayoutParams?): View {
         return popupPlayer.createDisplayView(params)
     }
     
