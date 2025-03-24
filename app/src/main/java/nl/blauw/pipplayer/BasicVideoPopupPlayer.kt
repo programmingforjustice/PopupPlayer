@@ -118,7 +118,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }
     
-    override fun createDisplayView(params: WindowManager.LayoutParams): View {
+    override fun createDisplayView(params: WindowManager.LayoutParams?): View {
         return playerView.also {
                 setupPlayer()
                 setupPlayerView()
