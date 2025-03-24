@@ -63,7 +63,7 @@ abstract class PopupPlayer(protected val context: Context) {
         const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     }
 
-    fun show(params: WindowManager.LayoutParams? = null) {
+    open fun show(params: WindowManager.LayoutParams? = null) {
         params?.apply {
           layoutParams.x = x 
           layoutParams.y = y 
@@ -550,6 +550,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     }
     
     override fun getCurrentPosition(): Long = popupPlayer.getCurrentPosition()
+    
+    fun show(params: WindowManager.LayoutParams?) {
+        popupPlayer.show(LayoutParams)
+    }
     
     override fun play(currentPosition: Long) {
         popupPlayer.play(currentPosition)
