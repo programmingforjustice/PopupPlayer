@@ -103,10 +103,14 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         //val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap = bitmap ?: BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap?.run {
-            params?.let {
+            if (params != null) {
+                layoutParams.height = params.height
+                layoutParams.width = params.width
+            } else {
                 layoutParams.height = height
                 layoutParams.width = width
             }
+            
             imageViewLayout.tag = width.toDouble() / height //scaleFactor
             imageView.setImageBitmap(this)
         }
