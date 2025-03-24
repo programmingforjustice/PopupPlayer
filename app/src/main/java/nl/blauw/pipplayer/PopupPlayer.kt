@@ -64,13 +64,13 @@ abstract class PopupPlayer(protected val context: Context) {
     }
 
     open fun show(params: WindowManager.LayoutParams? = null) {
+        val view = createDisplayView(params)
         params?.apply {
           layoutParams.x = x 
           layoutParams.y = y 
           layoutParams.width = width
           layoutParams.height = height
         }
-        val view = createDisplayView(params)
         windowManager.addView(view, layoutParams)
     }
     
