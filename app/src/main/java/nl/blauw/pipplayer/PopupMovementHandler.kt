@@ -22,7 +22,7 @@ class PopupMovementHandler(
     private var flagActionMove = false
     
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowMetrics: WindowMetrics = windowManager.currentWindowMetrics
             val bounds = windowMetrics.bounds
             displayWidth = bounds.width()
@@ -32,7 +32,12 @@ class PopupMovementHandler(
             windowManager.defaultDisplay.getMetrics(displayMetrics)
             displayWidth = displayMetrics.widthPixels
             displayHeight = displayMetrics.heightPixels
-        }
+        }*/
+        
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        displayWidth = displayMetrics.widthPixels
+        displayHeight = displayMetrics.heightPixels
     }
 
     override fun onTouch(view: View, event: MotionEvent): Boolean {
