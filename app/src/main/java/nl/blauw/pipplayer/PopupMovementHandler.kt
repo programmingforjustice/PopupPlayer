@@ -35,8 +35,8 @@ class PopupMovementHandler(
             displayHeight = displayMetrics.heightPixels
         }*/
         
-        val displayMetrics = DisplayMetrics()
-        Resources.getSystem().displayMetrics(displayMetrics)
+        val displayMetrics: DisplayMetrics = 
+        Resources.getSystem().displayMetrics
         displayWidth = displayMetrics.widthPixels
         displayHeight = displayMetrics.heightPixels
     }
