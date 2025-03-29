@@ -7,6 +7,7 @@ import android.view.WindowManager
 import android.os.Bundle
 import android.os.Build
 import android.util.DisplayMetrics
+import android.content.res.Resources
 import android.view.WindowMetrics
 
 class PopupMovementHandler(
@@ -35,7 +36,7 @@ class PopupMovementHandler(
         }*/
         
         val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        Resources.getSystem().displayMetrics(displayMetrics)
         displayWidth = displayMetrics.widthPixels
         displayHeight = displayMetrics.heightPixels
     }
