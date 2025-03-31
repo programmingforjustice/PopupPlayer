@@ -68,8 +68,8 @@ class PopupMovementHandler(
     fun updateDisplaySettings() {
         val rotation = windowManager.defaultDisplay.rotation
         when (rotation) {
-            Surface.ROTATION_0 && Surface.ROTATION_180 ->         (displayWidth, displayHeight) = getDisplayResolution()
-            Surface.ROTATION_90 && Surface.ROTATION_270 ->         (displayHeight, displayWidth) = getDisplayResolution()
+            Surface.ROTATION_0, Surface.ROTATION_180 ->         (displayWidth, displayHeight) = getDisplayResolution()
+            Surface.ROTATION_90, Surface.ROTATION_270 ->         (displayHeight, displayWidth) = getDisplayResolution()
             //else -> -1 // 알 수 없는 값
         }
     }
