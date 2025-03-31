@@ -19,8 +19,8 @@ class PopupMovementHandler(
     private val params: WindowManager.LayoutParams
 ) : View.OnTouchListener {
 
-    private val displayWidth: Int
-    private val displayHeight: Int
+    private var displayWidth: Int
+    private var displayHeight: Int
     private var offsetX = 0f
     private var offsetY = 0f
     private var flagActionMove = false
