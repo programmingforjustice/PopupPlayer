@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Display
 import android.view.WindowManager
+import android.view.Surface
 import android.os.Bundle
 import android.os.Build
 import android.graphics.Point
@@ -31,9 +32,9 @@ class PopupMovementHandler(
     private val displayListener = object : DisplayManager.DisplayListener {
         override fun onDisplayChanged(displayId: Int) {
             if (displayId == Display.DEFAULT_DISPLAY) {
-                // val rotation = activity.windowManager.defaultDisplay.rotation
+                updateDisplaySettings()
                 // println("화면 회전 감지됨: $rotation")
-                calculateDisplayResolution()
+                //calculateDisplayResolution()
                 Toast.makeText(context, "화면 회전 감지됨: ($displayWidth, $displayHeight)", Toast.LENGTH_SHORT).show()
             }
         }
@@ -61,26 +62,31 @@ class PopupMovementHandler(
         displayHeight = displayMetrics.heightPixels*/
         
         displayManager.registerDisplayListener(displayListener, null)
-        
-        calculateDisplayResolution()
+        updateDisplaySettings()
     }
     
-    fun calculateDisplayResolution() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  
+    fun updateDisplaySettings() {
+        val rotation = windowManager.defaultDisplay.rotation
+        when (rotation) {
+            Surface.ROTATION_0 && Surface.ROTATION_180 ->         (displayWidth, displayHeight) = getDisplayResolution()
+            Surface.ROTATION_90 && Surface.ROTATION_270 ->         (displayHeight, displayWidth) = getDisplayResolution()
+            //else -> -1 // 알 수 없는 값
+        }
+    }
+    
+    fun getDisplayResolution(): Pair<Int, Int> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  
             // API 30 이상 (Android 11+)
             //val windowManager = getSystemService(WindowManager::class.java)
             val metrics: WindowMetrics = windowManager.maximumWindowMetrics
-            displayWidth = metrics.bounds.width() 
-            displayHeight = metrics.bounds.height()
+            Pair(metrics.bounds.width(), metrics.bounds.height())
         } else {  
             // API 29 이하 (Android 10-)
             //val windowManager = getSystemService(WindowManager::class.java)
             val display: Display = windowManager.defaultDisplay
             val size = Point()
             display.getRealSize(size)
-            displayWidth = size.x
-            displayHeight = size.y
-            //Pair(size.x, size.y)
+            Pair(size.x, size.y)
         }
     }
 
