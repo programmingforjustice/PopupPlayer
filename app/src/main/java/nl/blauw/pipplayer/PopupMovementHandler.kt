@@ -3,6 +3,7 @@ package nl.blauw.pipplayer
 import android.content.Context
 import android.view.MotionEvent
 import android.view.View
+import android.view.Display
 import android.view.WindowManager
 import android.os.Bundle
 import android.os.Build
