@@ -1,6 +1,7 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import android.widget.Toast
 import android.view.MotionEvent
 import android.view.View
 import android.view.Display
@@ -25,20 +26,21 @@ class PopupMovementHandler(
     private var offsetY = 0f
     private var flagActionMove = false
     
-    //private val displayManager: DisplayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    private val displayManager: DisplayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
-    /*private val displayListener = object : DisplayManager.DisplayListener {
+    private val displayListener = object : DisplayManager.DisplayListener {
         override fun onDisplayChanged(displayId: Int) {
             if (displayId == Display.DEFAULT_DISPLAY) {
                 // val rotation = activity.windowManager.defaultDisplay.rotation
                 // println("화면 회전 감지됨: $rotation")
+                Toast.makeText(context, "화면 회전 감지됨", Toast.LENGTH_SHORT).show()
                 calculateDisplayResolution()
             }
         }
 
         override fun onDisplayAdded(displayId: Int) {}
         override fun onDisplayRemoved(displayId: Int) {}
-    }*/
+    }
     
     init {
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
