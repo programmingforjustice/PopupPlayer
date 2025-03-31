@@ -49,17 +49,21 @@ class PopupMovementHandler(
     }
     
     fun updateDisplaySettings() {
+        offsetX = 0f
+        offsetY = 0f
+        flagActionMove = false
+        
         val rotation = windowManager.defaultDisplay.rotation
         when (rotation) {
             Surface.ROTATION_0, Surface.ROTATION_180 ->  { 
                 val (width, height) = getDisplayResolution()
-                displayWidth = height
-                displayHeight = width
+                displayWidth = minOf(width, height)
+                displayHeight = maxOf(width, height)
             }
             Surface.ROTATION_90, Surface.ROTATION_270 -> {
                 val (width, height) = getDisplayResolution()
-                displayWidth = height
-                displayHeight = width
+                displayWidth = maxOf(width, height)
+                displayHeight = minOf(width, height)
             }
             //else -> -1 // 알 수 없는 값
         }
