@@ -35,10 +35,27 @@ class PopupMovementHandler(
             displayHeight = displayMetrics.heightPixels
         }*/
         
-        val displayMetrics: DisplayMetrics = 
+        /*val displayMetrics: DisplayMetrics = 
         Resources.getSystem().displayMetrics
         displayWidth = displayMetrics.widthPixels
-        displayHeight = displayMetrics.heightPixels
+        displayHeight = displayMetrics.heightPixels*/
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  
+            // API 30 이상 (Android 11+)
+            //val windowManager = getSystemService(WindowManager::class.java)
+            val metrics: WindowMetrics = windowManager.maximumWindowMetrics
+            displayWidth = metrics.bounds.width() 
+            displayHeight = metrics.bounds.height()
+        } else {  
+            // API 29 이하 (Android 10-)
+            //val windowManager = getSystemService(WindowManager::class.java)
+            val display: Display = windowManager.defaultDisplay
+            val size = Point()
+            display.getRealSize(size)
+            displayWidth = size.x
+            displayHeight = size.y
+            //Pair(size.x, size.y)
+        }
     }
 
     override fun onTouch(view: View, event: MotionEvent): Boolean {
