@@ -58,8 +58,8 @@ class PopupMovementHandler(
             }
             Surface.ROTATION_90, Surface.ROTATION_270 -> {
                 val (width, height) = getDisplayResolution()
-                displayWidth = height
-                displayHeight = width
+                displayWidth = width
+                displayHeight = height
             }
             //else -> -1 // 알 수 없는 값
         }
