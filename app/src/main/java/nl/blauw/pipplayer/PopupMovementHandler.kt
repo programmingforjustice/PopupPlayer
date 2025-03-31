@@ -35,7 +35,7 @@ class PopupMovementHandler(
                 updateDisplaySettings()
                 // println("화면 회전 감지됨: $rotation")
                 //calculateDisplayResolution()
-                Toast.makeText(context, "화면 회전 감지됨: ($displayWidth, $displayHeight)", Toast.LENGTH_SHORT).show()
+                /*Toast.makeText(context, "화면 회전 감지됨: ($displayWidth, $displayHeight)", Toast.LENGTH_SHORT).show()*/
             }
         }
 
