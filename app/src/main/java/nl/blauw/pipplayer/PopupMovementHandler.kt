@@ -25,9 +25,9 @@ class PopupMovementHandler(
     private var offsetY = 0f
     private var flagActionMove = false
     
-    private val displayManager: DisplayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    //private val displayManager: DisplayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
-    private val displayListener = object : DisplayManager.DisplayListener {
+    /*private val displayListener = object : DisplayManager.DisplayListener {
         override fun onDisplayChanged(displayId: Int) {
             if (displayId == Display.DEFAULT_DISPLAY) {
                 // val rotation = activity.windowManager.defaultDisplay.rotation
@@ -38,7 +38,7 @@ class PopupMovementHandler(
 
         override fun onDisplayAdded(displayId: Int) {}
         override fun onDisplayRemoved(displayId: Int) {}
-    }
+    }*/
     
     init {
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -58,7 +58,7 @@ class PopupMovementHandler(
         displayWidth = displayMetrics.widthPixels
         displayHeight = displayMetrics.heightPixels*/
         
-        displayManager.registerDisplayListener(displayListener, null)
+        //displayManager.registerDisplayListener(displayListener, null)
         
         calculateDisplayResolution()
     }
