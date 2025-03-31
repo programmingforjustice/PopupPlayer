@@ -11,6 +11,7 @@ import android.graphics.Point
 import android.util.DisplayMetrics
 import android.content.res.Resources
 import android.view.WindowMetrics
+import android.hardware.display.DisplayManager
 
 class PopupMovementHandler(
     context: Context,
@@ -23,6 +24,21 @@ class PopupMovementHandler(
     private var offsetX = 0f
     private var offsetY = 0f
     private var flagActionMove = false
+    
+    private val displayManager: DisplayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+
+    private val displayListener = object : DisplayManager.DisplayListener {
+        override fun onDisplayChanged(displayId: Int) {
+            if (displayId == Display.DEFAULT_DISPLAY) {
+                // val rotation = activity.windowManager.defaultDisplay.rotation
+                // println("화면 회전 감지됨: $rotation")
+                calculateDisplayResolution()
+            }
+        }
+
+        override fun onDisplayAdded(displayId: Int) {}
+        override fun onDisplayRemoved(displayId: Int) {}
+    }
     
     init {
         /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -42,6 +58,12 @@ class PopupMovementHandler(
         displayWidth = displayMetrics.widthPixels
         displayHeight = displayMetrics.heightPixels*/
         
+        displayManager.registerDisplayListener(displayListener, null)
+        
+        calculateDisplayResolution()
+    }
+    
+    fun calculateDisplayResolution() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  
             // API 30 이상 (Android 11+)
             //val windowManager = getSystemService(WindowManager::class.java)
