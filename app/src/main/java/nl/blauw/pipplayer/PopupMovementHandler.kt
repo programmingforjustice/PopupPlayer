@@ -44,23 +44,6 @@ class PopupMovementHandler(
     }
     
     init {
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val windowMetrics: WindowMetrics = windowManager.currentWindowMetrics
-            val bounds = windowMetrics.bounds
-            displayWidth = bounds.width()
-            displayHeight = bounds.height()
-        } else {
-            val displayMetrics = DisplayMetrics()
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-            displayWidth = displayMetrics.widthPixels
-            displayHeight = displayMetrics.heightPixels
-        }*/
-        
-        /*val displayMetrics: DisplayMetrics = 
-        Resources.getSystem().displayMetrics
-        displayWidth = displayMetrics.widthPixels
-        displayHeight = displayMetrics.heightPixels*/
-        
         displayManager.registerDisplayListener(displayListener, null)
         updateDisplaySettings()
     }
@@ -68,8 +51,16 @@ class PopupMovementHandler(
     fun updateDisplaySettings() {
         val rotation = windowManager.defaultDisplay.rotation
         when (rotation) {
-            Surface.ROTATION_0, Surface.ROTATION_180 ->         (displayWidth, displayHeight) = getDisplayResolution()
-            Surface.ROTATION_90, Surface.ROTATION_270 ->         (displayHeight, displayWidth) = getDisplayResolution()
+            Surface.ROTATION_0, Surface.ROTATION_180 ->  { 
+                val (width, height) = getDisplayResolution()
+                displayWidth = width
+                displayHeight = height
+            }
+            Surface.ROTATION_90, Surface.ROTATION_270 -> {
+                val (width, height) = getDisplayResolution()
+                displayWidth = height
+                displayHeight = width
+            }
             //else -> -1 // 알 수 없는 값
         }
     }
