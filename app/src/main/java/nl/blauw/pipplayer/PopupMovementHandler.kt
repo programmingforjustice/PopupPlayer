@@ -60,7 +60,7 @@ class PopupMovementHandler(
         displayWidth = displayMetrics.widthPixels
         displayHeight = displayMetrics.heightPixels*/
         
-        //displayManager.registerDisplayListener(displayListener, null)
+        displayManager.registerDisplayListener(displayListener, null)
         
         calculateDisplayResolution()
     }
