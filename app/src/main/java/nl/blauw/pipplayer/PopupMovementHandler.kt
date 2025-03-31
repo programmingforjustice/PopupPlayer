@@ -33,8 +33,8 @@ class PopupMovementHandler(
             if (displayId == Display.DEFAULT_DISPLAY) {
                 // val rotation = activity.windowManager.defaultDisplay.rotation
                 // println("화면 회전 감지됨: $rotation")
-                Toast.makeText(context, "화면 회전 감지됨", Toast.LENGTH_SHORT).show()
                 calculateDisplayResolution()
+                Toast.makeText(context, "화면 회전 감지됨: ($displayWidth, $displayHeight)", Toast.LENGTH_SHORT).show()
             }
         }
 
