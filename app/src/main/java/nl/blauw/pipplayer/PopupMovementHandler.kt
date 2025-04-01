@@ -59,7 +59,7 @@ class PopupMovementHandler(
         displayWidth = width
         displayHeight = height
         
-        val rotation = windowManager.defaultDisplay.rotation
+        /*val rotation = windowManager.defaultDisplay.rotation
         when (rotation) {
             Surface.ROTATION_0 ->  { 
                 Toast.makeText(context, "화면 회전 감지됨: Surface.ROTATION_0", Toast.LENGTH_SHORT).show()
@@ -74,7 +74,7 @@ class PopupMovementHandler(
                 Toast.makeText(context, "화면 회전 감지됨: Surface.ROTATION_270", Toast.LENGTH_SHORT).show()
             }
             //else -> -1 // 알 수 없는 값
-        }
+        }*/
     }
     
     fun getDisplayResolution(): Pair<Int, Int> {
@@ -98,8 +98,8 @@ class PopupMovementHandler(
             MotionEvent.ACTION_DOWN -> {
                 updateDisplaySettings()
                 flagActionMove = false
-                offsetX = params.x - event.rawX
-                offsetY = params.y - event.rawY
+                offsetX = minOf(params.x, displayWidth) - event.rawX
+                offsetY = minOf(params.y, displayHeight) - event.rawY
                 return false
             }
 
