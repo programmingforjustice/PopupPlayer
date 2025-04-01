@@ -55,6 +55,7 @@ class PopupMovementHandler(
         offsetY = 0f
         flagActionMove = false
         
+        displayManager.unregisterDisplayListener(displayListener)
         /*val (width, height) = getDisplayResolution()
         displayWidth = width
         displayHeight = height*/
@@ -87,6 +88,8 @@ class PopupMovementHandler(
             }
             //else -> -1 // 알 수 없는 값
         }
+        
+        displayManager.registerDisplayListener(displayListener, null)
     }
     
     fun getDisplayResolution(): Pair<Int, Int> {
