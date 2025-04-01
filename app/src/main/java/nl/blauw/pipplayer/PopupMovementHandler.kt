@@ -31,6 +31,7 @@ class PopupMovementHandler(
 
     private val displayListener = object : DisplayManager.DisplayListener {
         override fun onDisplayChanged(displayId: Int) {
+            Toast.makeText(context, "displayId: $displayId", Toast.LENGTH_SHORT).show()
             if (displayId == Display.DEFAULT_DISPLAY) {
                 updateDisplaySettings()
                 // println("화면 회전 감지됨: $rotation")
