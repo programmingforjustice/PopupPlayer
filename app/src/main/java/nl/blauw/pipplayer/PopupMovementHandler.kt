@@ -16,7 +16,7 @@ import android.view.WindowMetrics
 import android.hardware.display.DisplayManager
 
 class PopupMovementHandler(
-    context: Context,
+    private val context: Context,
     private val windowManager: WindowManager,
     private val params: WindowManager.LayoutParams
 ) : View.OnTouchListener {
