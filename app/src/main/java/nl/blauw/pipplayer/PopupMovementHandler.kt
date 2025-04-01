@@ -27,7 +27,7 @@ class PopupMovementHandler(
     private var offsetY = 0f
     private var flagActionMove = false
     
-    private val displayManager: DisplayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
+    /*private val displayManager: DisplayManager = context.getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 
     private val displayListener = object : DisplayManager.DisplayListener {
         override fun onDisplayChanged(displayId: Int) {
@@ -36,29 +36,28 @@ class PopupMovementHandler(
                 updateDisplaySettings()
                 // println("화면 회전 감지됨: $rotation")
                 //calculateDisplayResolution()
-                /*Toast.makeText(context, "화면 회전 감지됨: ($displayWidth, $displayHeight)", Toast.LENGTH_SHORT).show()*/
+                Toast.makeText(context, "화면 회전 감지됨: ($displayWidth, $displayHeight)", Toast.LENGTH_SHORT).show()
             }
         }
 
         override fun onDisplayAdded(displayId: Int) {}
         override fun onDisplayRemoved(displayId: Int) {}
-    }
+    }*/
     
     init {
-        displayManager.registerDisplayListener(displayListener, null)
+        //displayManager.registerDisplayListener(displayListener, null)
         updateDisplaySettings()
         
     }
     
     fun updateDisplaySettings() {
-        offsetX = 0f
-        offsetY = 0f
-        flagActionMove = false
+        // offsetX = 0f
+        // offsetY = 0f
+        // flagActionMove = false
         
-        displayManager.unregisterDisplayListener(displayListener)
-        /*val (width, height) = getDisplayResolution()
+        val (width, height) = getDisplayResolution()
         displayWidth = width
-        displayHeight = height*/
+        displayHeight = height
         
         val rotation = windowManager.defaultDisplay.rotation
         when (rotation) {
@@ -68,13 +67,13 @@ class PopupMovementHandler(
                 displayHeight = maxOf(width, height)*/
                 Toast.makeText(context, "화면 회전 감지됨: Surface.ROTATION_0", Toast.LENGTH_SHORT).show()
             }
-            Surface.ROTATION_90-> {
+            Surface.ROTATION_90 -> {
                 /*val (width, height) = getDisplayResolution()
                 displayWidth = maxOf(width, height)
                 displayHeight = minOf(width, height)*/
                 Toast.makeText(context, "화면 회전 감지됨: Surface.ROTATION_90", Toast.LENGTH_SHORT).show()
             }
-            Surface.ROTATION_180 ->  { 
+            Surface.ROTATION_180 -> { 
                 /*val (width, height) = getDisplayResolution()
                 displayWidth = minOf(width, height)
                 displayHeight = maxOf(width, height)*/
@@ -88,8 +87,6 @@ class PopupMovementHandler(
             }
             //else -> -1 // 알 수 없는 값
         }
-        
-        displayManager.registerDisplayListener(displayListener, null)
     }
     
     fun getDisplayResolution(): Pair<Int, Int> {
@@ -111,6 +108,7 @@ class PopupMovementHandler(
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
+                updateDisplaySettings()
                 flagActionMove = false
                 offsetX = params.x - event.rawX
                 offsetY = params.y - event.rawY
