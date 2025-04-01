@@ -58,16 +58,6 @@ class PopupMovementHandler(
         displayWidth = width
         displayHeight = height*/
         
-        val orientation = resources.configuration.orientation
-
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // 가로 모드
-            println("가로 모드입니다.")
-        } else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // 세로 모드
-            println("세로 모드입니다.")
-        }
-        
         val rotation = windowManager.defaultDisplay.rotation
         when (rotation) {
             Surface.ROTATION_0 ->  { 
