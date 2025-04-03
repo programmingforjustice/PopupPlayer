@@ -493,7 +493,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
             setOnIsPlayingChangedListener {
                 currentPosition = this@AdaptivePopupPlayer.popupPlayer.getCurrentPosition() 
                 
-                var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
+                val imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
                         setOnClickListener {
                        var layoutParams = this@AdaptivePopupPlayer.popupPlayer.layoutParams
                        this@AdaptivePopupPlayer.popupPlayer.dispose()
@@ -520,34 +520,6 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
             //this.isPlaying = this@AdaptivePopupPlayer.isPlaying
         }
     }
-    
-    /*private fun createPopupWindow() {
-        var factory = DefaultPopupPlayerFactory(context)
-        this@AdaptivePopupPlayer.popupPlayer = BasicVideoPopupPlayer(context, contentUrl).apply {
-            setOnIsPlayingChangedListener {
-                state = (popupPlayer as JsonSerializable).toJsonString()
-                //currentPosition = this@AdaptivePopupPlayer.popupPlayer.getCurrentPosition() 
-                
-                var imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
-                        setOnClickListener {
-                       //var layoutParams = this@AdaptivePopupPlayer.popupPlayer.layoutParams
-                       this@AdaptivePopupPlayer.popupPlayer.dispose()
-                        createPopupWindow()
-                        
-                       (this@AdaptivePopupPlayer.popupPlayer as? BasicVideoPopupPlayer)?.isPlaying = true
-                       this@AdaptivePopupPlayer.popupPlayer.show(layoutParams)
-                       this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
-                            
-                        }
-                }
-                
-                imagePopupPlayer.show(this@AdaptivePopupPlayer.popupPlayer.layoutParams)
-                this@AdaptivePopupPlayer.popupPlayer.dispose()
-                this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
-                //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
-            }
-        }
-    }*/
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
         return popupPlayer.createDisplayView(params)
@@ -576,6 +548,18 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
     }
     
     override fun toJsonString(): String {
-        return (popupPlayer as? JsonSerializable)?.toJsonString() ?: ""
+        // JSON 객체 생성
+        val jsonObject = JSONObject().apply {
+                put("mediaPath", contentUrl)
+                put("currentPosition", currentPosition)
+                put("isPlaying", true)
+                put("x", layoutParams.x)
+                put("y", layoutParams.y)
+                put("width", layoutParams.width)
+                put("height", layoutParams.height)
+            }
+    
+        // JSON 문자열로 변환
+        return jsonObject.toString()
    }
 }
