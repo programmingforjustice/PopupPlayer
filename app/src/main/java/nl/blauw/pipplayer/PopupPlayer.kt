@@ -552,7 +552,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
         val jsonObject = JSONObject().apply {
                 put("mediaPath", contentUrl)
                 put("currentPosition", currentPosition)
-                put("isPlaying", true)
+                put("isPlaying", isPlaying)
                 put("x", layoutParams.x)
                 put("y", layoutParams.y)
                 put("width", layoutParams.width)
