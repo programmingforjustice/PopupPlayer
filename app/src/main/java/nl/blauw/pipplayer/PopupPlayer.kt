@@ -553,10 +553,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private va
                 put("mediaPath", contentUrl)
                 put("currentPosition", currentPosition)
                 put("isPlaying", isPlaying)
-                put("x", layoutParams.x)
-                put("y", layoutParams.y)
-                put("width", layoutParams.width)
-                put("height", layoutParams.height)
+                put("x", popupPlayer.layoutParams.x)
+                put("y", popupPlayer.layoutParams.y)
+                put("width", popupPlayer.layoutParams.width)
+                put("height", popupPlayer.layoutParams.height)
             }
     
         // JSON 문자열로 변환
