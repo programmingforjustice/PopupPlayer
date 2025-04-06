@@ -67,7 +67,7 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     }
 
-    override fun show(params: WindowManager.LayoutParams? = null) {
+    override fun show(params: WindowManager.LayoutParams?) {
         val view = createDisplayView(params)
         params?.apply {
           layoutParams.x = x 
