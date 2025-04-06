@@ -33,15 +33,9 @@ interface PopupPlayer {
 }
 
 abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
-    protected val windowManager: WindowManager
-    override val layoutParams: WindowManager.LayoutParams
+    protected val windowManager: WindowManager  = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
     
-    init {
-      windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
-    }
-    
-    init {
-      layoutParams = WindowManager.LayoutParams(
+    override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
             Utils.convertDpToPixelsInt(2f, context),
             Utils.convertDpToPixelsInt(2f, context),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -55,7 +49,6 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             x = DEFAULT_POPUP_X
             y = DEFAULT_POPUP_Y
         }
-    }
 
     companion object {
         const val MAX_POPUP_WIDTH = 400
