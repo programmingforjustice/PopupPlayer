@@ -22,7 +22,19 @@ import java.io.File
 import org.json.JSONObject
 
 interface PopupPlayer {
+    companion object {
+        const val MAX_POPUP_WIDTH = 400
+        const val MAX_POPUP_HEIGHT = 400
+
+        const val DEFAULT_POPUP_X = 100
+        const val DEFAULT_POPUP_Y = 200
+
+        const val CONTROLLER_SHOW_TIMEOUT = 2500
+        const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+    }
+    
     val layoutParams: WindowManager.LayoutParams
+    
     fun show(params: WindowManager.LayoutParams? = null)
     fun getCurrentPosition(): Long
     fun play(currentPosition: Long = 0)
@@ -49,17 +61,6 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             x = DEFAULT_POPUP_X
             y = DEFAULT_POPUP_Y
         }
-
-    companion object {
-        const val MAX_POPUP_WIDTH = 400
-        const val MAX_POPUP_HEIGHT = 400
-
-        const val DEFAULT_POPUP_X = 100
-        const val DEFAULT_POPUP_Y = 200
-
-        const val CONTROLLER_SHOW_TIMEOUT = 2500
-        const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-    }
 
     override fun show(params: WindowManager.LayoutParams?) {
         val view = createDisplayView(params)
