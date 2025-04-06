@@ -22,6 +22,7 @@ import java.io.File
 import org.json.JSONObject
 
 interface PopupPlayer {
+    val layoutParams: WindowManager.LayoutParams
     fun show(params: WindowManager.LayoutParams? = null)
     fun getCurrentPosition(): Long
     fun play(currentPosition: Long = 0)
@@ -33,7 +34,7 @@ interface PopupPlayer {
 
 abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     protected val windowManager: WindowManager
-    val layoutParams: WindowManager.LayoutParams
+    override val layoutParams: WindowManager.LayoutParams
     
     init {
       windowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
@@ -480,6 +481,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
 
 class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
     private lateinit var popupPlayer: BasePopupPlayer
+    override val layoutParams: WindowManager.LayoutParams
     private var currentPosition: Long = 0
     private var state: String? = null
     var isPlaying = false
@@ -532,7 +534,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     override fun getCurrentPosition(): Long = popupPlayer.getCurrentPosition()
     
     override fun show(params: WindowManager.LayoutParams?) {
-        popupPlayer.show(params)
+        popupPlayer.show(layoutParams)
     }
     
     override fun play(currentPosition: Long) {

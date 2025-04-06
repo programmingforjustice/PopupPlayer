@@ -18,7 +18,7 @@ abstract class PopupPlayerFactory(protected val context: Context): JsonDeseriali
         var url = playerInfo.getString("mediaPath")
         val popupPlayer = create(url)
         //val layoutParams = WindowManager.LayoutParams().apply {
-        popupPlayer.layoutParams.apply {
+        (popupPlayer as? BasePopupPlayer)?.layoutParams.apply {
           x = playerInfo.getInt("x")
           y = playerInfo.getInt("y")
           width = playerInfo.getInt("width")
