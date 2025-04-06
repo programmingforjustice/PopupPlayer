@@ -479,7 +479,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
 }
 
 class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
-    private lateinit var popupPlayer: PopupPlayer
+    private lateinit var popupPlayer: BasePopupPlayer
     private var currentPosition: Long = 0
     private var state: String? = null
     var isPlaying = false
