@@ -86,7 +86,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         
         playerViewWrapper.apply {
             setKeepScreenOn(true)
-            setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT)
+            setControllerShowTimeoutMs(PopupPlayer.CONTROLLER_SHOW_TIMEOUT)
             setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE)
         }
 

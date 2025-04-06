@@ -54,12 +54,12 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             else
                 WindowManager.LayoutParams.TYPE_TOAST,
-            DEFAULT_WINDOW_FLAGS,
+            PopupPlayer.DEFAULT_WINDOW_FLAGS,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.LEFT
-            x = DEFAULT_POPUP_X
-            y = DEFAULT_POPUP_Y
+            x = PopupPlayer.DEFAULT_POPUP_X
+            y = PopupPlayer.DEFAULT_POPUP_Y
         }
 
     override fun show(params: WindowManager.LayoutParams?) {
@@ -260,7 +260,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         
         playerViewWrapper.apply {
             setKeepScreenOn(true)
-            setControllerShowTimeoutMs(CONTROLLER_SHOW_TIMEOUT)
+            setControllerShowTimeoutMs(PopupPlayer.CONTROLLER_SHOW_TIMEOUT)
             setRepeatToggleModes(RepeatModeUtil.REPEAT_TOGGLE_MODE_ONE)
         }
 
@@ -490,12 +490,12 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             else
                 WindowManager.LayoutParams.TYPE_TOAST,
-            DEFAULT_WINDOW_FLAGS,
+            PopupPlayer.DEFAULT_WINDOW_FLAGS,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.LEFT
-            x = DEFAULT_POPUP_X
-            y = DEFAULT_POPUP_Y
+            x = PopupPlayer.DEFAULT_POPUP_X
+            y = PopupPlayer.DEFAULT_POPUP_Y
         }
     
     init {
