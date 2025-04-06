@@ -21,13 +21,17 @@ import android.widget.Toast
 import java.io.File
 import org.json.JSONObject
 
-/*interface PopupPlayer {
+interface PopupPlayer {
     fun show(params: WindowManager.LayoutParams? = null)
+    fun getCurrentPosition(): Long
     fun play(currentPosition: Long = 0)
+    fun removePopupWindow() 
     fun dispose()
-}*/
+    fun createDisplayView(params: WindowManager.LayoutParams? = null): View
+    fun exportCurrentFrame(): Bitmap?
+}
 
-abstract class PopupPlayer(protected val context: Context) {
+abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     protected val windowManager: WindowManager
     val layoutParams: WindowManager.LayoutParams
     
@@ -63,7 +67,7 @@ abstract class PopupPlayer(protected val context: Context) {
         const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
     }
 
-    open fun show(params: WindowManager.LayoutParams? = null) {
+    override fun show(params: WindowManager.LayoutParams? = null) {
         val view = createDisplayView(params)
         params?.apply {
           layoutParams.x = x 
@@ -74,15 +78,15 @@ abstract class PopupPlayer(protected val context: Context) {
         windowManager.addView(view, layoutParams)
     }
     
-    abstract fun getCurrentPosition(): Long
+    /*abstract fun getCurrentPosition(): Long
     abstract fun play(currentPosition: Long = 0)
     abstract fun removePopupWindow() 
     abstract fun dispose()
     abstract fun createDisplayView(params: WindowManager.LayoutParams? = null): View
-    abstract fun exportCurrentFrame(): Bitmap?
+    abstract fun exportCurrentFrame(): Bitmap?*/
 }
 
-class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String?, private var bitmap: Bitmap? = null): PopupPlayer(context), JsonSerializable {
+class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String?, private var bitmap: Bitmap? = null): BasePopupPlayer(context), JsonSerializable {
     private val imageViewLayout: View
     private val controlLayout: View
     private val imageView: ImageView
@@ -209,7 +213,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
    }
 }
 
-class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): PopupPlayer(context), JsonSerializable {
+class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): BasePopupPlayer(context), JsonSerializable {
     private var player: Player
     private var playerView: PlayerView
     private val imageView: ImageView = ImageView(context)
@@ -474,7 +478,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
    }
 }
 
-class AdaptivePopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String): PopupPlayer(context), JsonSerializable {
+class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
     private lateinit var popupPlayer: PopupPlayer
     private var currentPosition: Long = 0
     private var state: String? = null
