@@ -474,13 +474,27 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
 
 class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
     private lateinit var popupPlayer: BasePopupPlayer
-    override val layoutParams: WindowManager.LayoutParams
     private var currentPosition: Long = 0
     private var state: String? = null
     var isPlaying = false
         set(value) {
             field = value
             (popupPlayer as BasicVideoPopupPlayer).isPlaying = value
+        }
+    
+    override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
+            Utils.convertDpToPixelsInt(2f, context),
+            Utils.convertDpToPixelsInt(2f, context),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                WindowManager.LayoutParams.TYPE_TOAST,
+            DEFAULT_WINDOW_FLAGS,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.TOP or Gravity.LEFT
+            x = DEFAULT_POPUP_X
+            y = DEFAULT_POPUP_Y
         }
     
     init {
