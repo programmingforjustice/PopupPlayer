@@ -37,7 +37,7 @@ class NewMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // View Binding 초기화
         binding = ActivityNewMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setView(binding.root)
 
         // 툴바 설정
         setSupportActionBar(binding.toolbar)
@@ -139,7 +139,7 @@ class NewMainActivity : AppCompatActivity() {
                 //binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
                 
                 //debug("recyclerview - MediaAdapter")
-                mediaAdapter = MediaAdapter(mediaItems)
+                mediaAdapter = MediaAdapter(this, mediaItems)
                 binding.recyclerView.adapter = mediaAdapter
                 //debug("end - recyclerview setup")
             } else {

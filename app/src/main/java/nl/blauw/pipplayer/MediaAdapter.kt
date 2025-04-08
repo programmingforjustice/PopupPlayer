@@ -2,13 +2,16 @@ package nl.blauw.pipplayer
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.content.Context
 import android.content.ContentResolver
 import android.util.Size
 import androidx.recyclerview.widget.RecyclerView
 import nl.blauw.pipplayer.databinding.ItemFileBinding
 
-class MediaAdapter(private val items: List<MediaItem>) :
+class MediaAdapter(private val context: Context, private val items: List<MediaItem>) :
     RecyclerView.Adapter<MediaAdapter.ViewHolder>() {
+    
+    val contentResolver = context.contentResolver
 
     inner class ViewHolder(val binding: ItemFileBinding) :
         RecyclerView.ViewHolder(binding.root) {
