@@ -215,6 +215,16 @@ class NewMainActivity : AppCompatActivity() {
                 items.add(MediaItem(id = id, contentUri = contentUri, displayName = name, mediaType = mediaType,  mimeType = mimeType))
             }
         }
+        
+        for (item in items) {
+            try {
+                // 원하는 썸네일 크기 지정 (예: 200x200)
+                val thumbnail = contentResolver.loadThumbnail(item.contentUri, Size(200, 200), null)
+                item.thumbnail = thumbnail
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
         //debug("finish - iterate query results.")
     
         return items
