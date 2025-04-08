@@ -37,7 +37,7 @@ class NewMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         // View Binding 초기화
         binding = ActivityNewMainBinding.inflate(layoutInflater)
-        setView(binding.root)
+        setContentView(binding.root)
 
         // 툴바 설정
         setSupportActionBar(binding.toolbar)
