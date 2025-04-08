@@ -493,7 +493,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
         set(value) {
             field = value
             popupPlayer.isPlaying = value
-        
+        }
     var isStarted = false
     
     override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
