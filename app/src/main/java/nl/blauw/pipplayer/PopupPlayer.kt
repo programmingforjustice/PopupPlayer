@@ -87,6 +87,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private val imageView: ImageView
     
     private var startTime: Long = 0
+    private var isPlaying = false
     
     private var onClickListener: (() -> Unit)? = null
     private var onClose: (() -> Unit)? = null
@@ -137,7 +138,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
-        setupImageView(params)
+        if (!isPlaying) setupImageView(params)
         return imageViewLayout
     }
     
@@ -178,6 +179,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     override fun play(currentPosition: Long) {
         //throw UnsupportedOperationException()
         toggleControlLayout(null)
+        isPlaying = true
     }
     
     override fun removePopupWindow() {
