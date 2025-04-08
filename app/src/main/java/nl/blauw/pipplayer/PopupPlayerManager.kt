@@ -60,7 +60,8 @@ object PopupPlayerManager : JsonSerializable {
     
     fun escalateOrder(player: PopupPlayer) {
         val order = orderList.indexOf(player)
-        if (order == -1) throw IllegalArgumentException("the specified PopupPlayer instance is not managed by PopupPlayerManager.")
+        /*if (order == -1) throw IllegalArgumentException("the specified PopupPlayer instance is not managed by PopupPlayerManager.")*/
+        if (order == -1) return
         
         val escalatedOrder = Math.min(orderList.size-1, order+1)
         val temp = orderList[escalatedOrder]
