@@ -127,6 +127,13 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             windowManager.removeViewImmediate(imageViewLayout)
             PopupPlayerManager.remove(this)
         }
+        
+        val orderEscalationButton = imageViewLayout.findViewById<ImageButton>(R.id.order_escalation_button)
+        orderEscalationButton.setOnClickListener {
+            onOrderEscalation?.invoke()
+            PopupPlayerManager.escalateOrder(this)
+            PopupPlayerManager.showAllPopupPlayerByOrder()
+        }
     }
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
@@ -521,6 +528,9 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
                         }
                         setOnClose {
                             PopupPlayerManager.remove(this@AdaptivePopupPlayer)
+                        }
+                        onOrderEscalation = {
+                            PopupPlayerManager.escalateOrder(this@AdaptivePopupPlayer)
                         }
                 }
                 
