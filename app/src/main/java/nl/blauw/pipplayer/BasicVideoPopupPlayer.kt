@@ -39,6 +39,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     private var onIsPlayingChangedListener: (() -> Unit)? = null
     
     private var onClose: (() -> Unit)? = null
+    var onOrderEscalation: (() -> Unit)? = null
       
     init {
         player = playerFactory.create(contentUrl)
@@ -110,6 +111,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         }
         
         playerViewWrapper.setupOrderEscalationButton {
+            onOrderEscalation?.invoke()
             PopupPlayerManager.escalateOrder(this)
             PopupPlayerManager.showAllPopupPlayerByOrder()
         }

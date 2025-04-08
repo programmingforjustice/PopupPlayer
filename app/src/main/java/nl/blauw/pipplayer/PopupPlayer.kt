@@ -90,6 +90,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
     private var onClickListener: (() -> Unit)? = null
     private var onClose: (() -> Unit)? = null
+    var onOrderEscalation: (() -> Unit)? = null
     
     init {
         val inflater = LayoutInflater.from(context) 
@@ -530,6 +531,9 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
             }
             setOnClose {
                 PopupPlayerManager.remove(this@AdaptivePopupPlayer)
+            }
+            onOrderEscalation = {
+                PopupPlayerManager.escalateOrder(this@AdaptivePopupPlayer)
             }
             //this.isPlaying = this@AdaptivePopupPlayer.isPlaying
         }
