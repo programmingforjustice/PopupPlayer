@@ -29,7 +29,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     //private val muteToggleButtonListener =  MuteToggleButtonListener(player)
     private lateinit var audioCodecMuteToggleButtonListener: AudioCodecMuteToggleButtonListener
     
-    var isPlaying: Boolean = false
+    //var isPlaying: Boolean = false
     var isMuted: Boolean = true
     var isDisposed: Boolean = false
       private set

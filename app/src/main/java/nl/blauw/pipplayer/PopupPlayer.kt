@@ -34,6 +34,7 @@ interface PopupPlayer {
     }
     
     val layoutParams: WindowManager.LayoutParams
+    var isPlaying: Boolean
     
     fun show(params: WindowManager.LayoutParams? = null)
     fun getCurrentPosition(): Long
@@ -61,6 +62,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             x = PopupPlayer.DEFAULT_POPUP_X
             y = PopupPlayer.DEFAULT_POPUP_Y
         }
+        
+    override var isPlaying = false
 
     override fun show(params: WindowManager.LayoutParams?) {
         val view = createDisplayView(params)
@@ -87,7 +90,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private val imageView: ImageView
     
     private var startTime: Long = 0
-    var isPlaying = false
+    //var isPlaying = false
     
     private var onClickListener: (() -> Unit)? = null
     private var onClose: (() -> Unit)? = null
@@ -228,7 +231,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     //private val muteToggleButtonListener =  MuteToggleButtonListener(player)
     private lateinit var audioCodecMuteToggleButtonListener: AudioCodecMuteToggleButtonListener
     
-    var isPlaying: Boolean = false
+    //var isPlaying: Boolean = false
     var isMuted: Boolean = true
     var isDisposed: Boolean = false
       private set
@@ -489,7 +492,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     private lateinit var popupPlayer: BasePopupPlayer
     private var currentPosition: Long = 0
     private var state: String? = null
-    var isPlaying = false
+    override var isPlaying = false
         set(value) {
             field = value
             popupPlayer.isPlaying = value
