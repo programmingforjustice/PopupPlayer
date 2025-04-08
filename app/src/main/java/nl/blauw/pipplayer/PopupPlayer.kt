@@ -87,7 +87,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private val imageView: ImageView
     
     private var startTime: Long = 0
-    private var isPlaying = false
+    var isPlaying = false
     
     private var onClickListener: (() -> Unit)? = null
     private var onClose: (() -> Unit)? = null
