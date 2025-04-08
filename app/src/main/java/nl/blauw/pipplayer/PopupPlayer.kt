@@ -104,12 +104,14 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         //val bitmap: Bitmap = BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap = bitmap ?: BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
         bitmap?.run {
-            if (params != null) {
-                layoutParams.height = params.height
-                layoutParams.width = params.width
-            } else {
-                layoutParams.height = height
-                layoutParams.width = width
+            if (!isPlaying) {
+                if (params != null) {
+                    layoutParams.height = params.height
+                    layoutParams.width = params.width
+                } else {
+                    layoutParams.height = height
+                    layoutParams.width = width
+                }
             }
             
             imageViewLayout.tag = width.toDouble() / height //scaleFactor
@@ -138,7 +140,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
-        if (!isPlaying) setupImageView(params)
+        setupImageView(params)
         return imageViewLayout
     }
     
