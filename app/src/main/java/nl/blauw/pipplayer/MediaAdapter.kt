@@ -3,6 +3,7 @@ package nl.blauw.pipplayer
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.content.ContentResolver
+import android.util.Size
 import androidx.recyclerview.widget.RecyclerView
 import nl.blauw.pipplayer.databinding.ItemFileBinding
 
