@@ -217,7 +217,7 @@ class NewMainActivity : AppCompatActivity() {
             }
         }
         
-        for (item in items) {
+        /*for (item in items) {
             try {
                 // 원하는 썸네일 크기 지정 (예: 200x200)
                 val thumbnail = contentResolver.loadThumbnail(item.contentUri, Size(200, 200), null)
@@ -225,7 +225,7 @@ class NewMainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
+        }*/
         //debug("finish - iterate query results.")
     
         return items
