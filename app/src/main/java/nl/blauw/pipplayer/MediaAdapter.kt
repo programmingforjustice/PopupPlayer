@@ -11,8 +11,8 @@ class MediaAdapter(private val items: List<MediaItem>) :
     inner class ViewHolder(val binding: ItemFileBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(mediaItem: MediaItem) {
-            binding.itemName.text = mediaItem.displayName
-            binding.itemName.imageThumbnail.setImageBitmap(mediaItem.thumbnail)
+            binding.mediaPath.text = mediaItem.displayName
+            binding.imageThumbnail.setImageBitmap(mediaItem.thumbnail)
             // 필요시, 미디어 타입에 따라 아이콘이나 썸네일 로딩 등을 추가할 수 있습니다.
         }
     }
