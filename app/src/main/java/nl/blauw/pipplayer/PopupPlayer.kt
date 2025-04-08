@@ -573,7 +573,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     
     override fun play(currentPosition: Long) {
         popupPlayer.play(currentPosition)
-        isPlaying = true
+        //isPlaying = true
     }
     
     override fun removePopupWindow() {
