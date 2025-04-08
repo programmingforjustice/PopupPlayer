@@ -488,10 +488,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     private var currentPosition: Long = 0
     private var state: String? = null
     var isPlaying = false
-        set(value) {
+        /*set(value) {
             field = value
             (popupPlayer as BasicVideoPopupPlayer).isPlaying = value
-        }
+        }*/
     
     override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
             Utils.convertDpToPixelsInt(2f, context),
@@ -558,12 +558,13 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     override fun getCurrentPosition(): Long = popupPlayer.getCurrentPosition()
     
     override fun show(params: WindowManager.LayoutParams?) {
-        //popupPlayer.show(layoutParams)
-        popupPlayer.show(params)
+        if (!isPlaying) popupPlayer.show(layoutParams)
+        else popupPlayer.show(params)
     }
     
     override fun play(currentPosition: Long) {
         popupPlayer.play(currentPosition)
+        isPlaying = true
     }
     
     override fun removePopupWindow() {
