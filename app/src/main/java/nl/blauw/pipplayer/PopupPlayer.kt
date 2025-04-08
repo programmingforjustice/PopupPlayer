@@ -488,11 +488,11 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     private var currentPosition: Long = 0
     private var state: String? = null
     var isPlaying = false
-        set(value) {
+        /*set(value) {
             field = value
             (popupPlayer as? BasicVideoPopupPlayer)?.isPlaying = value
-            /*(popupPlayer as? ImagePopupPlayer)?.isPlaying = value*/
-        }
+            (popupPlayer as? ImagePopupPlayer)?.isPlaying = value
+        }*/
     
     override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
             Utils.convertDpToPixelsInt(2f, context),
