@@ -558,7 +558,8 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     override fun getCurrentPosition(): Long = popupPlayer.getCurrentPosition()
     
     override fun show(params: WindowManager.LayoutParams?) {
-        popupPlayer.show(layoutParams)
+        //popupPlayer.show(layoutParams)
+        popupPlayer.show(params)
     }
     
     override fun play(currentPosition: Long) {
