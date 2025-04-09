@@ -541,6 +541,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
                 }
                 
                 imagePopupPlayer.show(this@AdaptivePopupPlayer.popupPlayer.layoutParams)
+                imagePopupPlayer.play()
                 this@AdaptivePopupPlayer.popupPlayer.dispose()
                 this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
                 //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
