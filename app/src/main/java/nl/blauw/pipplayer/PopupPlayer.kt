@@ -141,7 +141,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
-        setupImageView(params)
+        if (!isPlaying) setupImageView(params)
         return imageViewLayout
     }
     
