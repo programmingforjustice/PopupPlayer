@@ -27,16 +27,16 @@
 	android:layout_height="24dp"
 	android:background="?android:attr/selectableItemBackground" />
 	
-	 <ImageButton
-        android:id="@+id/mute_toggle_button"
-        android:src="@drawable/ic_mute" 
-        android:layout_width="24dp"
-	android:layout_height="24dp"
-	android:background="?android:attr/selectableItemBackground" />
-
     <ImageButton
         android:id="@+id/fullscreen_button"
         android:src="@drawable/ic_fullscreen" 
+        android:layout_width="24dp"
+	android:layout_height="24dp"
+	android:background="?android:attr/selectableItemBackground" />
+	
+	 <ImageButton
+        android:id="@+id/mute_toggle_button"
+        android:src="@drawable/ic_mute" 
         android:layout_width="24dp"
 	android:layout_height="24dp"
 	android:background="?android:attr/selectableItemBackground" />
