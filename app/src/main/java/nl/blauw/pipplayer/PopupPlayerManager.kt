@@ -58,6 +58,13 @@ object PopupPlayerManager : JsonSerializable {
       }
     }
     
+    fun escalateTopOrder(player: PopupPlayer) {
+        if (player in playerList) {
+            orderList.remove(player)
+            orderList.add(player)
+        }
+    }
+    
     fun escalateOrder(player: PopupPlayer) {
         val order = orderList.indexOf(player)
         /*if (order == -1) throw IllegalArgumentException("the specified PopupPlayer instance is not managed by PopupPlayerManager.")*/

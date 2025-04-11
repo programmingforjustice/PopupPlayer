@@ -545,6 +545,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
                 this@AdaptivePopupPlayer.popupPlayer.dispose()
                 this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
                 //this@AdaptivePopupPlayer.popupPlayer = imagePopupPlayer
+                PopupPlayerManager.escalateTopOrder(this@AdaptivePopupPlayer)
             }
             setOnClose {
                 PopupPlayerManager.remove(this@AdaptivePopupPlayer)
@@ -554,6 +555,7 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
             }
             //this.isPlaying = this@AdaptivePopupPlayer.isPlaying
         }
+        PopupPlayerManager.escalateTopOrder(this@AdaptivePopupPlayer)
     }
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
