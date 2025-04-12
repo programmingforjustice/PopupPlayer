@@ -3,7 +3,7 @@ package nl.blauw.pipplayer
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.content.Context
+import android.widget.Toast
 
 fun getMediaResolution(context: Context, uri: Uri): Pair<Int, Int>? {
     val retriever = MediaMetadataRetriever()
