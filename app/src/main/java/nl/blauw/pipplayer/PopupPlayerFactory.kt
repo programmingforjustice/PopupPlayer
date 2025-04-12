@@ -76,10 +76,15 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     }
     
     override fun canHandle(mediaUrl: String): Boolean {
-        return mediaUrl.lowercase().let {
+        val mimeType = context.contentResolver.getType(mediaUrl)?
+        return mimeType?.split("/").getOrNull(1)?.lowercase()?.let { subType -> 
+                subType.endsWith(".mp4") 
+                || subType.endsWith(".mkv")
+            } ?: false
+        /*return mediaUrl.lowercase().let {
             it.endsWith(".mp4") 
-            || it.endsWith(".mkv") 
-        }
+            || it.endsWith(".mkv")
+        }*/
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
@@ -92,13 +97,21 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
 
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUrl: String): Boolean {
-        return mediaUrl.lowercase().let {
+        val mimeType = context.contentResolver.getType(mediaUrl)?
+        return mimeType?.split("/").getOrNull(1)?.lowercase()?.let { subType -> 
+                subType.endsWith(".jpg") 
+                || subType.endsWith(".jpeg") 
+                || subType.endsWith(".png") 
+                || subType.endsWith(".webp") 
+                || subType.endsWith(".bmp")
+            } ?: false
+        /*return mediaUrl.lowercase().let {
             it.endsWith(".jpg") 
             || it.endsWith(".jpeg") 
             || it.endsWith(".png") 
             || it.endsWith(".webp") 
             || it.endsWith(".bmp")
-        }
+        }*/
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
