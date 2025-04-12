@@ -77,16 +77,19 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     }
     
     override fun canHandle(mediaUrl: String): Boolean {
-        val mimeType = context.contentResolver.getType(Uri.parse("file://" + mediaUrl))
+        val mimeType = context.contentResolver.getType(Uri.parse(mediaUrl))
         debug(context, "mimeType = $mimeType")
-        return mimeType?.split("/")?.getOrNull(1)?.lowercase()?.let { subType -> 
-                subType.endsWith(".mp4") 
-                || subType.endsWith(".mkv")
+        if (mimeType != null) { 
+            return mimeType?.split("/")?.getOrNull(1)?.lowercase()?.let { subType -> 
+                subType.endsWith("mp4") 
+                || subType.endsWith("mkv")
             } ?: false
-        /*return mediaUrl.lowercase().let {
-            it.endsWith(".mp4") 
-            || it.endsWith(".mkv")
-        }*/
+        } else {
+            return mediaUrl.lowercase().let {
+                it.endsWith(".mp4") 
+                || it.endsWith(".mkv")
+            }
+        }
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
@@ -99,22 +102,25 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
 
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUrl: String): Boolean {
-        val mimeType = context.contentResolver.getType(Uri.parse("file://" + mediaUrl))
+        val mimeType = context.contentResolver.getType(Uri.parse(mediaUrl))
+        if (mimeType != null) {
         debug(context, "mimeType = $mimeType")
-        return mimeType?.split("/")?.getOrNull(1)?.lowercase()?.let { subType -> 
-                subType.endsWith(".jpg") 
-                || subType.endsWith(".jpeg") 
-                || subType.endsWith(".png") 
-                || subType.endsWith(".webp") 
-                || subType.endsWith(".bmp")
-            } ?: false
-        /*return mediaUrl.lowercase().let {
-            it.endsWith(".jpg") 
-            || it.endsWith(".jpeg") 
-            || it.endsWith(".png") 
-            || it.endsWith(".webp") 
-            || it.endsWith(".bmp")
-        }*/
+            return mimeType?.split("/")?.getOrNull(1)?.lowercase()?.let { subType -> 
+                    subType.endsWith("jpg") 
+                    || subType.endsWith("jpeg") 
+                    || subType.endsWith("png") 
+                    || subType.endsWith("webp") 
+                    || subType.endsWith("bmp")
+                } ?: false
+        } else {
+            return mediaUrl.lowercase().let {
+                it.endsWith(".jpg") 
+                || it.endsWith(".jpeg") 
+                || it.endsWith(".png") 
+                || it.endsWith(".webp") 
+                || it.endsWith(".bmp")
+            }
+        }
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
