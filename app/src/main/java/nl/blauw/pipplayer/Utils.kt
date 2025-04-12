@@ -24,8 +24,8 @@ fun getMediaResolution(context: Context, uri: Uri): Pair<Int, Int>? {
     } finally {
         retriever.release()
     }
-    
-    fun debug(context: Context, text: String) {
-        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-    }
+}
+
+fun debug(context: Context, text: String) {
+    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 }
