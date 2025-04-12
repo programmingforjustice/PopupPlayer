@@ -1,5 +1,6 @@
 package nl.blauw.pipplayer
 
+import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.content.Context
@@ -22,5 +23,9 @@ fun getMediaResolution(context: Context, uri: Uri): Pair<Int, Int>? {
         null
     } finally {
         retriever.release()
+    }
+    
+    fun debug(context: Context, text: String) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
     }
 }

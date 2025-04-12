@@ -78,6 +78,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     override fun canHandle(mediaUrl: String): Boolean {
         val mimeType = context.contentResolver.getType(Uri.parse("file://" + mediaUrl))
+        debug(context, "mimeType = $mimeType")
         return mimeType?.split("/")?.getOrNull(1)?.lowercase()?.let { subType -> 
                 subType.endsWith(".mp4") 
                 || subType.endsWith(".mkv")
@@ -99,6 +100,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUrl: String): Boolean {
         val mimeType = context.contentResolver.getType(Uri.parse("file://" + mediaUrl))
+        debug(context, "mimeType = $mimeType")
         return mimeType?.split("/")?.getOrNull(1)?.lowercase()?.let { subType -> 
                 subType.endsWith(".jpg") 
                 || subType.endsWith(".jpeg") 
