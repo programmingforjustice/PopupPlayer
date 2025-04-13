@@ -73,9 +73,9 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
         val jsonObject = JSONObject(jsonString)
-        val mediaUrl = jsonObject.getString("mediaPath") ?: throw IllegalStateException("cannot find mediaUrl from jsonString.")
+        val mediaUri = jsonObject.getString("mediaPath") ?: throw IllegalStateException("cannot find mediaUrl from jsonString.")
         
-        val factory = findFactory(mediaUrl)
+        val factory = findFactory(Uri.parse(mediaUri))
         return factory.fromJsonString(jsonString)
     }
 }
@@ -89,15 +89,15 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
         }
     }
     
-    private fun checkFileExtensions(mediaUri: Uri): Boolean {
-            return mediaUri.path?.lowercase().let {
+    private fun isSupportedFileExtensions(mediaUri: Uri): Boolean {
+            return mediaUri.path?.lowercase()?.let {
                 it.endsWith(".mp4") 
                 || it.endsWith(".mkv")
             } ?: false
     }
     
-    private fun checkMediaType(mediaUri: Uri): Boolean {
-        val mimeType = context.contentResolver.getType(mediaUrl)
+    private fun isSupportedMediaType(mediaUri: Uri): Boolean {
+        val mimeType = context.contentResolver.getType(mediaUri)
         debug(context, "mimeType = $mimeType")
         return mimeType?.takeIf { mimeType.startsWith("video/") }?.let { subType -> 
                 subType.endsWith("/mp4")
@@ -106,9 +106,9 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     }
     
     override fun canHandle(mediaUri: Uri): Boolean {
-        return when(uri.scheme) {
-            "content" -> checkMediaType(mediaUri)
-            "file", null -> checkFileExtensions(mediaUri)
+        return when(mediaUri.scheme) {
+            "content" -> isSupportedFileExtensions(mediaUri)
+            "file" -> isSupportedMediaType(mediaUri)
             else -> false
         }
     }
