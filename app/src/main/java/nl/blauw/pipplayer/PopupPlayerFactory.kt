@@ -13,7 +13,7 @@ abstract class PopupPlayerFactory(protected val context: Context): JsonDeseriali
 
     //abstract fun canHandle(mediaUrl: String): Boolean
     abstract fun canHandle(mediaUri: Uri): Boolean
-    //abstract fun create(mediaUrl: String): PopupPlayer
+    abstract fun create(mediaUrl: String): PopupPlayer
     abstract fun create(mediaUri: Uri): PopupPlayer
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
@@ -61,10 +61,9 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
         return popupPlayerFactoryList.firstOrNull { it.canHandle(mediaUri) } ?: throw IllegalArgumentException("Unsupported video or image extensions.")
     }
     
-    /*override fun create(mediaUrl: String): PopupPlayer {
-        val factory = findFactory(mediaUrl)
-        return factory.create(mediaUrl)
-    }*/
+    override fun create(mediaUri: String): PopupPlayer {
+        return create(Uri.parse(mediaUri))
+    }
     
     override fun create(mediaUri: Uri): PopupPlayer {
         val factory = findFactory(mediaUri)
@@ -113,37 +112,34 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
         }
     }
     
-    override fun create(mediaUrl: String): PopupPlayer {
-        //return VideoPopupPlayer(context, mediaUrl)
-        //return BasicVideoPopupPlayer(context, mediaUrl)
-        return AdaptivePopupPlayer(context, mediaUrl)
-        
+    override fun create(mediaUri: String): PopupPlayer {
+        return create(Uri.parse(mediaUri))
     }
     
     override fun create(mediaUri: Uri): PopupPlayer {
         //return VideoPopupPlayer(context, mediaUrl)
         //return BasicVideoPopupPlayer(context, mediaUrl)
-        return AdaptivePopupPlayer(context, mediaUri)
+        return AdaptivePopupPlayer(context, mediaUri.path)
         
     }
 }
 
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
 
-    override fun canHandle(mediaUrl: String): Boolean {
-            return mediaUrl.lowercase().let {
+    private fun isSupportedFileExtensions(mediaUri: Uri): Boolean {
+            return mediaUri.path?.lowercase()?.let {
                 it.endsWith(".jpg") 
                 || it.endsWith(".jpeg") 
                 || it.endsWith(".png") 
                 || it.endsWith(".webp") 
                 || it.endsWith(".bmp")
-            }
+            } ?: false
     }
     
-    override fun canHandle(mediaUri: Uri): Boolean {
-        val mimeType = context.contentResolver.getType(mediaUrl)
+    private fun isSupportedMediaType(mediaUri: Uri): Boolean {
+        val mimeType = context.contentResolver.getType(mediaUri)
         debug(context, "mimeType = $mimeType")
-        return mimeType?.takeIf { mimeType.startsWith("video/") }?.let { subType -> 
+        return mimeType?.takeIf { mimeType.startsWith("image/") }?.let { subType -> 
                 subType.endsWith("/jpg") 
                     || subType.endsWith("/jpeg") 
                     || subType.endsWith("/png") 
@@ -152,33 +148,19 @@ class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
             } ?: false
     }
     
-    /*override fun canHandle(mediaUrl: String): Boolean {
-        val mimeType = context.contentResolver.getType(Uri.parse(mediaUrl))
-        if (mimeType != null) {
-        debug(context, "mimeType = $mimeType")
-            return mimeType?.split("/")?.getOrNull(1)?.lowercase()?.let { subType -> 
-                    subType.endsWith("jpg") 
-                    || subType.endsWith("jpeg") 
-                    || subType.endsWith("png") 
-                    || subType.endsWith("webp") 
-                    || subType.endsWith("bmp")
-                } ?: false
-        } else {
-            return mediaUrl.lowercase().let {
-                it.endsWith(".jpg") 
-                || it.endsWith(".jpeg") 
-                || it.endsWith(".png") 
-                || it.endsWith(".webp") 
-                || it.endsWith(".bmp")
-            }
+    override fun canHandle(mediaUri: Uri): Boolean {
+        return when(mediaUri.scheme) {
+            "content" -> isSupportedFileExtensions(mediaUri)
+            "file" -> isSupportedMediaType(mediaUri)
+            else -> false
         }
-    }*/
-    
-    override fun create(mediaUrl: String): PopupPlayer {
-        return ImagePopupPlayer(context, mediaUrl)
+    }
+
+    override fun create(mediaUri: String): PopupPlayer {
+        return create(Uri.parse(mediaUri))
     }
     
     override fun create(mediaUri: Uri): PopupPlayer {
-        return ImagePopupPlayer(context, mediaUri)
+        return ImagePopupPlayer(context, mediaUri.path)
     }
 }
