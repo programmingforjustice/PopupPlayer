@@ -11,9 +11,9 @@ import org.json.JSONObject
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
     protected var onFromJsonString: ((PopupPlayer, WindowManager.LayoutParams, JSONObject) -> Unit)? = null
 
-    abstract fun canHandle(mediaUrl: String): Boolean
+    //abstract fun canHandle(mediaUrl: String): Boolean
     abstract fun canHandle(mediaUri: Uri): Boolean
-    abstract fun create(mediaUrl: String): PopupPlayer
+    //abstract fun create(mediaUrl: String): PopupPlayer
     abstract fun create(mediaUri: Uri): PopupPlayer
     
     override fun fromJsonString(jsonString: String): PopupPlayer {
@@ -49,22 +49,22 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
         ImagePopupPlayerFactory(context)
     )
     
-    override fun canHandle(mediaUrl: String): Boolean = true
+    //override fun canHandle(mediaUrl: String): Boolean = true
     
     override fun canHandle(mediaUri: Uri): Boolean = true
     
-    private fun findFactory(mediaUrl: String): PopupPlayerFactory {
+    /*private fun findFactory(mediaUrl: String): PopupPlayerFactory {
         return popupPlayerFactoryList.firstOrNull { it.canHandle(mediaUrl) } ?: throw IllegalArgumentException("Unsupported video or image extensions.")
-    }
+    }*/
     
     private fun findFactory(mediaUri: Uri): PopupPlayerFactory {
         return popupPlayerFactoryList.firstOrNull { it.canHandle(mediaUri) } ?: throw IllegalArgumentException("Unsupported video or image extensions.")
     }
     
-    override fun create(mediaUrl: String): PopupPlayer {
+    /*override fun create(mediaUrl: String): PopupPlayer {
         val factory = findFactory(mediaUrl)
         return factory.create(mediaUrl)
-    }
+    }*/
     
     override fun create(mediaUri: Uri): PopupPlayer {
         val factory = findFactory(mediaUri)
@@ -89,20 +89,28 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
         }
     }
     
-    override fun canHandle(mediaUrl: String): Boolean {
-            return mediaUrl.lowercase().let {
+    private fun checkFileExtensions(mediaUri: Uri): Boolean {
+            return mediaUri.path?.lowercase().let {
                 it.endsWith(".mp4") 
                 || it.endsWith(".mkv")
-            }
+            } ?: false
     }
     
-    override fun canHandle(mediaUri: Uri): Boolean {
+    private fun checkMediaType(mediaUri: Uri): Boolean {
         val mimeType = context.contentResolver.getType(mediaUrl)
         debug(context, "mimeType = $mimeType")
         return mimeType?.takeIf { mimeType.startsWith("video/") }?.let { subType -> 
                 subType.endsWith("/mp4")
                 || subType.endsWith("/mkv")
             } ?: false
+    }
+    
+    override fun canHandle(mediaUri: Uri): Boolean {
+        return when(uri.scheme) {
+            "content" -> checkMediaType(mediaUri)
+            "file" or null -> checkFileExtensions(mediaUri)
+            else -> false
+        }
     }
     
     override fun create(mediaUrl: String): PopupPlayer {
