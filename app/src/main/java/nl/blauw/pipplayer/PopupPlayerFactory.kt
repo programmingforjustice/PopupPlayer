@@ -107,7 +107,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUri: Uri): Boolean {
         return when(mediaUri.scheme) {
             "content" -> isSupportedFileExtensions(mediaUri)
-            "file" -> isSupportedMediaType(mediaUri)
+            "file", null -> isSupportedMediaType(mediaUri)
             else -> false
         }
     }
@@ -151,7 +151,7 @@ class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUri: Uri): Boolean {
         return when(mediaUri.scheme) {
             "content" -> isSupportedFileExtensions(mediaUri)
-            "file" -> isSupportedMediaType(mediaUri)
+            "file", null -> isSupportedMediaType(mediaUri)
             else -> false
         }
     }
