@@ -108,7 +108,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     override fun canHandle(mediaUri: Uri): Boolean {
         return when(uri.scheme) {
             "content" -> checkMediaType(mediaUri)
-            "file" or null -> checkFileExtensions(mediaUri)
+            "file", null -> checkFileExtensions(mediaUri)
             else -> false
         }
     }
