@@ -111,6 +111,13 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
         return AdaptivePopupPlayer(context, mediaUrl)
         
     }
+    
+    override fun create(mediaUri: Uri): PopupPlayer {
+        //return VideoPopupPlayer(context, mediaUrl)
+        //return BasicVideoPopupPlayer(context, mediaUrl)
+        return AdaptivePopupPlayer(context, mediaUri)
+        
+    }
 }
 
 class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
@@ -161,5 +168,9 @@ class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     override fun create(mediaUrl: String): PopupPlayer {
         return ImagePopupPlayer(context, mediaUrl)
+    }
+    
+    override fun create(mediaUri: Uri): PopupPlayer {
+        return ImagePopupPlayer(context, mediaUri)
     }
 }
