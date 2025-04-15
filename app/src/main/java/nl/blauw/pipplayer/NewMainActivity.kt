@@ -265,7 +265,7 @@ class NewMainActivity : AppCompatActivity() {
               Uri.parse("package:" + this.getPackageName()))
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION)
     } else {
-      val intent = Intent(this, PlayerService.class)
+      val intent = Intent(this, PlayerService.class.java)
       intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_START_PIP)
       intent.putExtra("data", url)
       startForegroundService(intent)
