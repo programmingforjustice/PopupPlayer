@@ -30,10 +30,12 @@ fun getMediaResolution(context: Context, uri: Uri): Pair<Int, Int>? {
 
 fun loadBitmapFromContentUri(context: Context, uri: Uri): Bitmap? {
     return try {
+        debug(context, uri.toString())
         context.contentResolver.openInputStream(uri)?.use { inputStream ->
             BitmapFactory.decodeStream(inputStream)
         }
     } catch (e: Exception) {
+        debug(context, "An Exception Occurred.")
         e.printStackTrace()
         null
     }
