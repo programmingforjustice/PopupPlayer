@@ -606,27 +606,4 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
         // JSON 문자열로 변환
         return jsonObject.toString()
    }
-   
-   fun loadBitmapFromContentUri(context: Context, uri: Uri): Bitmap? {
-        return try {
-            context.contentResolver.openInputStream(uri)?.use { inputStream ->
-                BitmapFactory.decodeStream(inputStream)
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
-    }
-    
-   fun loadBitmapFromStorage(context: Context, uri: Uri): Bitmap? {
-       return BitmapFactory.decodeFile(uri.path)
-    }
-    
-    fun loadBitmap(context: Context, uri: Uri): Bitmap? {
-       return when(uri.scheme) {
-           "content" -> loadBitmapFromContentUri(content, uri)
-           "file", null -> loadBitmapFromStorage(context, uri)
-           else -> null
-       }
-    }
 }

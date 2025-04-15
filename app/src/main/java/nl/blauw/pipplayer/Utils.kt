@@ -26,6 +26,29 @@ fun getMediaResolution(context: Context, uri: Uri): Pair<Int, Int>? {
     }
 }
 
+fun loadBitmapFromContentUri(context: Context, uri: Uri): Bitmap? {
+    return try {
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun loadBitmapFromStorage(context: Context, uri: Uri): Bitmap? {
+   return BitmapFactory.decodeFile(uri.path)
+}
+
+fun loadBitmap(context: Context, uri: Uri): Bitmap? {
+   return when(uri.scheme) {
+       "content" -> loadBitmapFromContentUri(content, uri)
+       "file", null -> loadBitmapFromStorage(context, uri)
+       else -> null
+   }
+}
+
 fun debug(context: Context, text: String) {
     Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
 }
