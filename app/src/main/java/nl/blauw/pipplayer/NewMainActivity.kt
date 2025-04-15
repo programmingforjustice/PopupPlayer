@@ -2,6 +2,7 @@ package nl.blauw.pipplayer
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import androidx.core.content.ContextCompat
 import android.app.Activity
 import android.content.pm.PackageManager
@@ -257,7 +258,7 @@ class NewMainActivity : AppCompatActivity() {
     
    private fun startPipPlayer(url: String) {
     if (!Settings.canDrawOverlays(this)) {
-      this.savedUrl = url
+      //this.savedUrl = url
       val request =
           Intent(
               Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
