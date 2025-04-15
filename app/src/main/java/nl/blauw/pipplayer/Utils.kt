@@ -46,6 +46,7 @@ fun loadBitmapFromStorage(context: Context, uri: Uri): Bitmap? {
 }
 
 fun loadBitmap(context: Context, uri: Uri): Bitmap? {
+    debug(context, uri.toString())
    return when(uri.scheme) {
        "content" -> loadBitmapFromContentUri(context, uri)
        "file", null -> loadBitmapFromStorage(context, uri)
