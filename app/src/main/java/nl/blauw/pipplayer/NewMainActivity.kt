@@ -260,7 +260,7 @@ class NewMainActivity : AppCompatActivity() {
         }
     }
     
-   private fun startPipPlayer(url: String) {
+   private fun startPipPlayer(url: String?) {
     if (!Settings.canDrawOverlays(this)) {
       this.savedUrl = url
       val request =
