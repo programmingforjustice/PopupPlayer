@@ -140,6 +140,10 @@ class NewMainActivity : AppCompatActivity() {
                 
                 //debug("recyclerview - MediaAdapter")
                 mediaAdapter = MediaAdapter(this@NewMainActivity, mediaItems)
+                mediaAdapter.onItemClickListener = {
+                    uri -> startPipPlayer(uri)
+                }
+                
                 binding.recyclerView.adapter = mediaAdapter
                 //debug("end - recyclerview setup")
             } else {
@@ -249,6 +253,36 @@ class NewMainActivity : AppCompatActivity() {
             }
         }
     }
+    
+   private fun startPipPlayer(url: String) {
+    if (!Settings.canDrawOverlays(this)) {
+      this.savedUrl = url
+      val request =
+          Intent(
+              Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+              Uri.parse("package:" + this.getPackageName()))
+      startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION)
+    } else {
+      val intent = Intent(this, PlayerService.class)
+      intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_START_PIP)
+      intent.putExtra("data", url)
+      startForegroundService(intent)
+    }
+  }
+
+  override protected fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+  
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == REQUEST_CODE_OVERLAY_PERMISSION) {
+        if (Settings.canDrawOverlays(this)) {
+            // 전달된 데이터 가져오기
+            startPipPlayer(this.savedUrl);
+        } else {
+            Toast.makeText(this, "권한이 필요합니다!", Toast.LENGTH_SHORT).show();
+        }
+    }
+  }
     
     private fun debug(text: String) {
         Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
