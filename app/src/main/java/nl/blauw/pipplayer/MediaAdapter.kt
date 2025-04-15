@@ -13,13 +13,14 @@ class MediaAdapter(private val context: Context, private val items: List<MediaIt
     
     private val contentResolver = context.contentResolver
     
-    var onItemClickListener: (String -> ())? = null
+    var onItemClickListener: ((String) -> Unit)? = null
 
     inner class ViewHolder(val binding: ItemFileBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(mediaItem: MediaItem) {
             //binding.mediaPath.text = mediaItem.displayName
             binding.mediaPath.text = mediaItem.contentUri.toString() + ", " +   mediaItem.mimeType + ", " +  mediaItem.mediaType
+            binding.mediaPath.setOnClickListener { v -> onItemClickListener?.invoke(mediaItem.contentUri.toString()) }
             
             val thumbnail = contentResolver.loadThumbnail(mediaItem.contentUri, Size(200, 200), null)
             binding.imageThumbnail.setImageBitmap(thumbnail)
@@ -38,8 +39,6 @@ class MediaAdapter(private val context: Context, private val items: List<MediaIt
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(items[position])
-        holder.mediaPath.setOnClickListener { v -> onItemClickListener?.invoke(items[position]) 
-        }
     }
 
     override fun getItemCount(): Int = items.size

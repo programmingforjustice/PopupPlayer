@@ -11,6 +11,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Build
 import android.provider.MediaStore
+import android.provider.Settings
 import android.widget.Toast
 import android.view.Menu
 import android.view.View
