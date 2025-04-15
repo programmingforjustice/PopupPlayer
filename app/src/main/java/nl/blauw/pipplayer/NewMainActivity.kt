@@ -33,6 +33,9 @@ class NewMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewMainBinding
     private lateinit var mediaAdapter: MediaAdapter
    // private var currentSelectedItemId: Int = -1 // 초기 선택 항목 ID로 설정
+   companion object {
+       const val REQUEST_CODE_OVERLAY_PERMISSION = 100;
+   }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
