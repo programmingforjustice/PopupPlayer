@@ -262,7 +262,7 @@ class NewMainActivity : AppCompatActivity() {
     
    private fun startPipPlayer(url: String) {
     if (!Settings.canDrawOverlays(this)) {
-      8this.savedUrl = url
+      this.savedUrl = url
       val request =
           Intent(
               Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -278,14 +278,14 @@ class NewMainActivity : AppCompatActivity() {
 
   override protected fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
   
-    super.onActivityResult(requestCode, resultCode, data);
+    super.onActivityResult(requestCode, resultCode, data)
 
     if (requestCode == REQUEST_CODE_OVERLAY_PERMISSION) {
         if (Settings.canDrawOverlays(this)) {
             // 전달된 데이터 가져오기
-            startPipPlayer(this.savedUrl);
+            startPipPlayer(this.savedUrl)
         } else {
-            Toast.makeText(this, "권한이 필요합니다!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "권한이 필요합니다!", Toast.LENGTH_SHORT).show()
         }
     }
   }
