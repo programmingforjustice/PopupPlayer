@@ -32,6 +32,7 @@ class NewMainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewMainBinding
     private lateinit var mediaAdapter: MediaAdapter
+    private var savedUrl: String? = null
    // private var currentSelectedItemId: Int = -1 // 초기 선택 항목 ID로 설정
    companion object {
        const val REQUEST_CODE_OVERLAY_PERMISSION = 100;
@@ -261,14 +262,14 @@ class NewMainActivity : AppCompatActivity() {
     
    private fun startPipPlayer(url: String) {
     if (!Settings.canDrawOverlays(this)) {
-      //this.savedUrl = url
+      8this.savedUrl = url
       val request =
           Intent(
               Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
               Uri.parse("package:" + this.getPackageName()))
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION)
     } else {
-      val intent = Intent(this, PlayerService.class.java)
+      val intent = Intent(this, PlayerService::class.java)
       intent.putExtra(PlayerService.COMMAND, PlayerService.ACTION_START_PIP)
       intent.putExtra("data", url)
       startForegroundService(intent)
