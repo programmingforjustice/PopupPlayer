@@ -43,7 +43,7 @@ fun loadBitmapFromStorage(context: Context, uri: Uri): Bitmap? {
 
 fun loadBitmap(context: Context, uri: Uri): Bitmap? {
    return when(uri.scheme) {
-       "content" -> loadBitmapFromContentUri(content, uri)
+       "content" -> loadBitmapFromContentUri(context, uri)
        "file", null -> loadBitmapFromStorage(context, uri)
        else -> null
    }
