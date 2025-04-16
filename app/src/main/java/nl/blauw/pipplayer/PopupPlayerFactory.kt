@@ -131,6 +131,7 @@ class ImagePopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
                 it.endsWith(".jpg") 
                 || it.endsWith(".jpeg") 
                 || it.endsWith(".png") 
+                || it.endsWith(".gif") 
                 || it.endsWith(".webp") 
                 || it.endsWith(".bmp")
             } ?: false
