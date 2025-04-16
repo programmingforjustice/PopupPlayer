@@ -20,6 +20,10 @@ import com.google.android.exoplayer2.util.RepeatModeUtil
 import android.widget.Toast
 import java.io.File
 import org.json.JSONObject
+import android.graphics.drawable.Drawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 
 interface PopupPlayer {
     companion object {
@@ -109,7 +113,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             url -> Uri.parse(url) 
         }*/
         //bitmap = bitmap ?: BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
-        bitmap = bitmap ?: loadBitmap(context, Uri.parse(contentUrl)) ?: throw IllegalStateException("cannot load image.")
+        /*bitmap = bitmap ?: loadBitmap(context, Uri.parse(contentUrl)) ?: throw IllegalStateException("cannot load image.")
         bitmap?.run {
             if (params != null) {
                 layoutParams.height = params.height
@@ -121,7 +125,37 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             
             imageViewLayout.tag = width.toDouble() / height //scaleFactor
             imageView.setImageBitmap(this)
-        }
+        }*/
+        
+        Glide.with(this)
+            .load(bitmap ?: Uri.parse(contentUrl))
+            .into(object : CustomTarget<Drawable>() {
+                override fun onResourceReady(
+                    resource: Drawable,
+                    transition: Transition<in Drawable>?
+                ) {
+                    val width = resource.intrinsicWidth
+                    val height = resource.intrinsicHeight
+                    Log.d("Glide", "이미지 크기: ${width}x${height}")
+                    
+                    if (params != null) {
+                        layoutParams.height = params.height
+                        layoutParams.width = params.width
+                    } else {
+                        layoutParams.height = height
+                        layoutParams.width = width
+                    }
+                    
+                    imageViewLayout.tag = width.toDouble() / height
+
+                    // ImageView에 이미지 설정
+                    imageView.setImageDrawable(resource)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // 필요 시 리소스 정리 작업 수행
+                }
+            })
         
         imageView.scaleType = ImageView.ScaleType.FIT_CENTER
         
