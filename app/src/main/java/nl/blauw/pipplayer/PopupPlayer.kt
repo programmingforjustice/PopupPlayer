@@ -127,7 +127,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             imageView.setImageBitmap(this)
         }*/
         
-        Glide.with(this)
+        Glide.with(context)
             .load(bitmap ?: Uri.parse(contentUrl))
             .into(object : CustomTarget<Drawable>() {
                 override fun onResourceReady(
@@ -136,7 +136,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
                 ) {
                     val width = resource.intrinsicWidth
                     val height = resource.intrinsicHeight
-                    Log.d("Glide", "이미지 크기: ${width}x${height}")
+                    //Log.d("Glide", "이미지 크기: ${width}x${height}")
                     
                     if (params != null) {
                         layoutParams.height = params.height
