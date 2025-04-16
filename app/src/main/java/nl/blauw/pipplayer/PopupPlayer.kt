@@ -128,7 +128,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
         
         Glide.with(context)
-            .load(contentUrl?.let { url -> Uri.parse(url) }?.let { uri -> if (uri.scheme == null) Uri.fromFile(File(contentUrl)) } ?: bitmap)
+            .load(contentUrl?.let { url -> Uri.parse(url) }?.let { uri -> if (uri.scheme == null) Uri.fromFile(File(contentUrl)) else uri } ?: bitmap)
             .into(imageView)
             /*.into(object : CustomTarget<Drawable>() {
                 override fun onResourceReady(
