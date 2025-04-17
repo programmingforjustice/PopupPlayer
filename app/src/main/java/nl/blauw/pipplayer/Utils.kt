@@ -3,6 +3,10 @@ package nl.blauw.pipplayer
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.content.Context
+import android.view.Display
+import android.view.WindowManager
+import android.graphics.Point
+import android.view.WindowMetrics
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.widget.Toast
@@ -52,6 +56,20 @@ fun loadBitmap(context: Context, uri: Uri): Bitmap? {
        "file", null -> loadBitmapFromStorage(context, uri)
        else -> null
    }
+}
+
+fun getDisplayResolution(context: Context): Pair<Int, Int> {
+    val windowManager: WindowManager = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
+    
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  
+        val metrics: WindowMetrics = windowManager.maximumWindowMetrics
+        Pair(metrics.bounds.width(), metrics.bounds.height())
+    } else {  
+        val display: Display = windowManager.defaultDisplay
+        val size = Point()
+        display.getRealSize(size)
+        Pair(size.x, size.y)
+    }
 }
 
 fun debug(context: Context, text: String) {

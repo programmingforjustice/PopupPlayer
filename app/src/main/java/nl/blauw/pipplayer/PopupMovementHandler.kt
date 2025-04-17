@@ -32,13 +32,13 @@ class PopupMovementHandler(
     }
     
     fun updateDisplaySettings() {
-        getDisplayResolution().also { (width, height) -> 
+        getDisplayResolution(context).also { (width, height) -> 
             displayWidth = width
             displayHeight = height
         }
     }
     
-    fun getDisplayResolution(): Pair<Int, Int> {
+    /*fun getDisplayResolution(): Pair<Int, Int> {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {  
             val metrics: WindowMetrics = windowManager.maximumWindowMetrics
             Pair(metrics.bounds.width(), metrics.bounds.height())
@@ -48,7 +48,7 @@ class PopupMovementHandler(
             display.getRealSize(size)
             Pair(size.x, size.y)
         }
-    }
+    }*/
 
     override fun onTouch(view: View, event: MotionEvent): Boolean {
         when (event.action) {
