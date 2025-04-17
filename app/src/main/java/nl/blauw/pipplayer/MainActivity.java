@@ -143,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
           public void onClick(View view) {
             Intent intent = new Intent(MainActivity.this, PlayerService.class);
             stopService(intent);
-            throw new RuntimeException();
-            //MainActivity.this.finish();
-            //System.exit(0);
+            //throw new RuntimeException();
+            MainActivity.this.finish();
+            System.exit(0);
           }
         });
 
