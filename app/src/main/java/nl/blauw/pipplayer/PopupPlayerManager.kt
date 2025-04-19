@@ -34,8 +34,8 @@ object PopupPlayerManager : JsonSerializable {
           /*.filter{ popupPlayer -> 
             !popupPlayer.isDisposed
           }*/
-          .map{ 
-            (it as? JsonSerializable)?.toJsonString() 
+          .map{ popupPlayer -> 
+            (popupPlayer as? JsonSerializable)?.toJsonString() 
           }
           .joinToString(",", "[", "]")
     }
