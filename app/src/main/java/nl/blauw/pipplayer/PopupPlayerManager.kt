@@ -29,7 +29,8 @@ object PopupPlayerManager : JsonSerializable {
     }
     
     override fun toJsonString(): String {
-        return playerList
+        return orderList
+        //return playerList
           /*.filter{ popupPlayer -> 
             !popupPlayer.isDisposed
           }*/
@@ -50,7 +51,7 @@ object PopupPlayerManager : JsonSerializable {
         for (i in 0 until jsonArray.length()) {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
             var popupPlayer = factory.fromJsonString(playerInfo.toString())
-            popupPlayer.show()
+            popupPlayer.show(popupPlayer.layoutParams)
             popupPlayer.play(playerInfo.getLong("currentPosition"))
             playerList.add(popupPlayer)
             orderList.add(popupPlayer)
