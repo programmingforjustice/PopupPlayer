@@ -42,13 +42,35 @@ class FloatingButtonService : Service() {
             PixelFormat.TRANSLUCENT
         )
 
-        layoutParams.gravity = Gravity.TOP or Gravity.END
+        layoutParams.gravity = Gravity.BOTTOM or Gravity.END
         layoutParams.x = 50
         layoutParams.y = 100
 
         binding.fab.setOnClickListener {
             Toast.makeText(this, "Floating 버튼 클릭됨", Toast.LENGTH_SHORT).show()
         }
+        
+        fab.setOnTouchListener(object : View.OnTouchListener {
+    var dX = 0f
+    var dY = 0f
+
+    override fun onTouch(view: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                dX = view.x - event.rawX
+                dY = view.y - event.rawY
+            }
+            MotionEvent.ACTION_MOVE -> {
+                view.animate()
+                    .x(event.rawX + dX)
+                    .y(event.rawY + dY)
+                    .setDuration(0)
+                    .start()
+            }
+        }
+        return true
+    }
+})
 
         windowManager.addView(floatingView, layoutParams)
     }
