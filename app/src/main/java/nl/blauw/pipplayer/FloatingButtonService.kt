@@ -6,6 +6,8 @@ import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.IBinder
 import android.view.Gravity
+import android.content.Context
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -19,8 +21,12 @@ class FloatingButtonService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
-        val binding = FloatingButtonLayoutBinding.inflate(LayoutInflater.from(this))
+        
+        val themedContext = ContextThemeWrapper(this, R.style.Theme_MaterialComponents)
+        val inflater = LayoutInflater.from(themedContext)
+        
+       // val binding = FloatingButtonLayoutBinding.inflate(LayoutInflater.from(this))
+        val binding = FloatingButtonLayoutBinding.inflate(inflater)
         floatingView = binding.root
 
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
