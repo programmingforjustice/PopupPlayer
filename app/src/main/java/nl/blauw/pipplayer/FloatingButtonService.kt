@@ -22,7 +22,7 @@ class FloatingButtonService : Service() {
     override fun onCreate() {
         super.onCreate()
         
-        val themedContext = ContextThemeWrapper(this, R.style.Theme_MaterialComponents)
+        val themedContext = ContextThemeWrapper(this, R.style.AppTheme)
         val inflater = LayoutInflater.from(themedContext)
         
        // val binding = FloatingButtonLayoutBinding.inflate(LayoutInflater.from(this))
