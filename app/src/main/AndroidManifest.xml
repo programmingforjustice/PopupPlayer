@@ -46,6 +46,10 @@
         <action android:name="nl.blauw.pipplayer.START_SERVICE" />
       </intent-filter>
     </service>
+    
+    <service android:name=".FloatingButtonService" android:exported="true"
+      android:enabled="true">
+    </service>
   </application>
 
 </manifest>
