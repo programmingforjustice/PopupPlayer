@@ -13,6 +13,10 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import nl.blauw.pipplayer.databinding.FloatingButtonLayoutBinding
+import android.view.MotionEvent
+import android.view.View
+import android.view.View.OnTouchListener
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class FloatingButtonService : Service() {
 
