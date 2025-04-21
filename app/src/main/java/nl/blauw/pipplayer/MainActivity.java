@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
       }
     }
     
-    if (!Settings.canDrawOverlays(this)) {
+    /*if (!Settings.canDrawOverlays(this)) {
       Intent request =
           new Intent(
               Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     } else {
       Intent intent = new Intent(this, FloatingButtonService.class);
       startService(intent);
-    }
+    }*/
     
   }
 
