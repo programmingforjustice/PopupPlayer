@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
       startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
     } else {
       Intent intent = new Intent(this, FloatingButtonService.class);
-      startForegroundService(intent);
+      startService(intent);
     }
     
   }
