@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import com.example.yourapp.databinding.FloatingButtonLayoutBinding
+import nl.blauw.pipplayer.databinding.FloatingButtonLayoutBinding
 
 class FloatingButtonService : Service() {
 
