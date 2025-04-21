@@ -177,6 +177,18 @@ public class MainActivity extends AppCompatActivity {
         startActivity(getpermission);
       }
     }
+    
+    if (!Settings.canDrawOverlays(this)) {
+      Intent request =
+          new Intent(
+              Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+              Uri.parse("package:" + this.getPackageName()));
+      startActivityForResult(request, REQUEST_CODE_OVERLAY_PERMISSION);
+    } else {
+      Intent intent = new Intent(this, FloatingButtonService.class);
+      startForegroundService(intent);
+    }
+    
   }
 
   private void refreshData() {
