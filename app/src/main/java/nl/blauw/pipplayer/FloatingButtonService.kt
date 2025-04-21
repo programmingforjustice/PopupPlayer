@@ -50,7 +50,7 @@ class FloatingButtonService : Service() {
             Toast.makeText(this, "Floating 버튼 클릭됨", Toast.LENGTH_SHORT).show()
         }
         
-        fab.setOnTouchListener(object : View.OnTouchListener {
+        binding.fab.setOnTouchListener(object : View.OnTouchListener {
     var dX = 0f
     var dY = 0f
 
