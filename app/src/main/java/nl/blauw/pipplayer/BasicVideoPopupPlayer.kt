@@ -116,6 +116,12 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
             PopupPlayerManager.showAllPopupPlayerByOrder()
         }
         
+        playerViewWrapper.setupTopOrderEscalationButton {
+            removePopupWindow()
+            PopupPlayerManager.escalateTopOrder(this)
+            show(layoutParams)
+        }
+        
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
     }

@@ -29,6 +29,11 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         val orderEscalationButton: ImageButton? = super.findViewById(R.id.order_escalation_button)
         orderEscalationButton?.setOnClickListener(action)
     }
+    
+    fun setupTopOrderEscalationButton(action: (View) -> Unit) {
+        val topOrderEscalationButton: ImageButton? = super.findViewById(R.id.top_order_escalation_button)
+        topOrderEscalationButton?.setOnClickListener(action)
+    }
 
     fun setupTouchListener(action: (View, MotionEvent) -> Boolean) {
         super.setOnTouchListener(action)
