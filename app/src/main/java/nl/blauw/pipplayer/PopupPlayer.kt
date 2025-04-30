@@ -54,7 +54,7 @@ interface PopupPlayer {
 abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     protected val windowManager: WindowManager  = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
     
-    protected var playerView: View? = null
+    protected var popupPlayerView: View? = null
     
     override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
             Utils.convertDpToPixelsInt(2f, context),
@@ -86,7 +86,7 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     }
     
     override fun getPlayerView(): View? {
-        return playerView
+        return popupPlayerView
     }
     
     /*abstract fun getCurrentPosition(): Long
@@ -283,7 +283,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
 
 class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): BasePopupPlayer(context), JsonSerializable {
     private var player: Player
-    //private var playerView: PlayerView
+    private var playerView: PlayerView
     private val imageView: ImageView = ImageView(context)
     
     //private val muteToggleButtonListener =  MuteToggleButtonListener(player)
