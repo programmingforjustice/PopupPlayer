@@ -56,7 +56,10 @@ object PopupPlayerManager : JsonSerializable {
             //val popupPlayer = playingPlayer ?: recoveredPlayer
             
             if (playingPlayer != null) {
-                playingPlayer?.updatePlayerView(recoveredPlayer.layoutParams)
+                //playingPlayer?.updatePlayerView(recoveredPlayer.layoutParams)
+                playingPlayer?.removePopupWindow()
+                playingPlayer?.show(recoveredPlayer.layoutParams)
+                
             } else {
                 recoveredPlayer.show(recoveredPlayer.layoutParams)
                 recoveredPlayer.play(playerInfo.getLong("currentPosition"))
