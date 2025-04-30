@@ -250,4 +250,8 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         // JSON 문자열로 변환
         return jsonObject.toString()
    }
+   
+   override fun getMediaUri(): Uri? {
+       return contentUrl?.let { Uri.parse(it) }
+   }
 }

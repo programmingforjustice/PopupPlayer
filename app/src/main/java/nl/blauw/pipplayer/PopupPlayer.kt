@@ -47,6 +47,7 @@ interface PopupPlayer {
     fun dispose()
     fun createDisplayView(params: WindowManager.LayoutParams? = null): View
     fun exportCurrentFrame(): Bitmap?
+    fun getMediaUri(): Uri?
 }
 
 abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
@@ -265,6 +266,10 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
         // JSON 문자열로 변환
         return jsonObject.toString()
+   }
+   
+   override fun getMediaUri(): Uri? {
+       return contentUrl?.let { Uri.parse(it) }
    }
 }
 
@@ -531,6 +536,10 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         // JSON 문자열로 변환
         return jsonObject.toString()
    }
+   
+   override fun getMediaUri(): Uri? {
+       return contentUrl?.let { Uri.parse(it) }
+   }
 }
 
 class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context, private val contentUrl: String): PopupPlayer, JsonSerializable {
@@ -650,5 +659,9 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     
         // JSON 문자열로 변환
         return jsonObject.toString()
+   }
+   
+   override fun getMediaUri(): Uri? {
+       return contentUrl?.let { Uri.parse(it) }
    }
 }
