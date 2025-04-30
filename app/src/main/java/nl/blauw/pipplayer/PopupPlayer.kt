@@ -283,7 +283,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
 
 class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val contentUrl: String, private val playerFactory: PlayerFactory = DefaultPlayerFactory(context), private val playerViewFactory: PlayerViewFactory = DefaultPlayerViewFactory(context)): BasePopupPlayer(context), JsonSerializable {
     private var player: Player
-    private var playerView: PlayerView
+    //private var playerView: PlayerView
     private val imageView: ImageView = ImageView(context)
     
     //private val muteToggleButtonListener =  MuteToggleButtonListener(player)
