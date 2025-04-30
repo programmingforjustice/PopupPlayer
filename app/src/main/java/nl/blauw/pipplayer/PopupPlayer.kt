@@ -91,6 +91,12 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     }
     
     override fun updatePlayerView(params: WindowManager.LayoutParams) {
+        params.apply {
+          layoutParams.x = x 
+          layoutParams.y = y 
+          layoutParams.width = width
+          layoutParams.height = height
+        }
         windowManager.updateViewLayout(popupPlayerView, params)
     }
     
