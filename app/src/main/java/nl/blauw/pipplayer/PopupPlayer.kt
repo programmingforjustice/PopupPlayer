@@ -48,10 +48,13 @@ interface PopupPlayer {
     fun createDisplayView(params: WindowManager.LayoutParams? = null): View
     fun exportCurrentFrame(): Bitmap?
     fun getMediaUri(): Uri?
+    fun getPlayerView(): View?
 }
 
 abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     protected val windowManager: WindowManager  = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
+    
+    protected var playerView: View? = null
     
     override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
             Utils.convertDpToPixelsInt(2f, context),
@@ -71,14 +74,19 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     override var isPlaying = false
 
     override fun show(params: WindowManager.LayoutParams?) {
-        val view = createDisplayView(params)
+        //val view = createDisplayView(params)
+        playerView = createDisplayView(params)
         params?.apply {
           layoutParams.x = x 
           layoutParams.y = y 
           layoutParams.width = width
           layoutParams.height = height
         }
-        windowManager.addView(view, layoutParams)
+        windowManager.addView(playerView, layoutParams)
+    }
+    
+    override fun getPlayerView(): View? {
+        return playerView
     }
     
     /*abstract fun getCurrentPosition(): Long
@@ -663,5 +671,9 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
    
    override fun getMediaUri(): Uri? {
        return contentUrl?.let { Uri.parse(it) }
+   }
+   
+   override fun getPlayerView(): View? {
+       return popupPlayer.getPlayerView()
    }
 }

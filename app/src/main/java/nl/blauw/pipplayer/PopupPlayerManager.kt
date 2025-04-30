@@ -50,9 +50,12 @@ object PopupPlayerManager : JsonSerializable {
 
         for (i in 0 until jsonArray.length()) {
             val playerInfo: JSONObject = jsonArray.getJSONObject(i)
-            var popupPlayer = factory.fromJsonString(playerInfo.toString())
-            popupPlayer.show(popupPlayer.layoutParams)
-            popupPlayer.play(playerInfo.getLong("currentPosition"))
+            val playingPlayer = playerList.find { player -> player.getMediaUri() == Uri.parse(playerInfo.getString("mediaPath")) }
+            val recoveredPlayer = factory.fromJsonString(playerInfo.toString())
+            val popupPlayer = playingPlayer ?: recoveredPlayer
+            
+            popupPlayer.show(recoveredPlayer.layoutParams)
+            if (playingPlayer == null) popupPlayer.play(playerInfo.getLong("currentPosition"))
             playerList.add(popupPlayer)
             orderList.add(popupPlayer)
         }
