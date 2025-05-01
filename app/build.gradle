@@ -24,6 +24,22 @@ android {
             keyPassword "1q2w3e4r" // 키 비밀번호
         }
     }
+    
+    // flavor 구분용 dimension
+    flavorDimensions "mode"
+
+    productFlavors {
+        dev {
+            dimension "mode"
+            applicationId "nl.blauw.pipplayer.dev"
+            versionNameSuffix "-dev"
+        }
+
+        prod {
+            dimension "mode"
+            applicationId "nl.blauw.pipplayer"
+        }
+    }
 
     buildTypes {
         release {
@@ -43,6 +59,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+    
   	buildFeatures {
   	    buildConfig true
         viewBinding true
