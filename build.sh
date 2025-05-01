@@ -1,6 +1,6 @@
 #!/bin/bash
 
 git pull
-./gradlew clean assembleRelease --rerun-tasks
+./gradlew clean assembleDevRelease --rerun-tasks
 
 
