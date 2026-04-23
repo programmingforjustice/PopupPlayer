@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/workspaces/PopupPlayer/app"
+    name=":app"
+    type="APP"
+    maven="PipPlayer:app:"
+    agpVersion="8.2.2"
+    buildFolder="build"
+    bootClassPath="/workspaces/PopupPlayer/android_sdk/platforms/android-33/android.jar:/workspaces/PopupPlayer/android_sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="21"
+    compileTarget="android-33"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="devRelease"/>
+</lint-module>

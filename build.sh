@@ -9,7 +9,7 @@ if [ -z "$MODE" ]; then
   exit 1
 fi
 
-git pull
+#git pull
 
 # 분기 처리
 case "$MODE" in

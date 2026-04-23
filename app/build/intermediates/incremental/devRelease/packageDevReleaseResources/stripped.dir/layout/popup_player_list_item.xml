@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/popup_player_list_item_background"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp">
+
+    <!-- 아이콘 (앱 썸네일) -->
+    <ImageView
+        android:id="@+id/imageThumbnail"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_foreground" />
+
+    <!-- 텍스트 컨테이너 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="10dp">
+
+        <!-- 앱 이름 -->
+        <TextView
+            android:id="@+id/textAppName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="앱 이름"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#000000" />
+
+        <!-- 패키지 이름 -->
+        <TextView
+            android:id="@+id/textPackageName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="com.example.app"
+            android:textSize="14sp"
+            android:textColor="#666666" />
+
+        <!-- 버전 정보 -->
+        <TextView
+            android:id="@+id/textVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="버전: 1.0.0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#333333" />
+    </LinearLayout>
+
+    <!-- 파일 크기 표시 -->
+    <TextView
+        android:id="@+id/textSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Size: 10.5 MB"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_gravity="center" />
+</LinearLayout>
