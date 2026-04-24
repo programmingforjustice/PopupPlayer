@@ -1,28 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/drawable/ic_sort_name_asc.xml : 이름 오름차순 (A → Z) -->
+<!-- res/drawable/ic_sort_az.xml -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- 위쪽 화살표 (오름차순) -->
+    <!-- 대문자 A (왼쪽, 크게) - 외곽선만 -->
     <path
         android:fillColor="@android:color/transparent"
         android:strokeColor="#FF000000"
-        android:strokeWidth="2"
+        android:strokeWidth="1.8"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M12,19 L12,5 M6,11 L12,5 L18,11" />
+        android:pathData="M2,20 L7,4 L12,20 M3.8,14 L10.2,14" />
 
-    <!-- 왼쪽 A (작은 글씨) -->
+    <!-- 소문자 z (오른쪽, 작게) - 외곽선만 -->
     <path
-        android:fillColor="#FF000000"
-        android:pathData="M3,17 L5,12 L7,17 M3.8,15.5 L6.2,15.5" />
-
-    <!-- 오른쪽 Z (큰 글씨) -->
-    <path
-        android:fillColor="#FF000000"
-        android:pathData="M17,13 L21,13 L17,19 L21,19 M17,13 L21,13" />
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M13.5,13 L21,13 L13.5,20 L21,20" />
 
 </vector>

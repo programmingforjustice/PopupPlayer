@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
         DATE_NEWEST, DATE_OLDEST,
         SIZE_LARGEST, SIZE_SMALLEST
     }
-    private var currentSort = SortOrder.NAME_ASC
+    private var currentSort = SortOrder.DATE_NEWEST
 
     // ── 권한 요청 ─────────────────────────────────────────────
         private val permissionLauncher: ActivityResultLauncher<Array<String>> =
