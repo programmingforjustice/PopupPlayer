@@ -4,6 +4,7 @@ package nl.blauw.pipplayer.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,13 +28,16 @@ public final class ActivityMainBinding implements ViewBinding {
   public final BottomNavigationView bottomNav;
 
   @NonNull
-  public final ImageButton btnFolder;
+  public final ImageButton btnBack;
 
   @NonNull
   public final ImageButton btnLayoutToggle;
 
   @NonNull
   public final ImageButton btnSearch;
+
+  @NonNull
+  public final ImageButton btnSort;
 
   @NonNull
   public final LinearLayout categoryCleaner;
@@ -48,45 +52,64 @@ public final class ActivityMainBinding implements ViewBinding {
   public final LinearLayout categoryPlaylists;
 
   @NonNull
+  public final HorizontalScrollView categoryScrollView;
+
+  @NonNull
   public final LinearLayout categoryStatusSaver;
 
   @NonNull
   public final LinearLayout categoryUrlStream;
 
   @NonNull
-  public final LinearLayout llCategories;
+  public final HorizontalScrollView layoutBreadcrumb;
+
+  @NonNull
+  public final LinearLayout layoutDots;
+
+  @NonNull
+  public final LinearLayout layoutEmpty;
 
   @NonNull
   public final RecyclerView rvFolders;
 
   @NonNull
-  public final TextView tvFoldersLabel;
+  public final TextView tvBreadcrumb;
+
+  @NonNull
+  public final TextView tvItemCount;
 
   @NonNull
   public final TextView tvTitle;
 
   private ActivityMainBinding(@NonNull CoordinatorLayout rootView,
-      @NonNull BottomNavigationView bottomNav, @NonNull ImageButton btnFolder,
+      @NonNull BottomNavigationView bottomNav, @NonNull ImageButton btnBack,
       @NonNull ImageButton btnLayoutToggle, @NonNull ImageButton btnSearch,
-      @NonNull LinearLayout categoryCleaner, @NonNull LinearLayout categoryLocalNet,
-      @NonNull LinearLayout categoryMusic, @NonNull LinearLayout categoryPlaylists,
+      @NonNull ImageButton btnSort, @NonNull LinearLayout categoryCleaner,
+      @NonNull LinearLayout categoryLocalNet, @NonNull LinearLayout categoryMusic,
+      @NonNull LinearLayout categoryPlaylists, @NonNull HorizontalScrollView categoryScrollView,
       @NonNull LinearLayout categoryStatusSaver, @NonNull LinearLayout categoryUrlStream,
-      @NonNull LinearLayout llCategories, @NonNull RecyclerView rvFolders,
-      @NonNull TextView tvFoldersLabel, @NonNull TextView tvTitle) {
+      @NonNull HorizontalScrollView layoutBreadcrumb, @NonNull LinearLayout layoutDots,
+      @NonNull LinearLayout layoutEmpty, @NonNull RecyclerView rvFolders,
+      @NonNull TextView tvBreadcrumb, @NonNull TextView tvItemCount, @NonNull TextView tvTitle) {
     this.rootView = rootView;
     this.bottomNav = bottomNav;
-    this.btnFolder = btnFolder;
+    this.btnBack = btnBack;
     this.btnLayoutToggle = btnLayoutToggle;
     this.btnSearch = btnSearch;
+    this.btnSort = btnSort;
     this.categoryCleaner = categoryCleaner;
     this.categoryLocalNet = categoryLocalNet;
     this.categoryMusic = categoryMusic;
     this.categoryPlaylists = categoryPlaylists;
+    this.categoryScrollView = categoryScrollView;
     this.categoryStatusSaver = categoryStatusSaver;
     this.categoryUrlStream = categoryUrlStream;
-    this.llCategories = llCategories;
+    this.layoutBreadcrumb = layoutBreadcrumb;
+    this.layoutDots = layoutDots;
+    this.layoutEmpty = layoutEmpty;
     this.rvFolders = rvFolders;
-    this.tvFoldersLabel = tvFoldersLabel;
+    this.tvBreadcrumb = tvBreadcrumb;
+    this.tvItemCount = tvItemCount;
     this.tvTitle = tvTitle;
   }
 
@@ -123,9 +146,9 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.btnFolder;
-      ImageButton btnFolder = ViewBindings.findChildViewById(rootView, id);
-      if (btnFolder == null) {
+      id = R.id.btnBack;
+      ImageButton btnBack = ViewBindings.findChildViewById(rootView, id);
+      if (btnBack == null) {
         break missingId;
       }
 
@@ -138,6 +161,12 @@ public final class ActivityMainBinding implements ViewBinding {
       id = R.id.btnSearch;
       ImageButton btnSearch = ViewBindings.findChildViewById(rootView, id);
       if (btnSearch == null) {
+        break missingId;
+      }
+
+      id = R.id.btnSort;
+      ImageButton btnSort = ViewBindings.findChildViewById(rootView, id);
+      if (btnSort == null) {
         break missingId;
       }
 
@@ -165,6 +194,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.categoryScrollView;
+      HorizontalScrollView categoryScrollView = ViewBindings.findChildViewById(rootView, id);
+      if (categoryScrollView == null) {
+        break missingId;
+      }
+
       id = R.id.categoryStatusSaver;
       LinearLayout categoryStatusSaver = ViewBindings.findChildViewById(rootView, id);
       if (categoryStatusSaver == null) {
@@ -177,9 +212,21 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.llCategories;
-      LinearLayout llCategories = ViewBindings.findChildViewById(rootView, id);
-      if (llCategories == null) {
+      id = R.id.layoutBreadcrumb;
+      HorizontalScrollView layoutBreadcrumb = ViewBindings.findChildViewById(rootView, id);
+      if (layoutBreadcrumb == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutDots;
+      LinearLayout layoutDots = ViewBindings.findChildViewById(rootView, id);
+      if (layoutDots == null) {
+        break missingId;
+      }
+
+      id = R.id.layoutEmpty;
+      LinearLayout layoutEmpty = ViewBindings.findChildViewById(rootView, id);
+      if (layoutEmpty == null) {
         break missingId;
       }
 
@@ -189,9 +236,15 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvFoldersLabel;
-      TextView tvFoldersLabel = ViewBindings.findChildViewById(rootView, id);
-      if (tvFoldersLabel == null) {
+      id = R.id.tvBreadcrumb;
+      TextView tvBreadcrumb = ViewBindings.findChildViewById(rootView, id);
+      if (tvBreadcrumb == null) {
+        break missingId;
+      }
+
+      id = R.id.tvItemCount;
+      TextView tvItemCount = ViewBindings.findChildViewById(rootView, id);
+      if (tvItemCount == null) {
         break missingId;
       }
 
@@ -201,10 +254,10 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((CoordinatorLayout) rootView, bottomNav, btnFolder,
-          btnLayoutToggle, btnSearch, categoryCleaner, categoryLocalNet, categoryMusic,
-          categoryPlaylists, categoryStatusSaver, categoryUrlStream, llCategories, rvFolders,
-          tvFoldersLabel, tvTitle);
+      return new ActivityMainBinding((CoordinatorLayout) rootView, bottomNav, btnBack,
+          btnLayoutToggle, btnSearch, btnSort, categoryCleaner, categoryLocalNet, categoryMusic,
+          categoryPlaylists, categoryScrollView, categoryStatusSaver, categoryUrlStream,
+          layoutBreadcrumb, layoutDots, layoutEmpty, rvFolders, tvBreadcrumb, tvItemCount, tvTitle);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

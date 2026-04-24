@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_file_entry.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- 썸네일 / 폴더 아이콘 -->
+    <FrameLayout
+        android:layout_width="56dp"
+        android:layout_height="56dp">
+
+        <!-- ivEntryThumbnail -->
+        <ImageView
+            android:id="@+id/ivEntryThumbnail"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:scaleType="centerCrop"
+            android:background="#E8ECF0"
+            android:contentDescription="thumbnail" />
+
+        <!-- ivPlayOverlay: 동영상일 때만 visible -->
+        <ImageView
+            android:id="@+id/ivPlayOverlay"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_media_play"
+            android:alpha="0.85"
+            android:visibility="gone"
+            android:contentDescription="Play" />
+
+        <!-- tvGifBadge: GIF일 때만 visible -->
+        <TextView
+            android:id="@+id/tvGifBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:text="GIF"
+            android:textSize="9sp"
+            android:textColor="#FFFFFF"
+            android:background="#CC000000"
+            android:paddingStart="3dp"
+            android:paddingEnd="3dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- 이름 + 서브텍스트 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="8dp">
+
+        <!-- tvEntryName -->
+        <TextView
+            android:id="@+id/tvEntryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="#111111"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+        <!-- tvEntrySubtext -->
+        <TextView
+            android:id="@+id/tvEntrySubtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginTop="2dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <!-- ivEntryAction: 폴더 → 화살표, 파일 → 더보기 -->
+    <ImageView
+        android:id="@+id/ivEntryAction"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@android:drawable/ic_media_next"
+        android:alpha="0.4"
+        android:contentDescription="action" />
+
+</LinearLayout>

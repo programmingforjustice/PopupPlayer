@@ -68,17 +68,21 @@ class FolderAdapter(
             holder.tvBadge.visibility = View.GONE
         }
 
+        holder.ivThumbnail.scaleType = ImageView.ScaleType.CENTER_INSIDE
+        holder.ivThumbnail.setImageResource(R.drawable.ic_folder_default)
+
         // 썸네일 로딩 — Glide 사용 권장
         // thumbnailPath 가 null 이면 기본 폴더 아이콘 표시
-        if (item.thumbnailPath != null) {
+        /*if (item.thumbnailPath != null) {
             // TODO: Glide.with(holder.itemView.context)
             //           .load(item.thumbnailPath)
             //           .placeholder(R.drawable.ic_folder_default)
             //           .centerCrop()
             //           .into(holder.ivThumbnail)
         } else {
-            holder.ivThumbnail.setImageResource(android.R.drawable.ic_menu_gallery)
-        }
+            holder.ivThumbnail.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            holder.ivThumbnail.setImageResource(R.drawable.ic_folder_default)
+        }*/
 
         // 클릭 이벤트
         holder.itemView.setOnClickListener { onFolderClick(item) }
