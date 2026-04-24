@@ -67,7 +67,11 @@ class MainActivity : AppCompatActivity() {
     private companion object { const val KEY_ROOT = "__root__" }
 
     // 정렬 상태
-    private enum class SortOrder { NAME_ASC, NAME_DESC, DATE_DESC, SIZE_DESC }
+    private enum class SortOrder {
+        NAME_ASC, NAME_DESC,
+        DATE_NEWEST, DATE_OLDEST,
+        SIZE_LARGEST, SIZE_SMALLEST
+    }
     private var currentSort = SortOrder.NAME_ASC
 
     // ── 권한 요청 ─────────────────────────────────────────────
@@ -129,23 +133,45 @@ class MainActivity : AppCompatActivity() {
         btnBack.setOnClickListener { navigateUp() }
 
         btnSort.setOnClickListener {
-            if (folderStack.isEmpty()) return@setOnClickListener  // 루트에선 정렬 불필요
+            if (folderStack.isEmpty()) return@setOnClickListener
+            // 6단계 순환
             currentSort = when (currentSort) {
-                SortOrder.NAME_ASC  -> SortOrder.NAME_DESC
-                SortOrder.NAME_DESC -> SortOrder.DATE_DESC
-                SortOrder.DATE_DESC -> SortOrder.SIZE_DESC
-                SortOrder.SIZE_DESC -> SortOrder.NAME_ASC
+                SortOrder.NAME_ASC     -> SortOrder.NAME_DESC
+                SortOrder.NAME_DESC    -> SortOrder.DATE_NEWEST
+                SortOrder.DATE_NEWEST  -> SortOrder.DATE_OLDEST
+                SortOrder.DATE_OLDEST  -> SortOrder.SIZE_LARGEST
+                SortOrder.SIZE_LARGEST -> SortOrder.SIZE_SMALLEST
+                SortOrder.SIZE_SMALLEST -> SortOrder.NAME_ASC
             }
+            updateSortButton()
             Toast.makeText(this, sortLabel(), Toast.LENGTH_SHORT).show()
-            loadDirectory(folderStack.last())
+            loadDirectory(folderStack.last(), restoreScroll = false)
         }
+
+        // 초기 아이콘 설정
+        updateSortButton()
+    }
+
+    /** 현재 정렬 상태에 맞는 아이콘을 btnSort 에 적용 */
+    private fun updateSortButton() {
+        val iconRes = when (currentSort) {
+            SortOrder.NAME_ASC      -> R.drawable.ic_sort_name_asc
+            SortOrder.NAME_DESC     -> R.drawable.ic_sort_name_desc
+            SortOrder.DATE_NEWEST   -> R.drawable.ic_sort_date_newest
+            SortOrder.DATE_OLDEST   -> R.drawable.ic_sort_date_oldest
+            SortOrder.SIZE_LARGEST  -> R.drawable.ic_sort_size_largest
+            SortOrder.SIZE_SMALLEST -> R.drawable.ic_sort_size_smallest
+        }
+        btnSort.setImageResource(iconRes)
     }
 
     private fun sortLabel() = when (currentSort) {
         SortOrder.NAME_ASC  -> "이름 오름차순"
         SortOrder.NAME_DESC -> "이름 내림차순"
-        SortOrder.DATE_DESC -> "최신 순"
-        SortOrder.SIZE_DESC -> "크기 큰 순"
+        SortOrder.DATE_OLDEST -> "오래된 순"
+        SortOrder.DATE_NEWEST -> "최신 순"
+        SortOrder.SIZE_SMALLEST -> "크기 작은 순"
+        SortOrder.SIZE_LARGEST -> "크기 큰 순"
     }
 
     // ── 하단 네비 ─────────────────────────────────────────────
@@ -274,7 +300,7 @@ class MainActivity : AppCompatActivity() {
     // 디렉토리 탐색 화면
     // ─────────────────────────────────────────────────────────
 
-    /** 새 폴더로 이동 (스택에 push) */
+    /** 새 폴더로 이동 (스택에 push) — 이동 전 현재 스크롤 위치 저장 */
     private fun navigateTo(folder: File) {
         // 루트 → 하위폴더 진입은 rootFolderAdapter 클릭 시 이미 저장됨
         // 하위폴더 → 하위폴더 진입은 여기서 저장
@@ -343,8 +369,10 @@ class MainActivity : AppCompatActivity() {
                 .then(when (currentSort) {
                     SortOrder.NAME_ASC  -> compareBy { it.name.lowercase() }
                     SortOrder.NAME_DESC -> compareByDescending { it.name.lowercase() }
-                    SortOrder.DATE_DESC -> compareByDescending { it.file.lastModified() }
-                    SortOrder.SIZE_DESC -> compareByDescending { it.file.length() }
+                    SortOrder.DATE_OLDEST -> compareBy { it.file.lastModified() }
+                    SortOrder.DATE_NEWEST -> compareByDescending { it.file.lastModified() }
+                    SortOrder.SIZE_SMALLEST -> compareBy { it.file.length() }
+                    SortOrder.SIZE_LARGEST -> compareByDescending { it.file.length() }
                 })
         )
     }

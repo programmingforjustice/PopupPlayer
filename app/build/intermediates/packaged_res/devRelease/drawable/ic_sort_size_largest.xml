@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/ic_sort_size_largest.xml : 크기 큰순 (막대 내림차순) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 막대 3개: 왼쪽이 가장 크고 오른쪽으로 갈수록 작아짐 -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M3,5 L6,5 L6,19 L3,19 Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M9,9 L12,9 L12,19 L9,19 Z" />
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M15,13 L18,13 L18,19 L15,19 Z" />
+
+    <!-- 위쪽 화살표 (큰 순) -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M21,10 L21,4 M21,4 L19,6 M21,4 L23,6" />
+
+</vector>
