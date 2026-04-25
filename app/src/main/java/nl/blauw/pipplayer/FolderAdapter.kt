@@ -16,6 +16,7 @@ import nl.blauw.pipplayer.FolderItem
 data class FolderItem(
     val name: String,           // 폴더 이름 (예: "DCIM")
     val path: String,           // 절대 경로  (예: "/storage/emulated/0/DCIM")
+    val bucketId: Long,         // MediaStore BUCKET_ID (scanDirectoryFlow 에서 사용)
     val videoCount: Int,        // 포함된 동영상 수
     val subFolderCount: Int,    // 포함된 하위 폴더 수
     val thumbnailPath: String?, // 대표 썸네일 경로 (없으면 null)

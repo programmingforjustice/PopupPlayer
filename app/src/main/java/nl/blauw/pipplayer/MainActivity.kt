@@ -2,11 +2,14 @@ package nl.blauw.pipplayer
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
+import android.provider.Settings
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -19,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import android.provider.Settings
 import androidx.recyclerview.widget.RecyclerView
 import nl.blauw.pipplayer.EntryType
 import nl.blauw.pipplayer.FileEntry
@@ -28,6 +30,9 @@ import nl.blauw.pipplayer.FolderAdapter
 import nl.blauw.pipplayer.FolderItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -59,12 +64,18 @@ class MainActivity : AppCompatActivity() {
     // ── 탐색 상태 ────────────────────────────────────────────
     // folderStack 이 비어있으면 → 루트 화면
     // 비어있지 않으면 → 파일 탐색기 화면 (stack.last() 가 현재 폴더)
-    private val folderStack = ArrayDeque<File>()
+    // folderStack: Pair<File, bucketId>  (-1L = 하위폴더 직접 진입, BUCKET_ID 미확보)
+    private val folderStack = ArrayDeque<Pair<File, Long>>()
 
     // 경로별 LayoutManager 상태 저장 (스크롤 위치 복원용)
     // 루트 화면은 KEY_ROOT 를 키로 사용
     private val layoutManagerStateMap = HashMap<String, android.os.Parcelable?>()
-    private companion object { const val KEY_ROOT = "__root__" }
+    
+    
+    private companion object {
+        const val KEY_ROOT   = "__root__"
+        const val FIRST_CHUNK_SIZE = 50          // 미디어 파일 청크 단위
+    }
 
     // 정렬 상태
     private enum class SortOrder {
@@ -113,14 +124,14 @@ class MainActivity : AppCompatActivity() {
     private fun setupAdapters() {
         // 루트 폴더 목록용
         rootFolderAdapter = FolderAdapter { folder ->
-            saveScrollPosition()   // 루트 스크롤 위치 저장
-            navigateTo(File(folder.path))
+            saveScrollPosition()
+            navigateTo(File(folder.path), folder.bucketId)
         }
 
         // 파일 탐색용
         fileListAdapter = FileListAdapter(
-            onDirectoryClick = { entry -> navigateTo(entry.file) },
-            onFileClick      = { entry -> openMediaFile(entry)   }
+            onDirectoryClick = { entry -> navigateTo(entry.file, -1L) },
+            onFileClick      = { entry -> openMediaFile(entry) }
         )
 
         rvFolders.layoutManager = LinearLayoutManager(this)
@@ -145,7 +156,9 @@ class MainActivity : AppCompatActivity() {
             }
             updateSortButton()
             Toast.makeText(this, sortLabel(), Toast.LENGTH_SHORT).show()
-            loadDirectory(folderStack.last(), restoreScroll = false)
+            // ✅ Fix: folderStack.last()는 Pair<File,Long> → .first, .second 분리
+            val (dir, bucketId) = folderStack.last()
+            loadDirectory(dir, bucketId, restoreScroll = false)
         }
 
         // 초기 아이콘 설정
@@ -209,7 +222,9 @@ class MainActivity : AppCompatActivity() {
         if (folderStack.isEmpty()) {
             showRootScreen(restoreScroll = true)
         } else {
-            loadDirectory(folderStack.last(), restoreScroll = true)
+            // ✅ Fix: Pair<File,Long>에서 file, bucketId 분리
+            val (dir, bucketId) = folderStack.last()
+            loadDirectory(dir, bucketId, restoreScroll = true)
         }
         return true
     }
@@ -271,10 +286,27 @@ class MainActivity : AppCompatActivity() {
     // ─────────────────────────────────────────────────────────
     // 루트 화면 (기존 메인 폴더 목록)
     // ─────────────────────────────────────────────────────────
+
+    /**
+     * 점진적 로딩:
+     * 1) BUCKET 쿼리로 폴더 목록을 즉시 표시 (썸네일 없이)
+     * 2) Flow 가 폴더별 썸네일을 emit 할 때마다 해당 항목만 갱신
+     *
+     * 사용자는 쿼리 완료를 기다리지 않고 즉시 폴더 목록을 볼 수 있음.
+     */
     private fun loadRootFolders() {
         lifecycleScope.launch {
-            val folders = withContext(Dispatchers.IO) { scanMediaFolders() }
-            rootFolderAdapter.submitList(folders.sortedBy { it.name.lowercase() })
+            // 현재 Adapter 에 표시 중인 목록을 변경 가능한 맵으로 관리
+            val currentMap = LinkedHashMap<String, FolderItem>()
+
+            scanMediaFoldersFlow().collect { updated ->
+                // emit 된 FolderItem 으로 맵 갱신
+                currentMap[updated.path] = updated
+                // 이름 오름차순으로 정렬 후 submitList
+                rootFolderAdapter.submitList(
+                    currentMap.values.sortedBy { it.name.lowercase() }
+                )
+            }
         }
     }
 
@@ -300,142 +332,286 @@ class MainActivity : AppCompatActivity() {
     // 디렉토리 탐색 화면
     // ─────────────────────────────────────────────────────────
 
-    /** 새 폴더로 이동 (스택에 push) — 이동 전 현재 스크롤 위치 저장 */
-    private fun navigateTo(folder: File) {
-        // 루트 → 하위폴더 진입은 rootFolderAdapter 클릭 시 이미 저장됨
-        // 하위폴더 → 하위폴더 진입은 여기서 저장
+    /** 새 폴더로 이동 (스택에 push) */
+    private fun navigateTo(folder: File, bucketId: Long) {
         if (folderStack.isNotEmpty()) saveScrollPosition()
-        folderStack.addLast(folder)
-        loadDirectory(folder, restoreScroll = false)
-    }
-
-    /** 현재 폴더의 내용을 RecyclerView 에 표시 */
-    private fun loadDirectory(folder: File, restoreScroll: Boolean = false) {
-        // 탐색 중 UI 전환
-        tvTitle.text = folder.name
-        tvItemCount.text = "폴더 0개  •  파일 0개"
-
-        btnBack.visibility = View.VISIBLE
-        layoutBreadcrumb.visibility = View.VISIBLE
-        tvItemCount.visibility = View.VISIBLE
-        updateBreadcrumb()
-
-        // Adapter 전환 (루트 → 파일 탐색)
-        if (rvFolders.adapter !== fileListAdapter) {
-            fileListAdapter.submitList(emptyList())
-            rvFolders.adapter = fileListAdapter
-        }
-
-        lifecycleScope.launch {
-            val entries = withContext(Dispatchers.IO) { scanDirectory(folder) }
-
-            val dirCount  = entries.count { it.type == EntryType.DIRECTORY }
-            val fileCount = entries.size - dirCount
-            tvItemCount.text = "폴더 ${dirCount}개  •  파일 ${fileCount}개"
-
-            val isEmpty = entries.isEmpty()
-            layoutEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
-            rvFolders.visibility   = if (isEmpty) View.GONE    else View.VISIBLE
-
-            if (restoreScroll) {
-                // 뒤로가기: 데이터 교체 후 이전 스크롤 위치 복원
-                fileListAdapter.submitList(entries) {
-                    restoreScrollPosition(folder.absolutePath)
-                }
-            } else {
-                // 새 폴더 진입: 목록 비우고 교체 후 상단으로
-                fileListAdapter.submitList(entries) {
-                    rvFolders.scrollToPosition(0)
-                }
-            }
-        }
-    }
-
-    /** 디렉토리 내부 항목 스캔 + 정렬 */
-    private fun scanDirectory(folder: File): List<FileEntry> {
-        val raw = folder.listFiles() ?: return emptyList()
-        val entries = raw.mapNotNull { file ->
-            when {
-                file.isDirectory -> FileEntry(file, EntryType.DIRECTORY)
-                file.isVideo()   -> FileEntry(file, EntryType.VIDEO)
-                file.isGif()     -> FileEntry(file, EntryType.GIF)
-                file.isImage()   -> FileEntry(file, EntryType.IMAGE)
-                else             -> null
-            }
-        }
-        // 디렉토리 우선, 그 다음 currentSort 기준 정렬
-        return entries.sortedWith(
-            compareBy<FileEntry> { if (it.type == EntryType.DIRECTORY) 0 else 1 }
-                .then(when (currentSort) {
-                    SortOrder.NAME_ASC  -> compareBy { it.name.lowercase() }
-                    SortOrder.NAME_DESC -> compareByDescending { it.name.lowercase() }
-                    SortOrder.DATE_OLDEST -> compareBy { it.file.lastModified() }
-                    SortOrder.DATE_NEWEST -> compareByDescending { it.file.lastModified() }
-                    SortOrder.SIZE_SMALLEST -> compareBy { it.file.length() }
-                    SortOrder.SIZE_LARGEST -> compareByDescending { it.file.length() }
-                })
-        )
+        folderStack.addLast(folder to bucketId)
+        loadDirectory(folder, bucketId, restoreScroll = false)
     }
 
     /**
-     * 루트 미디어 폴더 스캔 (재귀 DFS)
+     * 디렉토리 내용을 RecyclerView 에 표시.
      *
-     * 전략:
-     * - 루트 직속 자식부터 시작해 모든 하위 디렉토리를 재귀 탐색
-     * - 디렉토리 자신이 직접 보유한 미디어가 1개라도 있으면 FolderItem 으로 수집
-     * - 숨김 폴더(.으로 시작)는 전부 스킵
-     * - 스택 오버플로 방지를 위해 재귀 대신 명시적 스택(ArrayDeque) 사용
+     * ── 블로킹 원인 해결 전략 ──────────────────────────────────
+     *
+     * 기존 문제:
+     *   CHUNK_SIZE(50)개마다 collect → 전체 currentMap 재정렬 → submitList()
+     *   → 수백 개 파일 폴더에서 매 청크마다 메인 스레드에서 DiffUtil 실행
+     *   → 누적 비용으로 메인 스레드 수십 초 블로킹
+     *
+     * 해결:
+     *   1) 정렬 및 집계(currentMap 병합)를 IO 스레드에서 수행 (withContext(Dispatchers.IO))
+     *   2) emit 을 2단계로 분리:
+     *      - 1차 emit: 하위 디렉토리 + 첫 FIRST_CHUNK_SIZE 개 파일 → 빠르게 화면 표시
+     *      - 2차 emit: 나머지 파일 전체 → 스캔 완료 후 1회만 submitList()
+     *      → DiffUtil 실행 횟수를 최대 2회로 제한
+     *   3) submitList() 를 withContext(Dispatchers.Main) 없이 직접 호출
+     *      (collect 는 이미 메인 스레드에서 실행되므로 별도 전환 불필요)
      */
-    private fun scanMediaFolders(): List<FolderItem> {
-        val root = Environment.getExternalStorageDirectory() ?: return emptyList()
-        val result = mutableListOf<FolderItem>()
- 
-        // BFS/DFS 스택: 탐색할 디렉토리를 순서대로 담음
-        val stack = ArrayDeque<File>()
- 
-        // 루트 직속 자식 디렉토리부터 시작 (루트 자체는 포함하지 않음)
-        root.listFiles()
-            ?.filter { it.isDirectory && !it.name.startsWith(".") }
-            ?.forEach { stack.addLast(it) }
- 
-        while (stack.isNotEmpty()) {
-            val dir = stack.removeLast()
- 
-            var videoCount  = 0
-            var subDirCount = 0
-            var thumbPath: String? = null
- 
-            dir.listFiles()?.forEach { f ->
-                when {
-                    // 숨김 하위 폴더 스킵, 일반 하위 폴더는 스택에 추가
-                    f.isDirectory && !f.name.startsWith(".") -> {
-                        subDirCount++
-                        stack.addLast(f)   // 재귀 탐색 예약
+    private fun loadDirectory(folder: File, bucketId: Long, restoreScroll: Boolean = false) {
+        tvTitle.text                = folder.name
+        btnBack.visibility          = View.VISIBLE
+        layoutBreadcrumb.visibility = View.VISIBLE
+        tvItemCount.visibility      = View.VISIBLE
+        updateBreadcrumb()
+
+        if (rvFolders.adapter !== fileListAdapter) rvFolders.adapter = fileListAdapter
+        if (!restoreScroll) fileListAdapter.submitList(emptyList())
+
+        lifecycleScope.launch {
+            // ── IO 스레드에서 전체 항목 수집 및 정렬 수행 ──────────────
+            //    메인 스레드에는 최종 정렬된 List 만 전달
+            scanDirectoryFlow(folder, bucketId).collect { (isPartial, entries) ->
+
+                // submitList 는 메인 스레드에서 호출 (collect 컨텍스트 = Main)
+                val isEmpty = entries.isEmpty()
+                layoutEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                rvFolders.visibility   = if (isEmpty) View.GONE    else View.VISIBLE
+
+                val dirCount  = entries.count { it.type == EntryType.DIRECTORY }
+                val fileCount = entries.size - dirCount
+                tvItemCount.text = if (isPartial) "폴더 ${dirCount}개  •  파일 ${fileCount}개+" // 로딩 중 표시
+                                   else           "폴더 ${dirCount}개  •  파일 ${fileCount}개"
+
+                if (restoreScroll) {
+                    fileListAdapter.submitList(entries) {
+                        // 마지막 emit(전체 완료)일 때만 스크롤 복원
+                        if (!isPartial) restoreScrollPosition(folder.absolutePath)
                     }
-                    f.isMedia() -> {
-                        if (f.isVideo()) videoCount++
-                        if (thumbPath == null) thumbPath = f.absolutePath
-                    }
+                } else {
+                    fileListAdapter.submitList(entries)
                 }
             }
+
+            if (!restoreScroll) rvFolders.scrollToPosition(0)
+        }
+    }
+
+    /**
+     * 디렉토리 내부 항목을 Flow 로 emit.
+     *
+     * emit 값: Pair<Boolean, List<FileEntry>>
+     *   - first  = isPartial: true 면 아직 스캔 중 (1차 emit), false 면 완료 (최종 emit)
+     *   - second = 현재까지 수집된 전체 목록 (정렬 완료 상태)
+     *
+     * ── 핵심 변경 ────────────────────────────────────────────────
+     *   - 정렬(sortedWith)을 flowOn(Dispatchers.IO) 블록 안에서 수행
+     *     → 메인 스레드는 이미 정렬된 List 를 받아서 submitList() 만 호출
+     *   - emit 횟수를 최대 2회로 제한:
+     *     1차) 하위 디렉토리 + 첫 FIRST_CHUNK_SIZE 개 파일
+     *     2차) 전체 완료 후 1회
+     *     → DiffUtil 실행 횟수 감소 → 메인 스레드 블로킹 해소
+     */
+    private fun scanDirectoryFlow(folder: File, bucketId: Long): Flow<Pair<Boolean, List<FileEntry>>> = flow {
+
+        // ── 1단계: 하위 디렉토리 수집 (File.listFiles, 빠름) ─────────
+        var t = System.currentTimeMillis()
+        val dirs = folder.listFiles()
+            ?.filter { it.isDirectory && !it.name.startsWith(".") }
+            ?.map { FileEntry(it, EntryType.DIRECTORY) }
+            ?: emptyList()
+        android.util.Log.d("SCAN", "[1] listFiles dirs: ${dirs.size}개 ${System.currentTimeMillis() - t}ms")
+
+        // ── 2단계: MediaStore 쿼리 ────────────────────────────────────
+        t = System.currentTimeMillis()
+
+        val projection = arrayOf(
+            MediaStore.Files.FileColumns.DATA,
+            MediaStore.Files.FileColumns.MEDIA_TYPE,
+            MediaStore.Files.FileColumns.MIME_TYPE
+        )
+
+        val (selection, selArgs) = if (bucketId != -1L) {
+            // BUCKET_ID = ? 방식 (정확, 빠름)
+            "${MediaStore.Files.FileColumns.BUCKET_ID} = ? AND " +
+            "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (?,?)" to arrayOf(
+                bucketId.toString(),
+                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString()
+            )
+        } else {
+            // DATA LIKE 폴백 (하위 폴더 직접 진입 시)
+            val prefix  = "${folder.absolutePath}/%"
+            val exclude = "${folder.absolutePath}/%/%"
+            "${MediaStore.Files.FileColumns.DATA} LIKE ? AND " +
+            "${MediaStore.Files.FileColumns.DATA} NOT LIKE ? AND " +
+            "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (?,?)" to arrayOf(
+                prefix, exclude,
+                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString()
+            )
+        }
+
+        val sortOrder = when (currentSort) {
+            SortOrder.NAME_ASC      -> "${MediaStore.Files.FileColumns.DISPLAY_NAME} ASC"
+            SortOrder.NAME_DESC     -> "${MediaStore.Files.FileColumns.DISPLAY_NAME} DESC"
+            SortOrder.DATE_NEWEST   -> "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC"
+            SortOrder.DATE_OLDEST   -> "${MediaStore.Files.FileColumns.DATE_MODIFIED} ASC"
+            SortOrder.SIZE_LARGEST  -> "${MediaStore.Files.FileColumns.SIZE} DESC"
+            SortOrder.SIZE_SMALLEST -> "${MediaStore.Files.FileColumns.SIZE} ASC"
+        }
+
+        val cursor = contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            projection, selection, selArgs, sortOrder
+        )
+        android.util.Log.d("SCAN", "[2] query: ${cursor?.count ?: 0}건 ${System.currentTimeMillis() - t}ms")
+
+        // 파일 전체를 IO 에서 수집
+        val allFiles = mutableListOf<FileEntry>()
+        var existsMs = 0L
+        var rowCount = 0
+
+        cursor?.use { c ->
+            val dataCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+            val typeCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+            val mimeCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
+
+            t = System.currentTimeMillis()
+            while (c.moveToNext()) {
+                val path      = c.getString(dataCol) ?: continue
+                val mediaType = c.getInt(typeCol)
+                val mime      = c.getString(mimeCol) ?: ""
+
+                val te = System.currentTimeMillis()
+                val file = File(path)
+                if (!file.exists()) { existsMs += System.currentTimeMillis() - te; continue }
+                existsMs += System.currentTimeMillis() - te
+                rowCount++
+
+                val entryType = when {
+                    mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> EntryType.VIDEO
+                    mime == "image/gif"                                         -> EntryType.GIF
+                    else                                                        -> EntryType.IMAGE
+                }
+                allFiles.add(FileEntry(file, entryType))
+
+                // ── 1차 emit: 디렉토리 + 첫 FIRST_CHUNK_SIZE 개 파일 ──
+                // IO 에서 정렬까지 완료한 뒤 emit → 메인 스레드 부담 최소화
+                if (allFiles.size == FIRST_CHUNK_SIZE) {
+                    val partial = (dirs + allFiles).sortedWith(sortComparator())
+                    emit(true to partial)   // isPartial = true
+                    android.util.Log.d("SCAN", "[3-partial] 1차 emit: ${partial.size}개")
+                }
+            }
+            android.util.Log.d("SCAN", "[3] 커서 순회: ${System.currentTimeMillis() - t}ms 유효 $rowCount 건 exists누적 ${existsMs}ms")
+        }
+
+        // ── 2차(최종) emit: 전체 항목 정렬 후 1회 ────────────────────
+        // IO 에서 정렬 완료 → 메인 스레드는 submitList() 만 실행
+        t = System.currentTimeMillis()
+        val finalList = (dirs + allFiles).sortedWith(sortComparator())
+        android.util.Log.d("SCAN", "[4] 최종 정렬: ${finalList.size}개 ${System.currentTimeMillis() - t}ms")
+
+        emit(false to finalList)   // isPartial = false (완료)
+
+    }.flowOn(Dispatchers.IO)   // 커서 순회 + 정렬 모두 IO 스레드에서 실행
+
  
-            // 직접 보유한 미디어가 하나라도 있는 폴더만 수집
-            if (videoCount > 0 || thumbPath != null) {
-                result.add(
-                    FolderItem(
-                        name           = dir.name,
-                        path           = dir.absolutePath,
-                        videoCount     = videoCount,
-                        subFolderCount = subDirCount,
-                        thumbnailPath  = thumbPath
-                    )
-                )
+    /** 현재 정렬 기준에 맞는 Comparator 반환 */
+    private fun sortComparator(): Comparator<FileEntry> =
+        compareBy<FileEntry> { if (it.type == EntryType.DIRECTORY) 0 else 1 }
+            .then(when (currentSort) {
+                SortOrder.NAME_ASC      -> compareBy { it.name.lowercase() }
+                SortOrder.NAME_DESC     -> compareByDescending { it.name.lowercase() }
+                SortOrder.DATE_NEWEST   -> compareByDescending { it.file.lastModified() }
+                SortOrder.DATE_OLDEST   -> compareBy { it.file.lastModified() }
+                SortOrder.SIZE_LARGEST  -> compareByDescending { it.file.length() }
+                SortOrder.SIZE_SMALLEST -> compareBy { it.file.length() }
+            })
+ 
+    /**
+     * 루트 미디어 폴더 스캔 — 단일 쿼리로 폴더 집계 + 썸네일 동시 수집
+     *
+     * 핵심: 추가 쿼리 없이 1회 전체 스캔에서 폴더별 첫 번째 미디어 경로를
+     * thumbPath 로 기록 → queryOneThumbnail() 반복 호출 완전 제거
+     *
+     * 점진적 emit 은 유지:
+     * - 집계 완료 직후 thumbnailPath 가 채워진 FolderItem 을 한꺼번에 emit
+     * - UI 는 쿼리 1회 완료 시점에 전체 목록(썸네일 포함)을 표시
+     */
+    private fun scanMediaFoldersFlow(): Flow<FolderItem> = flow {
+ 
+        data class FolderAccum(
+            var bucketId: Long = -1L,
+            var videoCount: Int = 0,
+            var thumbPath: String? = null
+        )
+        val folderMap = LinkedHashMap<String, FolderAccum>()
+ 
+        // ── 단일 쿼리: BUCKET_ID 포함해서 수집 ───────────────────────
+        val projection = arrayOf(
+            MediaStore.Files.FileColumns.DATA,
+            MediaStore.Files.FileColumns.MEDIA_TYPE,
+            MediaStore.Files.FileColumns.BUCKET_ID      // 추가
+        )
+        val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (?,?)"
+        val selArgs   = arrayOf(
+            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString()
+        )
+ 
+        contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            projection, selection, selArgs, null
+        )?.use { cursor ->
+            val dataCol   = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+            val typeCol   = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+            val bucketCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.BUCKET_ID)
+ 
+            while (cursor.moveToNext()) {
+                val path      = cursor.getString(dataCol)  ?: continue
+                val mediaType = cursor.getInt(typeCol)
+                val bucketId  = cursor.getLong(bucketCol)
+                val folder    = File(path).parent          ?: continue
+ 
+                val accum = folderMap.getOrPut(folder) { FolderAccum() }
+                if (accum.bucketId == -1L) accum.bucketId = bucketId
+ 
+                if (mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO) {
+                    accum.videoCount++
+                    if (accum.thumbPath == null || !accum.thumbPath!!.isVideoPath()) {
+                        accum.thumbPath = path
+                    }
+                } else {
+                    if (accum.thumbPath == null) accum.thumbPath = path
+                }
             }
         }
  
-        return result.sortedBy { it.name.lowercase() }
-    }
-
+        // ── FolderItem 변환 후 emit ───────────────────────────────────
+        folderMap.entries.forEach { (folderPath, accum) ->
+            val dir = File(folderPath)
+            if (!dir.exists() || dir.name.startsWith(".")) return@forEach
+            val subDirCount = dir.listFiles()?.count { it.isDirectory } ?: 0
+            emit(
+                FolderItem(
+                    name           = dir.name,
+                    path           = folderPath,
+                    bucketId       = accum.bucketId,   // 추가
+                    videoCount     = accum.videoCount,
+                    subFolderCount = subDirCount,
+                    thumbnailPath  = accum.thumbPath
+                )
+            )
+        }
+ 
+    }.flowOn(Dispatchers.IO)
+ 
+    private val VIDEO_EXT_SET = setOf("mp4","mkv","avi","mov","wmv","flv","webm","3gp","m4v","ts")
+    private fun String.isVideoPath() =
+        substringAfterLast('.', "").lowercase() in VIDEO_EXT_SET
+     
     // ── 스크롤 위치 저장 / 복원 ──────────────────────────────
 
     /**
@@ -443,7 +619,8 @@ class MainActivity : AppCompatActivity() {
      * 루트 화면이면 KEY_ROOT, 탐색 중이면 현재 폴더 절대경로를 키로 사용.
      */
     private fun saveScrollPosition() {
-        val key = if (folderStack.isEmpty()) KEY_ROOT else folderStack.last().absolutePath
+        // ✅ Fix: folderStack.last()는 Pair<File,Long> → .first.absolutePath
+        val key = if (folderStack.isEmpty()) KEY_ROOT else folderStack.last().first.absolutePath
         layoutManagerStateMap[key] = rvFolders.layoutManager?.onSaveInstanceState()
     }
 
@@ -458,7 +635,7 @@ class MainActivity : AppCompatActivity() {
 
     // ── 브레드크럼 ───────────────────────────────────────────
     private fun updateBreadcrumb() {
-        tvBreadcrumb.text = folderStack.joinToString(" / ") { it.name }
+        tvBreadcrumb.text = folderStack.joinToString(" / ") { it.first.name }
     }
 
     // ── 파일 열기 ─────────────────────────────────────────────
