@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -111,8 +112,8 @@ class FileListAdapter(
                 holder.ivThumbnail.setBackgroundColor(0xFFE0E4EA.toInt())
                 holder.ivPlayOverlay.visibility = View.GONE
                 holder.tvGifBadge.visibility    = View.GONE
-                //holder.ivAction.visibility = View.GONE
-                holder.ivAction.setImageResource(android.R.drawable.ic_media_next)
+                holder.ivAction.visibility = View.GONE
+                //holder.ivAction.setImageResource(android.R.drawable.ic_media_next)
                 holder.ivAction.setOnClickListener(null)
             }
 
@@ -121,6 +122,7 @@ class FileListAdapter(
                 holder.ivThumbnail.scaleType    = ImageView.ScaleType.CENTER_CROP
                 holder.ivPlayOverlay.visibility = View.VISIBLE
                 holder.tvGifBadge.visibility    = View.GONE
+                holder.ivAction.visibility = View.VISIBLE
                 holder.ivAction.setImageResource(android.R.drawable.ic_menu_more)
                 holder.ivThumbnail.setBackgroundColor(0xFFEEEEEE.toInt())
 
@@ -138,6 +140,7 @@ class FileListAdapter(
                 holder.ivThumbnail.scaleType = ImageView.ScaleType.CENTER_CROP
                 holder.ivPlayOverlay.visibility = View.GONE
                 holder.tvGifBadge.visibility    = View.GONE
+                holder.ivAction.visibility = View.VISIBLE
                 holder.ivAction.setImageResource(android.R.drawable.ic_menu_more)
                 holder.ivThumbnail.setBackgroundColor(0xFFEEEEEE.toInt())
 
@@ -153,6 +156,7 @@ class FileListAdapter(
                 holder.ivThumbnail.scaleType = ImageView.ScaleType.CENTER_CROP
                 holder.ivPlayOverlay.visibility = View.GONE
                 holder.tvGifBadge.visibility    = View.VISIBLE
+                holder.ivAction.visibility = View.VISIBLE
                 holder.ivAction.setImageResource(android.R.drawable.ic_menu_more)
                 holder.ivThumbnail.setBackgroundColor(0xFFEEEEEE.toInt())
 
@@ -193,8 +197,11 @@ class FileListAdapter(
         // ── 플레이리스트 추가 ─────────────────────────────────
         sheetView.findViewById<View>(R.id.menuPlaylist).setOnClickListener {
             dialog.dismiss()
-            menuCallbacks?.onPlaylist?.invoke(entry)
-                ?: Toast.makeText(ctx, "플레이리스트에 추가되었습니다", Toast.LENGTH_SHORT).show()
+            if (menuCallbacks != null) {
+                menuCallbacks.onPlaylist(entry)
+            } else {
+                showPlaylistSheet(entry, view)
+            }
         }
 
         // ── 공유 ──────────────────────────────────────────────
@@ -228,12 +235,25 @@ class FileListAdapter(
         dialog.show()
     }
 
-    override fun onBindViewHolder(holder: EntryViewHolder, position: Int, payloads: MutableList<Any>) {
-        if (payloads.isEmpty()) {
-            onBindViewHolder(holder, position)
-            return
-        }
-        super.onBindViewHolder(holder, position, payloads)
+    /**
+     * PlaylistBottomSheet 를 FragmentManager 를 통해 표시.
+     * RecyclerView 의 Context 가 FragmentActivity 여야 함.
+     */
+    private fun showPlaylistSheet(entry: FileEntry, view: View) {
+        val ctx = view.context
+        val fm = (ctx as? FragmentActivity)?.supportFragmentManager ?: return
+        PlaylistBottomSheet
+            .newInstance(entry.path)
+            .show(fm, PlaylistBottomSheet.TAG)
+    }
+
+    override fun onBindViewHolder(
+        holder: EntryViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isEmpty()) onBindViewHolder(holder, position)
+        else super.onBindViewHolder(holder, position, payloads)
     }
 
     // RecyclerView 에서 뷰가 재활용될 때 진행 중인 Glide 로딩 취소

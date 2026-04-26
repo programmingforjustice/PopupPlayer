@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    신규 플레이리스트 생성 Bottom Sheet
+    ─────────────────────────────────────────────────────────────
+    • 타이틀: "Nieuwe playlist aanmaken"
+    • 입력창: 플레이리스트 이름
+    • 버튼:   "Aanmaken"
+    ─────────────────────────────────────────────────────────────
+    파일 위치: res/layout/bottom_sheet_new_playlist.xml
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:paddingBottom="32dp">
+
+    <!-- 드래그 핸들 -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="12dp"
+        android:background="#DDDDDD"
+        android:importantForAccessibility="no" />
+
+    <!-- 타이틀 행 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingBottom="20dp">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_playlist_add"
+            android:tint="#1A1A1A"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="10dp"
+            android:text="Nieuwe playlist aanmaken"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A" />
+    </LinearLayout>
+
+    <!-- 이름 입력 + 생성 버튼 (같은 행) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:gravity="center_vertical">
+
+        <!-- 이름 입력창 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPlaylistName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="10dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPlaylistName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Naam playlist invoeren"
+                android:inputType="textCapSentences"
+                android:imeOptions="actionDone"
+                android:maxLines="1"
+                android:textSize="14sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- 생성 버튼 -->
+        <Button
+            android:id="@+id/btnCreatePlaylist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aanmaken"
+            android:textSize="14sp"
+            android:enabled="false"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+    </LinearLayout>
+
+</LinearLayout>

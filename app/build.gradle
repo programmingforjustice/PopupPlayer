@@ -1,16 +1,17 @@
 plugins {
     id 'com.android.application'
 	id 'kotlin-android'
+    id 'com.google.devtools.ksp' version "2.0.21-1.0.28"
 }
 
 android {
-    compileSdk 33
+    compileSdk 35
 	  namespace "nl.blauw.pipplayer"
 		
     defaultConfig {
         applicationId "nl.blauw.pipplayer"
         minSdk 26
-        targetSdk 33
+        targetSdk 35
         versionCode 1
         versionName "1.0"
     }
@@ -79,6 +80,11 @@ dependencies {
       implementation 'androidx.core:core-ktx:1.9.0'
       implementation 'com.github.zjupure:webpdecoder:2.4.4.16.0'
       implementation 'com.github.bumptech.glide:glide:4.14.0'
+
+    implementation "androidx.room:room-runtime:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"     // coroutines Flow 지원
+    ksp "androidx.room:room-compiler:2.6.1"
+
       //annotationProcessor 'com.github.bumptech.glide:compiler:4.14.0'
 
         //implementation 'com.google.android.material:material:1.12.0'

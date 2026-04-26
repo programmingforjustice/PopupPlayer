@@ -2,7 +2,7 @@
     name="devRelease"
     package="nl.blauw.pipplayer"
     minSdkVersion="26"
-    targetSdkVersion="33"
+    targetSdkVersion="35"
     mergedManifest="build/intermediates/merged_manifest/devRelease/AndroidManifest.xml"
     proguardFiles="build/intermediates/default_proguard_files/global/proguard-android-optimize.txt-8.2.2:proguard-rules.pro"
     partialResultsDir="build/intermediates/lint_vital_partial_results/devRelease/out"
@@ -22,10 +22,10 @@
   <testFixturesSourceProviders>
   </testFixturesSourceProviders>
   <artifact
-      classOutputs="build/intermediates/javac/devRelease/classes:build/tmp/kotlin-classes/devRelease:build/kotlinToolingMetadata:build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/devRelease/R.jar"
+      classOutputs="build/intermediates/javac/devRelease/classes:build/tmp/kotlin-classes/devRelease:build/kotlinToolingMetadata:build/generated/ksp/devRelease/resources:build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/devRelease/R.jar"
       type="MAIN"
       applicationId="nl.blauw.pipplayer.dev"
-      generatedSourceFolders="build/generated/ap_generated_sources/devRelease/out:build/generated/source/buildConfig/dev/release:build/generated/data_binding_base_class_source_out/devRelease/out"
+      generatedSourceFolders="build/generated/ksp/devRelease/java:build/generated/ksp/devRelease/kotlin:build/generated/ap_generated_sources/devRelease/out:build/generated/source/buildConfig/dev/release:build/generated/data_binding_base_class_source_out/devRelease/out"
       generatedResourceFolders="build/generated/res/resValues/dev/release"
       desugaredMethodsFiles="/home/codespace/.gradle/caches/transforms-4/a745234506f6250c49bbef7f65b895e3/transformed/D8BackportedDesugaredMethods.txt">
   </artifact>

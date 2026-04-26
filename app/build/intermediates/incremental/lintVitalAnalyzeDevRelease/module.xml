@@ -6,9 +6,9 @@
     maven="PipPlayer:app:"
     agpVersion="8.2.2"
     buildFolder="build"
-    bootClassPath="/workspaces/PopupPlayer/android_sdk/platforms/android-33/android.jar:/workspaces/PopupPlayer/android_sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    bootClassPath="/workspaces/PopupPlayer/android_sdk/platforms/android-35/android.jar:/workspaces/PopupPlayer/android_sdk/build-tools/34.0.0/core-lambda-stubs.jar"
     javaSourceLevel="21"
-    compileTarget="android-33"
+    compileTarget="android-35"
     neverShrinking="true">
   <lintOptions
       abortOnError="true"

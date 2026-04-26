@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    플레이리스트 선택 Bottom Sheet
+    ─────────────────────────────────────────────────────────────
+    • 상단: 타이틀 ("N video toevoegen aan playlist")
+    • 버튼: "Nieuwe playlist aanmaken" (신규 생성)
+    • 목록: 기존 플레이리스트 RecyclerView
+    ─────────────────────────────────────────────────────────────
+    파일 위치: res/layout/bottom_sheet_playlist.xml
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:paddingBottom="24dp">
+
+    <!-- 드래그 핸들 -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="8dp"
+        android:background="#DDDDDD"
+        android:importantForAccessibility="no" />
+
+    <!-- 타이틀: "N video toevoegen aan playlist" -->
+    <TextView
+        android:id="@+id/tvPlaylistSheetTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="16dp"
+        android:text="1 video toevoegen aan playlist"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A1A" />
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#F0F0F0"
+        android:layout_marginBottom="12dp" />
+
+    <!-- 신규 플레이리스트 생성 버튼 -->
+    <LinearLayout
+        android:id="@+id/btnNewPlaylist"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="20dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_new_playlist_btn"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- 아이콘: 플레이리스트 추가 -->
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_playlist_add"
+            android:tint="#1A73E8"
+            android:importantForAccessibility="no" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="Nieuwe playlist aanmaken"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#1A73E8" />
+
+    </LinearLayout>
+
+    <!-- 기존 플레이리스트 목록 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPlaylists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="400dp"
+        android:nestedScrollingEnabled="false"
+        android:overScrollMode="never" />
+
+    <!-- 플레이리스트 없을 때 안내 문구 -->
+    <TextView
+        android:id="@+id/tvPlaylistEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:text="아직 플레이리스트가 없습니다."
+        android:textSize="14sp"
+        android:textColor="#888888"
+        android:gravity="center"
+        android:visibility="gone" />
+
+</LinearLayout>
+
