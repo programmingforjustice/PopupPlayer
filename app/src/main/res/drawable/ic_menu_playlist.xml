@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <!-- 리스트 줄 3개 -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#555555"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M3,6 L15,6" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#555555"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M3,12 L12,12" />
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#555555"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M3,18 L10,18" />
+    <!-- 오른쪽 + 아이콘 -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#555555"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M19,11 L19,17 M16,14 L22,14" />
+</vector>

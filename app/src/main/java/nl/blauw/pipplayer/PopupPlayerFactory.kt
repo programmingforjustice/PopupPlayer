@@ -1,4 +1,3 @@
-
 package nl.blauw.pipplayer
 
 import android.net.Uri
@@ -7,6 +6,7 @@ import android.os.Build
 import android.graphics.PixelFormat
 import android.view.WindowManager
 import org.json.JSONObject
+import java.io.File
 
 abstract class PopupPlayerFactory(protected val context: Context): JsonDeserializable<PopupPlayer> {
     protected var onFromJsonString: ((PopupPlayer, WindowManager.LayoutParams, JSONObject) -> Unit)? = null
@@ -62,7 +62,13 @@ class DefaultPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) 
     }
     
     override fun create(mediaUri: String): PopupPlayer {
-        return create(Uri.parse(mediaUri))
+        // 문자열이 http나 content로 시작하지 않는 일반 경로라면 fromFile 사용
+        val uri = if (mediaUri.startsWith("/") || mediaUri.startsWith("file://")) {
+            Uri.fromFile(File(mediaUri.replace("file://", "")))
+        } else {
+            Uri.parse(mediaUri)
+        }
+        return create(uri)
     }
     
     override fun create(mediaUri: Uri): PopupPlayer {
