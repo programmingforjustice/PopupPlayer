@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity() {
         bindViews()
         setupAdapters()
         setupToolbar()
+        setupCategories()
         setupBottomNav()
         setupBackPressed()
         checkPermissionsAndLoad()
@@ -187,7 +188,12 @@ class MainActivity : AppCompatActivity() {
         SortOrder.SIZE_LARGEST -> "크기 큰 순"
     }
 
-    // ── 하단 네비 ─────────────────────────────────────────────
+    // ── 카테고리 클릭 ─────────────────────────────────────────
+    private fun setupCategories() {
+        findViewById<View>(R.id.categoryPlaylists).setOnClickListener {
+            startActivity(Intent(this, PlaylistActivity::class.java))
+        }
+    }
     private fun setupBottomNav() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {

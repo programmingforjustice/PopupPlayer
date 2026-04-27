@@ -36,6 +36,10 @@ interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertItem(item: PlaylistItem): Long
 
+    /** 특정 플레이리스트의 첫 번째 미디어 경로 (썸네일용). */
+    @Query("SELECT mediaPath FROM playlist_items WHERE playlistId = :playlistId ORDER BY addedAt ASC LIMIT 1")
+    suspend fun getFirstMediaPath(playlistId: Long): String?
+
     /** 특정 플레이리스트의 아이템 수 조회. */
     @Query("SELECT COUNT(*) FROM playlist_items WHERE playlistId = :playlistId")
     suspend fun getItemCount(playlistId: Long): Int

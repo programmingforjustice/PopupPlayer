@@ -47,10 +47,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="nl.blauw.pipplayer.PlayerListActivity" >
-        </activity>
-        <activity android:name="nl.blauw.pipplayer.NewMainActivity" >
-        </activity>
+        <activity android:name="nl.blauw.pipplayer.PlayerListActivity" />
+        <activity android:name="nl.blauw.pipplayer.NewMainActivity" />
+        <activity android:name="nl.blauw.pipplayer.PlaylistActivity" />
+        <activity android:name="nl.blauw.pipplayer.PlaylistDetailActivity" />
 
         <service
             android:name="nl.blauw.pipplayer.PlayerService"

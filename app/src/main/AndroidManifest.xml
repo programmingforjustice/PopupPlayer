@@ -38,11 +38,13 @@
       </intent-filter>
     </activity>
 
-    <activity android:name=".PlayerListActivity">
-    </activity>
+    <activity android:name=".PlayerListActivity" />
     
-    <activity android:name=".NewMainActivity">
-    </activity>
+    <activity android:name=".NewMainActivity" />
+
+    <activity android:name=".PlaylistActivity" />
+
+    <activity android:name=".PlaylistDetailActivity" />
 
     <service android:name=".PlayerService" 
       android:foregroundServiceType="mediaPlayback"

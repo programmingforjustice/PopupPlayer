@@ -63,6 +63,14 @@ class PlaylistRepository(context: Context) {
         return if (inserted > 0L) AddResult.ADDED else AddResult.ERROR
     }
 
+    /** 특정 플레이리스트의 아이템 목록 Flow (실시간 관찰). */
+    fun getItemsByPlaylist(playlistId: Long): kotlinx.coroutines.flow.Flow<List<PlaylistItem>> =
+        dao.getItemsByPlaylist(playlistId)
+
+    /** 특정 플레이리스트의 첫 번째 미디어 경로 (썸네일용). */
+    suspend fun getFirstMediaPath(playlistId: Long): String? =
+        dao.getFirstMediaPath(playlistId)
+
     /** 특정 플레이리스트의 아이템 수. */
     suspend fun getItemCount(playlistId: Long): Int = dao.getItemCount(playlistId)
 
