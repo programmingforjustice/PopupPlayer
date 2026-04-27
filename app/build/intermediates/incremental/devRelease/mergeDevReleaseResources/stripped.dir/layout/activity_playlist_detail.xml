@@ -174,9 +174,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="플레이리스트가 비어있습니다"
+            android:text="Geen video&#x2019;s in deze playlist."
             android:textSize="15sp"
-            android:textColor="#AAAAAA" />
+            android:textColor="#AAAAAA"
+            android:layout_marginBottom="24dp" />
+
+        <Button
+            android:id="@+id/btnAddVideos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VIDEO&#x2019;S TOEVOEGEN"
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4A7FD4"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp" />
 
     </LinearLayout>
 

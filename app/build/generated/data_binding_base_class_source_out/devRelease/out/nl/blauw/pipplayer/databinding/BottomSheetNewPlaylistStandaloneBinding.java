@@ -5,13 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
@@ -25,18 +24,13 @@ public final class BottomSheetNewPlaylistStandaloneBinding implements ViewBindin
   public final Button btnCreatePlaylist;
 
   @NonNull
-  public final TextInputEditText etPlaylistName;
-
-  @NonNull
-  public final TextInputLayout tilPlaylistName;
+  public final EditText etPlaylistName;
 
   private BottomSheetNewPlaylistStandaloneBinding(@NonNull LinearLayout rootView,
-      @NonNull Button btnCreatePlaylist, @NonNull TextInputEditText etPlaylistName,
-      @NonNull TextInputLayout tilPlaylistName) {
+      @NonNull Button btnCreatePlaylist, @NonNull EditText etPlaylistName) {
     this.rootView = rootView;
     this.btnCreatePlaylist = btnCreatePlaylist;
     this.etPlaylistName = etPlaylistName;
-    this.tilPlaylistName = tilPlaylistName;
   }
 
   @Override
@@ -73,19 +67,13 @@ public final class BottomSheetNewPlaylistStandaloneBinding implements ViewBindin
       }
 
       id = R.id.etPlaylistName;
-      TextInputEditText etPlaylistName = ViewBindings.findChildViewById(rootView, id);
+      EditText etPlaylistName = ViewBindings.findChildViewById(rootView, id);
       if (etPlaylistName == null) {
         break missingId;
       }
 
-      id = R.id.tilPlaylistName;
-      TextInputLayout tilPlaylistName = ViewBindings.findChildViewById(rootView, id);
-      if (tilPlaylistName == null) {
-        break missingId;
-      }
-
       return new BottomSheetNewPlaylistStandaloneBinding((LinearLayout) rootView, btnCreatePlaylist,
-          etPlaylistName, tilPlaylistName);
+          etPlaylistName);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

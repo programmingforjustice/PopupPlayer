@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    파일 위치: res/layout/bottom_sheet_new_playlist_standalone.xml
-    NewPlaylistDialog 에서 사용 (미디어 추가 없이 생성만)
--->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@android:color/white"
-    android:paddingBottom="32dp">
+    android:paddingBottom="20dp">
 
     <!-- 드래그 핸들 -->
     <View
@@ -17,7 +13,7 @@
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="10dp"
         android:background="#DDDDDD"
         android:importantForAccessibility="no" />
 
@@ -27,12 +23,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingBottom="20dp">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="14dp">
 
         <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:src="@drawable/ic_menu_playlist"
             android:tint="#1A1A1A"
             android:importantForAccessibility="no" />
@@ -43,48 +40,53 @@
             android:layout_weight="1"
             android:layout_marginStart="10dp"
             android:text="Nieuwe playlist aanmaken"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="#1A1A1A" />
 
     </LinearLayout>
 
-    <!-- 이름 입력 + 생성 버튼 -->
+    <!-- 입력창 + 버튼 행 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:gravity="center_vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPlaylistName"
+        <!-- 테두리 있는 EditText -->
+        <EditText
+            android:id="@+id/etPlaylistName"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_weight="1"
-            android:layout_marginEnd="10dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPlaylistName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Naam playlist invoeren"
-                android:inputType="textCapSentences"
-                android:imeOptions="actionDone"
-                android:maxLines="1"
-                android:textSize="14sp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginEnd="8dp"
+            android:minHeight="0dp"
+            android:hint="Naam playlist invoeren"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:textColorHint="#AAAAAA"
+            android:inputType="textCapSentences"
+            android:imeOptions="actionDone"
+            android:maxLines="1"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:background="@drawable/bg_edittext_outlined" />
 
         <Button
             android:id="@+id/btnCreatePlaylist"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
             android:text="Aanmaken"
             android:textSize="14sp"
+            android:textColor="@color/btn_playlist_create_text"
             android:enabled="false"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            android:backgroundTint="@color/btn_playlist_create_bg"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
 
     </LinearLayout>
 

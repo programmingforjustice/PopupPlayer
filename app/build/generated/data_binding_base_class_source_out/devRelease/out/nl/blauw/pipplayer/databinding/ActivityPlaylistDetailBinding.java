@@ -24,6 +24,9 @@ public final class ActivityPlaylistDetailBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final Button btnAddVideos;
+
+  @NonNull
   public final ImageButton btnBack;
 
   @NonNull
@@ -57,12 +60,13 @@ public final class ActivityPlaylistDetailBinding implements ViewBinding {
   public final TextView tvPlaylistName;
 
   private ActivityPlaylistDetailBinding(@NonNull LinearLayout rootView,
-      @NonNull ImageButton btnBack, @NonNull ImageButton btnMore, @NonNull Button btnPlayAll,
-      @NonNull ImageButton btnRepeat, @NonNull ImageButton btnShuffle, @NonNull ImageButton btnSort,
-      @NonNull ImageView ivHeaderBg, @NonNull LinearLayout layoutEmpty,
-      @NonNull RecyclerView rvItems, @NonNull TextView tvPlaylistMeta,
-      @NonNull TextView tvPlaylistName) {
+      @NonNull Button btnAddVideos, @NonNull ImageButton btnBack, @NonNull ImageButton btnMore,
+      @NonNull Button btnPlayAll, @NonNull ImageButton btnRepeat, @NonNull ImageButton btnShuffle,
+      @NonNull ImageButton btnSort, @NonNull ImageView ivHeaderBg,
+      @NonNull LinearLayout layoutEmpty, @NonNull RecyclerView rvItems,
+      @NonNull TextView tvPlaylistMeta, @NonNull TextView tvPlaylistName) {
     this.rootView = rootView;
+    this.btnAddVideos = btnAddVideos;
     this.btnBack = btnBack;
     this.btnMore = btnMore;
     this.btnPlayAll = btnPlayAll;
@@ -103,6 +107,12 @@ public final class ActivityPlaylistDetailBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnAddVideos;
+      Button btnAddVideos = ViewBindings.findChildViewById(rootView, id);
+      if (btnAddVideos == null) {
+        break missingId;
+      }
+
       id = R.id.btnBack;
       ImageButton btnBack = ViewBindings.findChildViewById(rootView, id);
       if (btnBack == null) {
@@ -169,8 +179,8 @@ public final class ActivityPlaylistDetailBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityPlaylistDetailBinding((LinearLayout) rootView, btnBack, btnMore,
-          btnPlayAll, btnRepeat, btnShuffle, btnSort, ivHeaderBg, layoutEmpty, rvItems,
+      return new ActivityPlaylistDetailBinding((LinearLayout) rootView, btnAddVideos, btnBack,
+          btnMore, btnPlayAll, btnRepeat, btnShuffle, btnSort, ivHeaderBg, layoutEmpty, rvItems,
           tvPlaylistMeta, tvPlaylistName);
     }
     String missingId = rootView.getResources().getResourceName(id);

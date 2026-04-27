@@ -63,6 +63,9 @@ class PlaylistRepository(context: Context) {
         return if (inserted > 0L) AddResult.ADDED else AddResult.ERROR
     }
 
+    /** 플레이리스트에서 아이템 제거. */
+    suspend fun removeItemFromPlaylist(itemId: Long) = dao.deleteItem(itemId)
+
     /** 특정 플레이리스트의 아이템 목록 Flow (실시간 관찰). */
     fun getItemsByPlaylist(playlistId: Long): kotlinx.coroutines.flow.Flow<List<PlaylistItem>> =
         dao.getItemsByPlaylist(playlistId)

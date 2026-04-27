@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/activity_media_picker.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- ── 툴바 ── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp">
+
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Close" />
+
+        <TextView
+            android:id="@+id/tvPickerTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Toevoegen aan playlist (0 video&#x2019;s)"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:layout_marginStart="4dp"
+            android:maxLines="1"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <!-- ── 검색창 ── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_search_bar"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@android:drawable/ic_menu_search"
+                android:alpha="0.4"
+                android:contentDescription="search icon" />
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="Video&#x2019;s zoeken…"
+                android:textSize="14sp"
+                android:textColor="#111111"
+                android:textColorHint="#AAAAAA"
+                android:background="@android:color/transparent"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:singleLine="true" />
+
+            <ImageButton
+                android:id="@+id/btnClearSearch"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:visibility="gone"
+                android:contentDescription="Clear" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- ── 미디어 목록 ── -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMedia"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp" />
+
+    <!-- ── 하단 추가 버튼 (선택 항목 있을 때) ── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="#FFFFFF"
+        android:elevation="8dp">
+
+        <Button
+            android:id="@+id/btnConfirmAdd"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="추가"
+            android:textSize="15sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#4A7FD4"
+            android:enabled="false" />
+
+    </FrameLayout>
+
+</LinearLayout>

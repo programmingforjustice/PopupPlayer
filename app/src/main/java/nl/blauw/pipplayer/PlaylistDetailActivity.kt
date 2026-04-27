@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -73,6 +74,18 @@ class PlaylistDetailActivity : AppCompatActivity() {
         layoutEmpty  = findViewById(R.id.layoutEmpty)
 
         tvName.text  = playlistName
+
+        // 빈 상태에서 "VIDEO'S TOEVOEGEN" 버튼 클릭 → MediaPickerActivity
+        findViewById<Button>(R.id.btnAddVideos).setOnClickListener {
+            openMediaPicker()
+        }
+    }
+
+    private fun openMediaPicker() {
+        val intent = android.content.Intent(this, MediaPickerActivity::class.java).apply {
+            putExtra(MediaPickerActivity.EXTRA_PLAYLIST_ID, playlistId)
+        }
+        startActivity(intent)
     }
 
     private fun setupToolbar() {
@@ -131,13 +144,19 @@ class PlaylistDetailActivity : AppCompatActivity() {
                 setOf("mp4","mkv","avi","mov","wmv","flv","webm","3gp","m4v","ts")
 
         if (isVideo) {
-            Glide.with(this).asBitmap().load(file)
-                .apply(RequestOptions().frame(1_000_000L).transform(CenterCrop())
+            Glide.with(this)
+                .asBitmap()
+                .load(file)
+                .apply(RequestOptions()
+                    .frame(1_000_000L)
+                    .transform(CenterCrop())
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                 .into(ivHeaderBg)
         } else {
-            Glide.with(this).load(file)
-                .apply(RequestOptions().transform(CenterCrop())
+            Glide.with(this)
+                .load(file)
+                .apply(RequestOptions()
+                    .transform(CenterCrop())
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
                 .into(ivHeaderBg)
         }
@@ -158,8 +177,89 @@ class PlaylistDetailActivity : AppCompatActivity() {
     }
 
     private fun showItemMenu(item: PlaylistItem) {
-        // TODO: 목록에서 제거 등
-        Toast.makeText(this, item.mediaPath.substringAfterLast('/'), Toast.LENGTH_SHORT).show()
+        val file    = File(item.mediaPath)
+        val isVideo = item.mediaPath.substringAfterLast('.', "").lowercase() in
+                setOf("mp4","mkv","avi","mov","wmv","flv","webm","3gp","m4v","ts")
+
+        val dialog    = BottomSheetDialog(this)
+        val sheetView = LayoutInflater.from(this)
+            .inflate(R.layout.bottom_sheet_playlist_item_menu, null)
+
+        // ── 상단 썸네일 ────────────────────────────────────────
+        val ivThumb   = sheetView.findViewById<ImageView>(R.id.ivMenuThumb)
+        val tvDuration = sheetView.findViewById<TextView>(R.id.tvMenuDuration)
+        val tvFileName = sheetView.findViewById<TextView>(R.id.tvMenuFileName)
+        val tvFileMeta = sheetView.findViewById<TextView>(R.id.tvMenuFileMeta)
+
+        tvFileName.text = file.name
+        tvFileMeta.text = Formatter.formatShortFileSize(this, file.length())
+        tvDuration.visibility = if (isVideo) View.VISIBLE else View.GONE
+
+        if (isVideo) {
+            Glide.with(this)
+                .asBitmap()
+                .load(file)
+                .apply(RequestOptions()
+                    .frame(1_000_000L)
+                    .transform(CenterCrop())
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .placeholder(android.R.drawable.ic_media_play))
+                .into(ivThumb)
+        } else {
+            Glide.with(this)
+                .load(file)
+                .apply(RequestOptions()
+                    .transform(CenterCrop())
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .placeholder(android.R.drawable.ic_menu_gallery))
+                .into(ivThumb)
+        }
+
+        // ── Play ──────────────────────────────────────────────
+        sheetView.findViewById<View>(R.id.menuPlay).setOnClickListener {
+            dialog.dismiss()
+            playItem(item)
+        }
+
+        // ── Remove (플레이리스트에서 제거) ────────────────────
+        sheetView.findViewById<View>(R.id.menuRemove).setOnClickListener {
+            dialog.dismiss()
+            lifecycleScope.launch {
+                withContext(Dispatchers.IO) {
+                    repo.removeItemFromPlaylist(item.id)
+                }
+                Toast.makeText(this@PlaylistDetailActivity,
+                    "목록에서 제거되었습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // ── 속성 ──────────────────────────────────────────────
+        sheetView.findViewById<View>(R.id.menuProperties).setOnClickListener {
+            dialog.dismiss()
+            showProperties(file)
+        }
+
+        dialog.setContentView(sheetView)
+        dialog.show()
+    }
+
+    /** 파일 속성 다이얼로그 */
+    private fun showProperties(file: File) {
+        val sizeStr     = Formatter.formatShortFileSize(this, file.length())
+        val dateStr     = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault())
+            .format(java.util.Date(file.lastModified()))
+        val message     = """
+            이름: ${file.name}
+            크기: $sizeStr
+            경로: ${file.parent}
+            수정일: $dateStr
+        """.trimIndent()
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle("Eigenschappen")
+            .setMessage(message)
+            .setPositiveButton("확인", null)
+            .show()
     }
 
     // ── Adapter ───────────────────────────────────────────────

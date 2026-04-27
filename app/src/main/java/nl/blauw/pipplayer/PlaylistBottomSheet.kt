@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -36,19 +37,16 @@ import java.io.File
  *   PlaylistBottomSheet.newInstance(mediaPath).show(supportFragmentManager, TAG)
  *
  * 동작 흐름:
- *   1) bottom_sheet_playlist.xml → 기존 플레이리스트 목록 표시
- *   2) "Nieuwe playlist aanmaken" 클릭
- *      → bottom_sheet_new_playlist.xml 로 ViewSwitcher 전환
- *   3) 이름 입력 후 "Aanmaken" 클릭
- *      → DB 저장 → 해당 리스트에 미디어 추가 → Toast
- *   4) 기존 플레이리스트 행 클릭
- *      → 미디어 추가 → Toast (중복 시 별도 메시지)
+ *   1) viewSelectPlaylist → 기존 플레이리스트 목록 표시
+ *   2) "Nieuwe playlist aanmaken" 클릭 → viewNewPlaylist 로 전환
+ *   3) 이름 입력 후 "Aanmaken" 클릭 → DB 저장 → 미디어 추가 → Toast
+ *   4) 기존 플레이리스트 행 클릭 → 미디어 추가 → Toast (중복 시 별도 메시지)
  */
 class PlaylistBottomSheet : BottomSheetDialogFragment() {
 
     // ── 인자 키 ────────────────────────────────────────────────
     companion object {
-        const val TAG         = "PlaylistBottomSheet"
+        const val TAG = "PlaylistBottomSheet"
         private const val ARG_MEDIA_PATH = "media_path"
 
         fun newInstance(mediaPath: String): PlaylistBottomSheet =
@@ -73,8 +71,7 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
 
     // ── 신규 생성 화면 뷰 ─────────────────────────────────────
     private lateinit var viewNewPlaylist: View
-    private lateinit var tilName: TextInputLayout
-    private lateinit var etName: TextInputEditText
+    private lateinit var etName: EditText
     private lateinit var btnCreate: Button
 
     // ── 현재 화면 상태 ─────────────────────────────────────────
@@ -98,7 +95,6 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
 
         // 신규 생성 화면
         viewNewPlaylist = root.findViewById(R.id.viewNewPlaylist)
-        tilName         = root.findViewById(R.id.tilPlaylistName)
         etName          = root.findViewById(R.id.etPlaylistName)
         btnCreate       = root.findViewById(R.id.btnCreatePlaylist)
 
@@ -164,9 +160,7 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
-                val name = s?.toString()?.trim() ?: ""
-                btnCreate.isEnabled = name.isNotEmpty()
-                tilName.error = null    // 오류 메시지 초기화
+                btnCreate.isEnabled = s?.toString()?.trim()?.isNotEmpty() == true
             }
         })
 
@@ -197,7 +191,6 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
         viewNewPlaylist.visibility    = View.GONE
         viewSelectPlaylist.visibility = View.VISIBLE
         etName.text?.clear()
-        tilName.error = null
     }
 
     /** 외부에서 뒤로가기 처리를 위해 현재 화면 상태 노출 */
@@ -215,7 +208,7 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
     private fun createAndAdd() {
         val name = etName.text?.toString()?.trim() ?: ""
         if (name.isEmpty()) {
-            tilName.error = "플레이리스트 이름을 입력해주세요."
+            Toast.makeText(requireContext(), "플레이리스트 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -223,7 +216,7 @@ class PlaylistBottomSheet : BottomSheetDialogFragment() {
             // 중복 검사
             val isDuplicate = withContext(Dispatchers.IO) { repo.isNameDuplicate(name) }
             if (isDuplicate) {
-                tilName.error = "이미 존재하는 플레이리스트 이름입니다."
+                Toast.makeText(requireContext(), "이미 존재하는 플레이리스트 이름입니다.", Toast.LENGTH_SHORT).show()
                 return@launch
             }
 

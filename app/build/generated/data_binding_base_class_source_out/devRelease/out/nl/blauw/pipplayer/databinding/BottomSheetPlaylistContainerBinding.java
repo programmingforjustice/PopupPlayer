@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,8 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
@@ -31,13 +30,10 @@ public final class BottomSheetPlaylistContainerBinding implements ViewBinding {
   public final LinearLayout btnNewPlaylist;
 
   @NonNull
-  public final TextInputEditText etPlaylistName;
+  public final EditText etPlaylistName;
 
   @NonNull
   public final RecyclerView rvPlaylists;
-
-  @NonNull
-  public final TextInputLayout tilPlaylistName;
 
   @NonNull
   public final TextView tvPlaylistEmpty;
@@ -53,16 +49,14 @@ public final class BottomSheetPlaylistContainerBinding implements ViewBinding {
 
   private BottomSheetPlaylistContainerBinding(@NonNull FrameLayout rootView,
       @NonNull Button btnCreatePlaylist, @NonNull LinearLayout btnNewPlaylist,
-      @NonNull TextInputEditText etPlaylistName, @NonNull RecyclerView rvPlaylists,
-      @NonNull TextInputLayout tilPlaylistName, @NonNull TextView tvPlaylistEmpty,
-      @NonNull TextView tvPlaylistSheetTitle, @NonNull LinearLayout viewNewPlaylist,
-      @NonNull LinearLayout viewSelectPlaylist) {
+      @NonNull EditText etPlaylistName, @NonNull RecyclerView rvPlaylists,
+      @NonNull TextView tvPlaylistEmpty, @NonNull TextView tvPlaylistSheetTitle,
+      @NonNull LinearLayout viewNewPlaylist, @NonNull LinearLayout viewSelectPlaylist) {
     this.rootView = rootView;
     this.btnCreatePlaylist = btnCreatePlaylist;
     this.btnNewPlaylist = btnNewPlaylist;
     this.etPlaylistName = etPlaylistName;
     this.rvPlaylists = rvPlaylists;
-    this.tilPlaylistName = tilPlaylistName;
     this.tvPlaylistEmpty = tvPlaylistEmpty;
     this.tvPlaylistSheetTitle = tvPlaylistSheetTitle;
     this.viewNewPlaylist = viewNewPlaylist;
@@ -109,7 +103,7 @@ public final class BottomSheetPlaylistContainerBinding implements ViewBinding {
       }
 
       id = R.id.etPlaylistName;
-      TextInputEditText etPlaylistName = ViewBindings.findChildViewById(rootView, id);
+      EditText etPlaylistName = ViewBindings.findChildViewById(rootView, id);
       if (etPlaylistName == null) {
         break missingId;
       }
@@ -117,12 +111,6 @@ public final class BottomSheetPlaylistContainerBinding implements ViewBinding {
       id = R.id.rvPlaylists;
       RecyclerView rvPlaylists = ViewBindings.findChildViewById(rootView, id);
       if (rvPlaylists == null) {
-        break missingId;
-      }
-
-      id = R.id.tilPlaylistName;
-      TextInputLayout tilPlaylistName = ViewBindings.findChildViewById(rootView, id);
-      if (tilPlaylistName == null) {
         break missingId;
       }
 
@@ -151,8 +139,8 @@ public final class BottomSheetPlaylistContainerBinding implements ViewBinding {
       }
 
       return new BottomSheetPlaylistContainerBinding((FrameLayout) rootView, btnCreatePlaylist,
-          btnNewPlaylist, etPlaylistName, rvPlaylists, tilPlaylistName, tvPlaylistEmpty,
-          tvPlaylistSheetTitle, viewNewPlaylist, viewSelectPlaylist);
+          btnNewPlaylist, etPlaylistName, rvPlaylists, tvPlaylistEmpty, tvPlaylistSheetTitle,
+          viewNewPlaylist, viewSelectPlaylist);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

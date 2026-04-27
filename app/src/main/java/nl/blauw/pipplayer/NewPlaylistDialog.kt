@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
@@ -40,8 +41,7 @@ class NewPlaylistDialog : BottomSheetDialogFragment() {
     }
 
     private lateinit var repo: PlaylistRepository
-    private lateinit var tilName: TextInputLayout
-    private lateinit var etName: TextInputEditText
+    private lateinit var etName: EditText
     private lateinit var btnCreate: Button
 
     override fun onCreateView(
@@ -57,7 +57,6 @@ class NewPlaylistDialog : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         repo      = PlaylistRepository(requireContext())
-        tilName   = view.findViewById(R.id.tilPlaylistName)
         etName    = view.findViewById(R.id.etPlaylistName)
         btnCreate = view.findViewById(R.id.btnCreatePlaylist)
 
@@ -68,7 +67,6 @@ class NewPlaylistDialog : BottomSheetDialogFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
             override fun afterTextChanged(s: Editable?) {
                 btnCreate.isEnabled = s?.toString()?.trim()?.isNotEmpty() == true
-                tilName.error = null
             }
         })
 
@@ -84,14 +82,14 @@ class NewPlaylistDialog : BottomSheetDialogFragment() {
     private fun createPlaylist() {
         val name = etName.text?.toString()?.trim() ?: ""
         if (name.isEmpty()) {
-            tilName.error = "플레이리스트 이름을 입력해주세요."
+            Toast.makeText(requireContext(), "플레이리스트 이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
             return
         }
 
         lifecycleScope.launch {
             val isDuplicate = withContext(Dispatchers.IO) { repo.isNameDuplicate(name) }
             if (isDuplicate) {
-                tilName.error = "이미 존재하는 플레이리스트 이름입니다."
+                Toast.makeText(requireContext(), "이미 존재하는 플레이리스트 이름입니다.", Toast.LENGTH_SHORT).show()
                 return@launch
             }
 

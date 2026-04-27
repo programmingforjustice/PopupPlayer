@@ -51,6 +51,7 @@
         <activity android:name="nl.blauw.pipplayer.NewMainActivity" />
         <activity android:name="nl.blauw.pipplayer.PlaylistActivity" />
         <activity android:name="nl.blauw.pipplayer.PlaylistDetailActivity" />
+        <activity android:name="nl.blauw.pipplayer.MediaPickerActivity" />
 
         <service
             android:name="nl.blauw.pipplayer.PlayerService"
