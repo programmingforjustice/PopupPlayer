@@ -272,7 +272,7 @@ class FileListAdapter(
                 holder.ivAction.setOnClickListener { v -> showMenu(entry, v) }
                 when (entry.type) {
                     EntryType.VIDEO -> {
-                        holder.tvDur.visibility = View.GONE
+                        holder.tvDur.visibility = View.VISIBLE
                         holder.tvGif.visibility = View.GONE
                         holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
                         Glide.with(ctx).asBitmap().load(entry.file).apply(GRID_VIDEO_OPT).into(holder.ivThumb)
