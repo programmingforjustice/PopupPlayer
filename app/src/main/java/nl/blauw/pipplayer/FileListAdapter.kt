@@ -31,10 +31,21 @@ enum class EntryType { DIRECTORY, VIDEO, IMAGE, GIF }
 // ── Data Model ────────────────────────────────────────────────
 data class FileEntry(
     val file: File,
-    val type: EntryType
+    val type: EntryType,
+    val duration: Long = 0L   // 동영상 재생시간 (ms), 비디오 외에는 0
 ) {
     val name: String get() = file.name
     val path: String get() = file.absolutePath
+
+    val durationLabel: String get() {
+        if (duration <= 0L) return ""
+        val total = duration / 1000
+        val h = total / 3600
+        val m = (total % 3600) / 60
+        val s = total % 60
+        return if (h > 0) "%d:%02d:%02d".format(h, m, s)
+        else              "%02d:%02d".format(m, s)
+    }
 
     fun subtextFor(context: android.content.Context): String =
         if (type == EntryType.DIRECTORY) {
@@ -165,6 +176,7 @@ class FileListAdapter(
     class ListMediaVH(view: View) : RecyclerView.ViewHolder(view) {
         val ivThumb:   ImageView = view.findViewById(R.id.ivEntryThumbnail)
         val ivOverlay: ImageView = view.findViewById(R.id.ivPlayOverlay)
+        val tvDuration: TextView = view.findViewById(R.id.tvDuration)
         val tvGif:     TextView  = view.findViewById(R.id.tvGifBadge)
         val tvName:    TextView  = view.findViewById(R.id.tvEntryName)
         val tvSub:     TextView  = view.findViewById(R.id.tvEntrySubtext)
@@ -235,19 +247,28 @@ class FileListAdapter(
                         holder.ivOverlay.visibility = View.VISIBLE
                         holder.tvGif.visibility     = View.GONE
                         holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
+                        // duration 오버레이 표시
+                        if (entry.durationLabel.isNotEmpty()) {
+                            holder.tvDuration.visibility = View.VISIBLE
+                            holder.tvDuration.text       = entry.durationLabel
+                        } else {
+                            holder.tvDuration.visibility = View.GONE
+                        }
                         Glide.with(ctx).asBitmap().load(entry.file).apply(LIST_VIDEO_OPT).into(holder.ivThumb)
                     }
                     EntryType.IMAGE -> {
-                        holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_CROP
-                        holder.ivOverlay.visibility = View.GONE
-                        holder.tvGif.visibility     = View.GONE
+                        holder.ivThumb.scaleType     = ImageView.ScaleType.CENTER_CROP
+                        holder.ivOverlay.visibility  = View.GONE
+                        holder.tvGif.visibility      = View.GONE
+                        holder.tvDuration.visibility = View.GONE
                         holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
                         Glide.with(ctx).asBitmap().load(entry.file).apply(LIST_THUMB_OPT).into(holder.ivThumb)
                     }
                     EntryType.GIF -> {
-                        holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_CROP
-                        holder.ivOverlay.visibility = View.GONE
-                        holder.tvGif.visibility     = View.VISIBLE
+                        holder.ivThumb.scaleType     = ImageView.ScaleType.CENTER_CROP
+                        holder.ivOverlay.visibility  = View.GONE
+                        holder.tvGif.visibility      = View.VISIBLE
+                        holder.tvDuration.visibility = View.GONE
                         holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
                         Glide.with(ctx).asGif().load(entry.file).apply(LIST_THUMB_OPT).into(holder.ivThumb)
                     }
@@ -272,7 +293,13 @@ class FileListAdapter(
                 holder.ivAction.setOnClickListener { v -> showMenu(entry, v) }
                 when (entry.type) {
                     EntryType.VIDEO -> {
-                        holder.tvDur.visibility = View.VISIBLE
+                        // duration 오버레이 표시
+                        if (entry.durationLabel.isNotEmpty()) {
+                            holder.tvDur.visibility = View.VISIBLE
+                            holder.tvDur.text       = entry.durationLabel
+                        } else {
+                            holder.tvDur.visibility = View.GONE
+                        }
                         holder.tvGif.visibility = View.GONE
                         holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
                         Glide.with(ctx).asBitmap().load(entry.file).apply(GRID_VIDEO_OPT).into(holder.ivThumb)

@@ -30,6 +30,9 @@ public final class ItemFileEntryBinding implements ViewBinding {
   public final ImageView ivPlayOverlay;
 
   @NonNull
+  public final TextView tvDuration;
+
+  @NonNull
   public final TextView tvEntryName;
 
   @NonNull
@@ -40,12 +43,13 @@ public final class ItemFileEntryBinding implements ViewBinding {
 
   private ItemFileEntryBinding(@NonNull LinearLayout rootView, @NonNull ImageView ivEntryAction,
       @NonNull ImageView ivEntryThumbnail, @NonNull ImageView ivPlayOverlay,
-      @NonNull TextView tvEntryName, @NonNull TextView tvEntrySubtext,
+      @NonNull TextView tvDuration, @NonNull TextView tvEntryName, @NonNull TextView tvEntrySubtext,
       @NonNull TextView tvGifBadge) {
     this.rootView = rootView;
     this.ivEntryAction = ivEntryAction;
     this.ivEntryThumbnail = ivEntryThumbnail;
     this.ivPlayOverlay = ivPlayOverlay;
+    this.tvDuration = tvDuration;
     this.tvEntryName = tvEntryName;
     this.tvEntrySubtext = tvEntrySubtext;
     this.tvGifBadge = tvGifBadge;
@@ -96,6 +100,12 @@ public final class ItemFileEntryBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvDuration;
+      TextView tvDuration = ViewBindings.findChildViewById(rootView, id);
+      if (tvDuration == null) {
+        break missingId;
+      }
+
       id = R.id.tvEntryName;
       TextView tvEntryName = ViewBindings.findChildViewById(rootView, id);
       if (tvEntryName == null) {
@@ -115,7 +125,7 @@ public final class ItemFileEntryBinding implements ViewBinding {
       }
 
       return new ItemFileEntryBinding((LinearLayout) rootView, ivEntryAction, ivEntryThumbnail,
-          ivPlayOverlay, tvEntryName, tvEntrySubtext, tvGifBadge);
+          ivPlayOverlay, tvDuration, tvEntryName, tvEntrySubtext, tvGifBadge);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

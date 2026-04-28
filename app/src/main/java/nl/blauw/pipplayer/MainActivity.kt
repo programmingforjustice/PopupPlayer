@@ -463,7 +463,8 @@ class MainActivity : AppCompatActivity() {
         val projection = arrayOf(
             MediaStore.Files.FileColumns.DATA,
             MediaStore.Files.FileColumns.MEDIA_TYPE,
-            MediaStore.Files.FileColumns.MIME_TYPE
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Video.Media.DURATION          // 동영상 재생시간
         )
 
         val (selection, selArgs) = if (bucketId != -1L) {
@@ -508,15 +509,18 @@ class MainActivity : AppCompatActivity() {
         var rowCount = 0
 
         cursor?.use { c ->
-            val dataCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
-            val typeCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
-            val mimeCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
+            val dataCol  = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+            val typeCol  = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+            val mimeCol  = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MIME_TYPE)
+            val durCol   = c.getColumnIndex(MediaStore.Video.Media.DURATION)  // 없을 수 있으므로 getColumnIndex
 
             t = System.currentTimeMillis()
             while (c.moveToNext()) {
                 val path      = c.getString(dataCol) ?: continue
                 val mediaType = c.getInt(typeCol)
                 val mime      = c.getString(mimeCol) ?: ""
+                val duration  = if (durCol >= 0 && mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
+                                    c.getLong(durCol) else 0L
 
                 val te = System.currentTimeMillis()
                 val file = File(path)
@@ -528,8 +532,9 @@ class MainActivity : AppCompatActivity() {
                     mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> EntryType.VIDEO
                     mime == "image/gif"                                         -> EntryType.GIF
                     else                                                        -> EntryType.IMAGE
+
                 }
-                allFiles.add(FileEntry(file, entryType))
+                allFiles.add(FileEntry(file, entryType, duration))
 
                 // ── 1차 emit: 디렉토리 + 첫 FIRST_CHUNK_SIZE 개 파일 ──
                 // IO 에서 정렬까지 완료한 뒤 emit → 메인 스레드 부담 최소화
