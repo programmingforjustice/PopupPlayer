@@ -11,6 +11,14 @@ interface PlaylistDao {
 
     // ── 플레이리스트 CRUD ──────────────────────────────────────────
 
+    /** 플레이리스트 이름 변경. */
+    @Query("UPDATE playlists SET name = :newName WHERE id = :id")
+    suspend fun renamePlaylist(id: Long, newName: String)
+
+    /** 플레이리스트 삭제 (CASCADE 로 아이템도 자동 삭제). */
+    @Query("DELETE FROM playlists WHERE id = :id")
+    suspend fun deletePlaylist(id: Long)
+
     /** 신규 플레이리스트 생성. 동일 이름 있으면 IGNORE (중복 방지). */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPlaylist(playlist: Playlist): Long

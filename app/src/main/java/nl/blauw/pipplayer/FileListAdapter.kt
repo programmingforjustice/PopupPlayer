@@ -1,6 +1,7 @@
 package nl.blauw.pipplayer
 
 import android.content.Intent
+import android.graphics.Rect
 import android.net.Uri
 import android.text.format.DateFormat
 import android.text.format.Formatter
@@ -12,6 +13,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,7 +21,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import nl.blauw.pipplayer.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.io.File
 import java.util.Date
@@ -54,212 +55,299 @@ data class FileMenuCallbacks(
     val onRename:   (FileEntry) -> Unit
 )
 
-// ── DiffUtil ──────────────────────────────────────────────────
-private val DIFF = object : DiffUtil.ItemCallback<FileEntry>() {
-    override fun areItemsTheSame(a: FileEntry, b: FileEntry) = a.path == b.path
-    override fun areContentsTheSame(a: FileEntry, b: FileEntry) = a == b
-}
-
-// ── 공용 Glide RequestOptions ─────────────────────────────────
-// 디스크 캐시 활성화 + 모서리 둥글게 (4dp)
-private val THUMBNAIL_OPTIONS = RequestOptions()
-    .transform(CenterCrop(), RoundedCorners(8))
-    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-    .placeholder(android.R.drawable.ic_menu_gallery)
-    .error(android.R.drawable.ic_menu_gallery)
-
-private val VIDEO_OPTIONS = THUMBNAIL_OPTIONS
-    .clone()
-    .frame(1_000_000L)   // 1초 지점 프레임 추출 (마이크로초 단위)
-
 // ── Adapter ───────────────────────────────────────────────────
 class FileListAdapter(
     private val onDirectoryClick: (FileEntry) -> Unit,
-    private val onFileClick: (FileEntry) -> Unit,
-    private val menuCallbacks: FileMenuCallbacks? = null
-) : ListAdapter<FileEntry, FileListAdapter.EntryViewHolder>(DIFF) {
+    private val onFileClick:      (FileEntry) -> Unit,
+    private val menuCallbacks:    FileMenuCallbacks? = null
+) : ListAdapter<FileListAdapter.ListItem, RecyclerView.ViewHolder>(
+    object : DiffUtil.ItemCallback<ListItem>() {
+        override fun areItemsTheSame(a: ListItem, b: ListItem) = when {
+            a is ListItem.Header && b is ListItem.Header -> a.title == b.title
+            a is ListItem.Entry  && b is ListItem.Entry  -> a.entry.path == b.entry.path
+            else -> false
+        }
+        override fun areContentsTheSame(a: ListItem, b: ListItem) = a == b
+    }
+) {
 
-    inner class EntryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val ivThumbnail: ImageView   = itemView.findViewById(R.id.ivEntryThumbnail)
-        val ivPlayOverlay: ImageView = itemView.findViewById(R.id.ivPlayOverlay)
-        val tvGifBadge: TextView     = itemView.findViewById(R.id.tvGifBadge)
-        val tvName: TextView         = itemView.findViewById(R.id.tvEntryName)
-        val tvSubtext: TextView      = itemView.findViewById(R.id.tvEntrySubtext)
-        val ivAction: ImageView      = itemView.findViewById(R.id.ivEntryAction)
+    // ── 내부 타입 ─────────────────────────────────────────────
+    sealed class ListItem {
+        data class Header(val title: String) : ListItem()
+        data class Entry(val entry: FileEntry) : ListItem()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EntryViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_file_entry, parent, false)
-        return EntryViewHolder(view)
+    companion object {
+        private const val VT_HEADER     = 0
+        private const val VT_DIR_LIST   = 1
+        private const val VT_MEDIA_LIST = 2
+        private const val VT_DIR_GRID   = 3
+        private const val VT_MEDIA_GRID = 4
+
+        private val LIST_THUMB_OPT = RequestOptions()
+            .transform(CenterCrop(), RoundedCorners(8))
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .placeholder(android.R.drawable.ic_menu_gallery)
+            .error(android.R.drawable.ic_menu_gallery)
+
+        private val LIST_VIDEO_OPT = LIST_THUMB_OPT.clone().frame(1_000_000L)
+
+        private val GRID_THUMB_OPT = RequestOptions()
+            .transform(CenterCrop())
+            .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+            .placeholder(android.R.drawable.ic_menu_gallery)
+
+        private val GRID_VIDEO_OPT = GRID_THUMB_OPT.clone().frame(1_000_000L)
     }
 
-    override fun onBindViewHolder(holder: EntryViewHolder, position: Int) {
-        val entry = getItem(position)
-        val ctx   = holder.itemView.context
+    // ── 상태 ─────────────────────────────────────────────────
+    var isGrid: Boolean = false
+        set(value) { if (field != value) { field = value; rebuildList() } }
 
-        holder.tvName.text    = entry.name
-        holder.tvSubtext.text = entry.subtextFor(ctx)
+    private var rawEntries: List<FileEntry> = emptyList()
 
-        when (entry.type) {
+    fun submitEntries(entries: List<FileEntry>) {
+        rawEntries = entries
+        rebuildList()
+    }
 
-            // ── 디렉토리: 기본 폴더 아이콘 ──────────────────────
-            EntryType.DIRECTORY -> {
-                // Glide 로딩 취소 후 기본 아이콘 표시
-                Glide.with(ctx).clear(holder.ivThumbnail)
-                holder.ivThumbnail.setImageResource(R.drawable.ic_folder_default)
-                holder.ivThumbnail.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                holder.ivThumbnail.setBackgroundColor(0xFFE0E4EA.toInt())
-                holder.ivPlayOverlay.visibility = View.GONE
-                holder.tvGifBadge.visibility    = View.GONE
-                holder.ivAction.visibility = View.GONE
-                //holder.ivAction.setImageResource(android.R.drawable.ic_media_next)
+    private fun rebuildList() {
+        val items = mutableListOf<ListItem>()
+        val dirs  = rawEntries.filter { it.type == EntryType.DIRECTORY }
+        val media = rawEntries.filter { it.type != EntryType.DIRECTORY }
+        if (isGrid) {
+            if (dirs.isNotEmpty()) {
+                items.add(ListItem.Header("Mappen"))
+                dirs.forEach { items.add(ListItem.Entry(it)) }
+            }
+            if (media.isNotEmpty()) {
+                items.add(ListItem.Header("Video's"))
+                media.forEach { items.add(ListItem.Entry(it)) }
+            }
+        } else {
+            dirs.forEach  { items.add(ListItem.Entry(it)) }
+            media.forEach { items.add(ListItem.Entry(it)) }
+        }
+        submitList(items)
+    }
+
+    override fun getItemViewType(position: Int) = when (val item = getItem(position)) {
+        is ListItem.Header -> VT_HEADER
+        is ListItem.Entry  -> when (item.entry.type) {
+            EntryType.DIRECTORY -> if (isGrid) VT_DIR_GRID   else VT_DIR_LIST
+            else                -> if (isGrid) VT_MEDIA_GRID else VT_MEDIA_LIST
+        }
+    }
+
+    // ── SpanSizeLookup ────────────────────────────────────────
+    fun getSpanSizeLookup(spanCount: Int): GridLayoutManager.SpanSizeLookup =
+        object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int) = when (getItemViewType(position)) {
+                VT_DIR_GRID, VT_MEDIA_GRID -> 1
+                else -> spanCount  // 헤더 + 리스트 모드 전체 너비
+            }
+        }
+
+    // ── ViewHolders ───────────────────────────────────────────
+    class HeaderVH(view: View) : RecyclerView.ViewHolder(view) {
+        val tv: TextView = view as TextView
+    }
+
+    class ListDirVH(view: View) : RecyclerView.ViewHolder(view) {
+        val ivThumb:   ImageView = view.findViewById(R.id.ivEntryThumbnail)
+        val ivOverlay: ImageView = view.findViewById(R.id.ivPlayOverlay)
+        val tvGif:     TextView  = view.findViewById(R.id.tvGifBadge)
+        val tvName:    TextView  = view.findViewById(R.id.tvEntryName)
+        val tvSub:     TextView  = view.findViewById(R.id.tvEntrySubtext)
+        val ivAction:  ImageView = view.findViewById(R.id.ivEntryAction)
+    }
+
+    class ListMediaVH(view: View) : RecyclerView.ViewHolder(view) {
+        val ivThumb:   ImageView = view.findViewById(R.id.ivEntryThumbnail)
+        val ivOverlay: ImageView = view.findViewById(R.id.ivPlayOverlay)
+        val tvGif:     TextView  = view.findViewById(R.id.tvGifBadge)
+        val tvName:    TextView  = view.findViewById(R.id.tvEntryName)
+        val tvSub:     TextView  = view.findViewById(R.id.tvEntrySubtext)
+        val ivAction:  ImageView = view.findViewById(R.id.ivEntryAction)
+    }
+
+    class GridDirVH(view: View) : RecyclerView.ViewHolder(view) {
+        val ivIcon:  ImageView = view.findViewById(R.id.ivFolderIcon)
+        val tvName:  TextView  = view.findViewById(R.id.tvDirName)
+        val tvSub:   TextView  = view.findViewById(R.id.tvDirSubtext)
+    }
+
+    class GridMediaVH(view: View) : RecyclerView.ViewHolder(view) {
+        val ivThumb:   ImageView = view.findViewById(R.id.ivEntryThumbnail)
+        val tvNew:     TextView  = view.findViewById(R.id.tvNewBadge)
+        val tvDur:     TextView  = view.findViewById(R.id.tvDuration)
+        val tvGif:     TextView  = view.findViewById(R.id.tvGifBadge)
+        val tvName:    TextView  = view.findViewById(R.id.tvEntryName)
+        val ivAction:  ImageView = view.findViewById(R.id.ivEntryAction)
+    }
+
+    // ── onCreateViewHolder ────────────────────────────────────
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        fun inflate(res: Int) = LayoutInflater.from(parent.context).inflate(res, parent, false)
+        return when (viewType) {
+            VT_HEADER     -> HeaderVH(inflate(R.layout.item_section_header))
+            VT_DIR_LIST   -> ListDirVH(inflate(R.layout.item_file_entry))
+            VT_MEDIA_LIST -> ListMediaVH(inflate(R.layout.item_file_entry))
+            VT_DIR_GRID   -> GridDirVH(inflate(R.layout.item_directory_grid))
+            else          -> GridMediaVH(inflate(R.layout.item_file_entry_grid))
+        }
+    }
+
+    // ── onBindViewHolder ──────────────────────────────────────
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position)
+        when (holder) {
+
+            is HeaderVH -> holder.tv.text = (item as ListItem.Header).title
+
+            is ListDirVH -> {
+                val entry = (item as ListItem.Entry).entry
+                val ctx   = holder.itemView.context
+                Glide.with(ctx).clear(holder.ivThumb)
+                holder.ivThumb.setImageResource(R.drawable.ic_folder_default)
+                holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_INSIDE
+                holder.ivThumb.setBackgroundColor(0xFFE0E4EA.toInt())
+                holder.ivOverlay.visibility = View.GONE
+                holder.tvGif.visibility     = View.GONE
+                holder.tvName.text          = entry.name
+                holder.tvSub.text           = entry.subtextFor(ctx)
+                holder.ivAction.visibility  = View.GONE
                 holder.ivAction.setOnClickListener(null)
+                holder.itemView.setOnClickListener { onDirectoryClick(entry) }
             }
 
-            // ── 동영상: 1초 지점 프레임 추출 ────────────────────
-            EntryType.VIDEO -> {
-                holder.ivThumbnail.scaleType    = ImageView.ScaleType.CENTER_CROP
-                holder.ivPlayOverlay.visibility = View.VISIBLE
-                holder.tvGifBadge.visibility    = View.GONE
+            is ListMediaVH -> {
+                val entry = (item as ListItem.Entry).entry
+                val ctx   = holder.itemView.context
+                holder.tvName.text = entry.name
+                holder.tvSub.text  = entry.subtextFor(ctx)
                 holder.ivAction.visibility = View.VISIBLE
                 holder.ivAction.setImageResource(android.R.drawable.ic_menu_more)
-                holder.ivThumbnail.setBackgroundColor(0xFFEEEEEE.toInt())
-
-                Glide.with(ctx)
-                    .asBitmap()
-                    .load(entry.file)
-                    .apply(VIDEO_OPTIONS)
-                    .into(holder.ivThumbnail)
-
-                holder.ivAction.setOnClickListener { v -> showFileMenuWithContext(entry, v) }
+                holder.ivAction.setOnClickListener { v -> showMenu(entry, v) }
+                when (entry.type) {
+                    EntryType.VIDEO -> {
+                        holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_CROP
+                        holder.ivOverlay.visibility = View.VISIBLE
+                        holder.tvGif.visibility     = View.GONE
+                        holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
+                        Glide.with(ctx).asBitmap().load(entry.file).apply(LIST_VIDEO_OPT).into(holder.ivThumb)
+                    }
+                    EntryType.IMAGE -> {
+                        holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_CROP
+                        holder.ivOverlay.visibility = View.GONE
+                        holder.tvGif.visibility     = View.GONE
+                        holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
+                        Glide.with(ctx).asBitmap().load(entry.file).apply(LIST_THUMB_OPT).into(holder.ivThumb)
+                    }
+                    EntryType.GIF -> {
+                        holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_CROP
+                        holder.ivOverlay.visibility = View.GONE
+                        holder.tvGif.visibility     = View.VISIBLE
+                        holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
+                        Glide.with(ctx).asGif().load(entry.file).apply(LIST_THUMB_OPT).into(holder.ivThumb)
+                    }
+                    else -> Unit
+                }
+                holder.itemView.setOnClickListener { onFileClick(entry) }
             }
 
-            // ── 이미지: 파일 직접 로딩 ──────────────────────────
-            EntryType.IMAGE -> {
-                holder.ivThumbnail.scaleType = ImageView.ScaleType.CENTER_CROP
-                holder.ivPlayOverlay.visibility = View.GONE
-                holder.tvGifBadge.visibility    = View.GONE
-                holder.ivAction.visibility = View.VISIBLE
-                holder.ivAction.setImageResource(android.R.drawable.ic_menu_more)
-                holder.ivThumbnail.setBackgroundColor(0xFFEEEEEE.toInt())
-
-                Glide.with(ctx)
-                    .asBitmap()
-                    .load(entry.file)
-                    .apply(THUMBNAIL_OPTIONS)
-                    .into(holder.ivThumbnail)
-
-                holder.ivAction.setOnClickListener { v -> showFileMenuWithContext(entry, v) }
+            is GridDirVH -> {
+                val entry = (item as ListItem.Entry).entry
+                holder.ivIcon.setImageResource(R.drawable.ic_folder_default)
+                holder.tvName.text = entry.name
+                holder.tvSub.text  = entry.subtextFor(holder.itemView.context)
+                holder.itemView.setOnClickListener { onDirectoryClick(entry) }
             }
-            EntryType.GIF -> {
-                holder.ivThumbnail.scaleType = ImageView.ScaleType.CENTER_CROP
-                holder.ivPlayOverlay.visibility = View.GONE
-                holder.tvGifBadge.visibility    = View.VISIBLE
-                holder.ivAction.visibility = View.VISIBLE
-                holder.ivAction.setImageResource(android.R.drawable.ic_menu_more)
-                holder.ivThumbnail.setBackgroundColor(0xFFEEEEEE.toInt())
 
-                Glide.with(ctx)
-                    .asGif()
-                    .load(entry.file)
-                    .apply(THUMBNAIL_OPTIONS)
-                    .into(holder.ivThumbnail)
-
-                holder.ivAction.setOnClickListener { v -> showFileMenuWithContext(entry, v) }
+            is GridMediaVH -> {
+                val entry = (item as ListItem.Entry).entry
+                val ctx   = holder.itemView.context
+                holder.tvName.text = entry.name
+                holder.tvNew.visibility = View.GONE
+                holder.ivAction.setOnClickListener { v -> showMenu(entry, v) }
+                when (entry.type) {
+                    EntryType.VIDEO -> {
+                        holder.tvDur.visibility = View.GONE
+                        holder.tvGif.visibility = View.GONE
+                        holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
+                        Glide.with(ctx).asBitmap().load(entry.file).apply(GRID_VIDEO_OPT).into(holder.ivThumb)
+                    }
+                    EntryType.IMAGE -> {
+                        holder.tvDur.visibility = View.GONE
+                        holder.tvGif.visibility = View.GONE
+                        holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
+                        Glide.with(ctx).asBitmap().load(entry.file).apply(GRID_THUMB_OPT).into(holder.ivThumb)
+                    }
+                    EntryType.GIF -> {
+                        holder.tvDur.visibility = View.GONE
+                        holder.tvGif.visibility = View.VISIBLE
+                        holder.ivThumb.setBackgroundColor(0xFFEEEEEE.toInt())
+                        Glide.with(ctx).asGif().load(entry.file).apply(GRID_THUMB_OPT).into(holder.ivThumb)
+                    }
+                    else -> Unit
+                }
+                holder.itemView.setOnClickListener { onFileClick(entry) }
             }
-        }
-
-        holder.itemView.setOnClickListener {
-            if (entry.type == EntryType.DIRECTORY) onDirectoryClick(entry)
-            else onFileClick(entry)
         }
     }
 
-    // ── Bottom Sheet 메뉴 ─────────────────────────────────────
-    private fun showFileMenuWithContext(entry: FileEntry, view: View) {
-        val ctx = view.context
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        val iv = when (holder) {
+            is ListDirVH   -> holder.ivThumb
+            is ListMediaVH -> holder.ivThumb
+            is GridMediaVH -> holder.ivThumb
+            else           -> return
+        }
+        Glide.with(iv.context).clear(iv)
+    }
 
-        val dialog = BottomSheetDialog(ctx)
-        val sheetView = LayoutInflater.from(ctx)
-            .inflate(R.layout.bottom_sheet_file_menu, null)
-
-        // 파일명 타이틀
+    // ── Bottom Sheet 파일 메뉴 ────────────────────────────────
+    private fun showMenu(entry: FileEntry, view: View) {
+        val ctx       = view.context
+        val dialog    = BottomSheetDialog(ctx)
+        val sheetView = LayoutInflater.from(ctx).inflate(R.layout.bottom_sheet_file_menu, null)
         sheetView.findViewById<TextView>(R.id.tvMenuFileName).text = entry.name
-
-        // ── 즐겨찾기 추가 ────────────────────────────────────
         sheetView.findViewById<View>(R.id.menuFavorite).setOnClickListener {
             dialog.dismiss()
             menuCallbacks?.onFavorite?.invoke(entry)
                 ?: Toast.makeText(ctx, "즐겨찾기에 추가되었습니다", Toast.LENGTH_SHORT).show()
         }
-        
-        // ── 플레이리스트 추가 ─────────────────────────────────
         sheetView.findViewById<View>(R.id.menuPlaylist).setOnClickListener {
             dialog.dismiss()
-            if (menuCallbacks != null) {
-                menuCallbacks.onPlaylist(entry)
-            } else {
-                showPlaylistSheet(entry, view)
+            if (menuCallbacks != null) menuCallbacks.onPlaylist(entry)
+            else (view.context as? FragmentActivity)?.supportFragmentManager?.let {
+                PlaylistBottomSheet.newInstance(entry.path).show(it, PlaylistBottomSheet.TAG)
             }
         }
-
-        // ── 공유 ──────────────────────────────────────────────
         sheetView.findViewById<View>(R.id.menuShare).setOnClickListener {
             dialog.dismiss()
             if (menuCallbacks != null) {
                 menuCallbacks.onShare(entry)
             } else {
-                val uri = Uri.fromFile(entry.file)
                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                     type = when (entry.type) {
                         EntryType.VIDEO -> "video/*"
                         EntryType.GIF   -> "image/gif"
                         else            -> "image/*"
                     }
-                    putExtra(Intent.EXTRA_STREAM, uri)
+                    putExtra(Intent.EXTRA_STREAM, Uri.fromFile(entry.file))
                     addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
                 ctx.startActivity(Intent.createChooser(shareIntent, "공유"))
             }
         }
-
-        // ── 이름 변경 ─────────────────────────────────────────
         sheetView.findViewById<View>(R.id.menuRename).setOnClickListener {
             dialog.dismiss()
             menuCallbacks?.onRename?.invoke(entry)
                 ?: Toast.makeText(ctx, "이름 변경: ${entry.name}", Toast.LENGTH_SHORT).show()
         }
-
         dialog.setContentView(sheetView)
         dialog.show()
     }
-
-    /**
-     * PlaylistBottomSheet 를 FragmentManager 를 통해 표시.
-     * RecyclerView 의 Context 가 FragmentActivity 여야 함.
-     */
-    private fun showPlaylistSheet(entry: FileEntry, view: View) {
-        val ctx = view.context
-        val fm = (ctx as? FragmentActivity)?.supportFragmentManager ?: return
-        PlaylistBottomSheet
-            .newInstance(entry.path)
-            .show(fm, PlaylistBottomSheet.TAG)
-    }
-
-    override fun onBindViewHolder(
-        holder: EntryViewHolder,
-        position: Int,
-        payloads: MutableList<Any>
-    ) {
-        if (payloads.isEmpty()) onBindViewHolder(holder, position)
-        else super.onBindViewHolder(holder, position, payloads)
-    }
-
-    // RecyclerView 에서 뷰가 재활용될 때 진행 중인 Glide 로딩 취소
-    override fun onViewRecycled(holder: EntryViewHolder) {
-        super.onViewRecycled(holder)
-        Glide.with(holder.ivThumbnail.context).clear(holder.ivThumbnail)
-    }
-
 }

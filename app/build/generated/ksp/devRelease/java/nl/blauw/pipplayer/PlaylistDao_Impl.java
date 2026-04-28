@@ -38,6 +38,10 @@ public final class PlaylistDao_Impl implements PlaylistDao {
 
   private final EntityInsertionAdapter<PlaylistItem> __insertionAdapterOfPlaylistItem;
 
+  private final SharedSQLiteStatement __preparedStmtOfRenamePlaylist;
+
+  private final SharedSQLiteStatement __preparedStmtOfDeletePlaylist;
+
   private final SharedSQLiteStatement __preparedStmtOfDeleteItem;
 
   public PlaylistDao_Impl(@NonNull final RoomDatabase __db) {
@@ -71,6 +75,22 @@ public final class PlaylistDao_Impl implements PlaylistDao {
         statement.bindLong(2, entity.getPlaylistId());
         statement.bindString(3, entity.getMediaPath());
         statement.bindLong(4, entity.getAddedAt());
+      }
+    };
+    this.__preparedStmtOfRenamePlaylist = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "UPDATE playlists SET name = ? WHERE id = ?";
+        return _query;
+      }
+    };
+    this.__preparedStmtOfDeletePlaylist = new SharedSQLiteStatement(__db) {
+      @Override
+      @NonNull
+      public String createQuery() {
+        final String _query = "DELETE FROM playlists WHERE id = ?";
+        return _query;
       }
     };
     this.__preparedStmtOfDeleteItem = new SharedSQLiteStatement(__db) {
@@ -115,6 +135,59 @@ public final class PlaylistDao_Impl implements PlaylistDao {
           return _result;
         } finally {
           __db.endTransaction();
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object renamePlaylist(final long id, final String newName,
+      final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfRenamePlaylist.acquire();
+        int _argIndex = 1;
+        _stmt.bindString(_argIndex, newName);
+        _argIndex = 2;
+        _stmt.bindLong(_argIndex, id);
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfRenamePlaylist.release(_stmt);
+        }
+      }
+    }, $completion);
+  }
+
+  @Override
+  public Object deletePlaylist(final long id, final Continuation<? super Unit> $completion) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        final SupportSQLiteStatement _stmt = __preparedStmtOfDeletePlaylist.acquire();
+        int _argIndex = 1;
+        _stmt.bindLong(_argIndex, id);
+        try {
+          __db.beginTransaction();
+          try {
+            _stmt.executeUpdateDelete();
+            __db.setTransactionSuccessful();
+            return Unit.INSTANCE;
+          } finally {
+            __db.endTransaction();
+          }
+        } finally {
+          __preparedStmtOfDeletePlaylist.release(_stmt);
         }
       }
     }, $completion);

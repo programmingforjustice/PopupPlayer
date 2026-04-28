@@ -2,12 +2,10 @@ package nl.blauw.pipplayer
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.content.ContentUris
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
+import android.os.Build
 import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
@@ -23,18 +21,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import nl.blauw.pipplayer.EntryType
-import nl.blauw.pipplayer.FileEntry
-import nl.blauw.pipplayer.FileListAdapter
-import nl.blauw.pipplayer.FolderAdapter
-import nl.blauw.pipplayer.FolderItem
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -140,6 +132,9 @@ class MainActivity : AppCompatActivity() {
         rvFolders.adapter = rootFolderAdapter
     }
 
+    // ── 레이아웃 상태 ─────────────────────────────────────────
+    private var isGridLayout = false
+
     // ── 툴바 버튼 ─────────────────────────────────────────────
     private fun setupToolbar() {
         btnBack.setOnClickListener { navigateUp() }
@@ -162,11 +157,45 @@ class MainActivity : AppCompatActivity() {
             loadDirectory(dir, bucketId, restoreScroll = false)
         }
 
-        // 초기 아이콘 설정
+        // 레이아웃 토글
+        findViewById<ImageButton>(R.id.btnLayoutToggle).setOnClickListener {
+            isGridLayout = !isGridLayout
+            applyLayoutMode()
+        }
+
         updateSortButton()
+        applyLayoutMode()
     }
 
-    /** 현재 정렬 상태에 맞는 아이콘을 btnSort 에 적용 */
+    /** 현재 isGridLayout 상태를 LayoutManager + Adapter + 버튼 아이콘에 반영 */
+    private fun applyLayoutMode() {
+        val toggleBtn = findViewById<ImageButton>(R.id.btnLayoutToggle)
+        // 기존 decoration 제거
+        while (rvFolders.itemDecorationCount > 0) {
+            rvFolders.removeItemDecorationAt(0)
+        }
+
+        if (isGridLayout) {
+            val spanCount = 2
+            val gridLM    = androidx.recyclerview.widget.GridLayoutManager(this, spanCount)
+            gridLM.spanSizeLookup = fileListAdapter.getSpanSizeLookup(spanCount)
+            rvFolders.layoutManager = gridLM
+            fileListAdapter.isGrid  = true
+            // 외부 좌우 패딩 + 아이템 간격
+            val outerPx = (12 * resources.displayMetrics.density).toInt()
+            rvFolders.setPadding(outerPx, 0, outerPx, 0)
+            rvFolders.clipToPadding = false
+            rvFolders.addItemDecoration(GridSpacingDecoration(spanCount, spacingDp = 10))
+            toggleBtn.setImageResource(R.drawable.ic_layout_list)
+        } else {
+            rvFolders.layoutManager = LinearLayoutManager(this)
+            fileListAdapter.isGrid  = false
+            rvFolders.setPadding(0, 0, 0, 0)
+            rvFolders.clipToPadding = true
+            toggleBtn.setImageResource(R.drawable.ic_layout_grid)
+        }
+    }
+
     private fun updateSortButton() {
         val iconRes = when (currentSort) {
             SortOrder.NAME_ASC      -> R.drawable.ic_sort_name_asc
@@ -372,7 +401,7 @@ class MainActivity : AppCompatActivity() {
         updateBreadcrumb()
 
         if (rvFolders.adapter !== fileListAdapter) rvFolders.adapter = fileListAdapter
-        if (!restoreScroll) fileListAdapter.submitList(emptyList())
+        if (!restoreScroll) fileListAdapter.submitEntries(emptyList())
 
         lifecycleScope.launch {
             // ── IO 스레드에서 전체 항목 수집 및 정렬 수행 ──────────────
@@ -390,12 +419,12 @@ class MainActivity : AppCompatActivity() {
                                    else           "폴더 ${dirCount}개  •  파일 ${fileCount}개"
 
                 if (restoreScroll) {
-                    fileListAdapter.submitList(entries) {
-                        // 마지막 emit(전체 완료)일 때만 스크롤 복원
-                        if (!isPartial) restoreScrollPosition(folder.absolutePath)
+                    fileListAdapter.submitEntries(entries)
+                    if (!isPartial) {
+                        rvFolders.post { restoreScrollPosition(folder.absolutePath) }
                     }
                 } else {
-                    fileListAdapter.submitList(entries)
+                    fileListAdapter.submitEntries(entries)
                 }
             }
 
@@ -665,4 +694,39 @@ class MainActivity : AppCompatActivity() {
     private fun File.isImage() = ext() in IMAGE_EXT
     private fun File.isGif()   = ext() in GIF_EXT
     private fun File.isMedia() = ext() in (VIDEO_EXT + IMAGE_EXT + GIF_EXT)
+
+    // ── 그리드 아이템 간격 Decoration ────────────────────────
+    private inner class GridSpacingDecoration(
+        private val spanCount: Int,
+        private val spacingDp: Int
+    ) : RecyclerView.ItemDecoration() {
+
+        private val sp: Int get() =
+            (spacingDp * resources.displayMetrics.density).toInt()
+
+        override fun getItemOffsets(
+            outRect: android.graphics.Rect,
+            view: View,
+            parent: RecyclerView,
+            state: RecyclerView.State
+        ) {
+            val position = parent.getChildAdapterPosition(view)
+            if (position == RecyclerView.NO_ID.toInt()) return
+
+            // 헤더(VT_HEADER=0)는 간격 없음
+            if (fileListAdapter.getItemViewType(position) == 0) {
+                outRect.set(0, 0, 0, sp)
+                return
+            }
+
+            // 그리드 아이템: 좌우 모두 half 적용
+            // RecyclerView 자체에 paddingStart/End 가 있으므로
+            // 외부 여백은 이미 확보됨 → 내부 간격만 half/half 로 처리
+            val half = sp / 2
+            outRect.left   = half
+            outRect.right  = half
+            outRect.top    = 0
+            outRect.bottom = sp
+        }
+    }
 }

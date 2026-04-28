@@ -1,14 +1,17 @@
 package nl.blauw.pipplayer
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
@@ -19,6 +22,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -87,7 +91,114 @@ class PlaylistActivity : AppCompatActivity() {
     }
 
     private fun showPlaylistMenu(playlist: Playlist) {
-        // TODO: 플레이리스트 삭제 / 이름 변경 메뉴
+        val dialog    = BottomSheetDialog(this)
+        val sheetView = LayoutInflater.from(this)
+            .inflate(R.layout.bottom_sheet_playlist_menu, null)
+
+        // ── 상단 썸네일 + 플레이리스트명 ─────────────────────
+        val ivThumb  = sheetView.findViewById<ImageView>(R.id.ivMenuThumb)
+        val tvName   = sheetView.findViewById<TextView>(R.id.tvMenuPlaylistName)
+        val tvMeta   = sheetView.findViewById<TextView>(R.id.tvMenuPlaylistMeta)
+
+        tvName.text = playlist.name
+        lifecycleScope.launch {
+            val count     = withContext(Dispatchers.IO) { repo.getItemCount(playlist.id) }
+            val thumbPath = withContext(Dispatchers.IO) { repo.getFirstMediaPath(playlist.id) }
+            tvMeta.text = "${count}개의 미디어"
+            if (thumbPath != null) {
+                val file    = File(thumbPath)
+                val isVideo = thumbPath.substringAfterLast('.', "").lowercase() in
+                        setOf("mp4","mkv","avi","mov","wmv","flv","webm","3gp","m4v","ts")
+                if (isVideo) {
+                    Glide.with(ivThumb).asBitmap().load(file)
+                        .apply(RequestOptions().frame(1_000_000L).transform(CenterCrop())
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
+                        .into(ivThumb)
+                } else {
+                    Glide.with(ivThumb).load(file)
+                        .apply(RequestOptions().transform(CenterCrop())
+                            .diskCacheStrategy(DiskCacheStrategy.RESOURCE))
+                        .into(ivThumb)
+                }
+            }
+        }
+
+        // ── Play: 첫 번째 아이템 재생 ─────────────────────────
+        sheetView.findViewById<View>(R.id.menuPlay).setOnClickListener {
+            dialog.dismiss()
+            lifecycleScope.launch {
+                val firstPath = withContext(Dispatchers.IO) { repo.getFirstMediaPath(playlist.id) }
+                if (firstPath != null) {
+                    val intent = Intent(this@PlaylistActivity, PlayerService::class.java).apply {
+                        putExtra(PlayerService.COMMAND, PlayerService.ACTION_START_PIP)
+                        putExtra("data", firstPath)
+                    }
+                    startForegroundService(intent)
+                } else {
+                    Toast.makeText(this@PlaylistActivity, "재생할 미디어가 없습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        // ── Rename: 이름 변경 다이얼로그 ─────────────────────
+        sheetView.findViewById<View>(R.id.menuRename).setOnClickListener {
+            dialog.dismiss()
+            showRenameDialog(playlist)
+        }
+
+        // ── Remove: 플레이리스트 삭제 확인 ───────────────────
+        sheetView.findViewById<View>(R.id.menuRemove).setOnClickListener {
+            dialog.dismiss()
+            AlertDialog.Builder(this)
+                .setTitle("플레이리스트 삭제")
+                .setMessage("\"${playlist.name}\" 를 삭제하시겠습니까?")
+                .setPositiveButton("삭제") { _, _ ->
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) { repo.deletePlaylist(playlist.id) }
+                        Toast.makeText(
+                            this@PlaylistActivity,
+                            "\"${playlist.name}\" 이(가) 삭제되었습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                .setNegativeButton("취소", null)
+                .show()
+        }
+
+        dialog.setContentView(sheetView)
+        dialog.show()
+    }
+
+    /** 이름 변경 AlertDialog */
+    private fun showRenameDialog(playlist: Playlist) {
+        val etInput = EditText(this).apply {
+            setText(playlist.name)
+            selectAll()
+            setPadding(48, 24, 48, 24)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("이름 변경")
+            .setView(etInput)
+            .setPositiveButton("확인") { _, _ ->
+                val newName = etInput.text?.toString()?.trim() ?: ""
+                if (newName.isEmpty()) {
+                    Toast.makeText(this, "이름을 입력해주세요.", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+                lifecycleScope.launch {
+                    val isDuplicate = withContext(Dispatchers.IO) { repo.isNameDuplicate(newName) }
+                    if (isDuplicate && newName != playlist.name) {
+                        Toast.makeText(this@PlaylistActivity, "이미 존재하는 이름입니다.", Toast.LENGTH_SHORT).show()
+                        return@launch
+                    }
+                    withContext(Dispatchers.IO) { repo.renamePlaylist(playlist.id, newName) }
+                    Toast.makeText(this@PlaylistActivity, "이름이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
     }
 
     // ── Adapter ───────────────────────────────────────────────

@@ -2,9 +2,6 @@ package nl.blauw.pipplayer
 
 import android.content.Context
 import kotlinx.coroutines.flow.Flow
-import nl.blauw.pipplayer.AppDatabase
-import nl.blauw.pipplayer.Playlist
-import nl.blauw.pipplayer.PlaylistItem
 
 /**
  * PlaylistRepository — DB 접근 계층
@@ -14,15 +11,21 @@ import nl.blauw.pipplayer.PlaylistItem
  *
  * 반환 값 설명
  * ─────────────────────────────────────────────────────────
- * AddResult.ADDED    → 정상 추가
- * AddResult.DUPLICATE→ 이미 해당 플레이리스트에 존재
- * AddResult.ERROR    → 기타 오류 (DB 삽입 실패 등)
+ * AddResult.ADDED     → 정상 추가
+ * AddResult.DUPLICATE → 이미 해당 플레이리스트에 존재
+ * AddResult.ERROR     → 기타 오류 (DB 삽입 실패 등)
  */
 class PlaylistRepository(context: Context) {
 
     private val dao = AppDatabase.getInstance(context).playlistDao()
 
-    // ── 플레이리스트 ──────────────────────────────────────────────
+    // ── 플레이리스트 ──────────────────────────────────────────
+
+    /** 플레이리스트 이름 변경. */
+    suspend fun renamePlaylist(id: Long, newName: String) = dao.renamePlaylist(id, newName)
+
+    /** 플레이리스트 삭제 (아이템 CASCADE 삭제). */
+    suspend fun deletePlaylist(id: Long) = dao.deletePlaylist(id)
 
     /** 전체 플레이리스트 목록 Flow (실시간 관찰). */
     fun getAllPlaylists(): Flow<List<Playlist>> = dao.getAllPlaylists()
