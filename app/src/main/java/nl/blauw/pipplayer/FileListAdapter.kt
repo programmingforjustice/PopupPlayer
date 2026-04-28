@@ -223,7 +223,8 @@ class FileListAdapter(
                 Glide.with(ctx).clear(holder.ivThumb)
                 holder.ivThumb.setImageResource(R.drawable.ic_folder_default)
                 holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_INSIDE
-                holder.ivThumb.setBackgroundColor(0xFFE0E4EA.toInt())
+                //holder.ivThumb.setBackgroundColor(0xFFE0E4EA.toInt())
+                holder.ivThumb.setBackgroundColor(android.graphics.Color.WHITE)
                 holder.ivOverlay.visibility = View.GONE
                 holder.tvGif.visibility     = View.GONE
                 holder.tvName.text          = entry.name
