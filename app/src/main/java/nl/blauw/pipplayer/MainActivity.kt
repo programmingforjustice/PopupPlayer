@@ -40,12 +40,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTitle: TextView
     private lateinit var tvBreadcrumb: TextView
     private lateinit var tvItemCount: TextView
-    private lateinit var layoutBreadcrumb: View       // 브레드크럼 행 (탐색 중에만 보임)
+    private lateinit var layoutBreadcrumb: View
+    private lateinit var layoutFilterBar: View
+    private lateinit var btnFilterAll: TextView
+    private lateinit var btnFilterVideo: TextView
+    private lateinit var btnFilterImage: TextView
     private lateinit var layoutEmpty: LinearLayout
     private lateinit var rvFolders: RecyclerView
     private lateinit var btnBack: ImageButton
     private lateinit var btnSort: ImageButton
     private lateinit var bottomNav: BottomNavigationView
+
+    // ── 필터 상태 ─────────────────────────────────────────────
+    private enum class FilterType { ALL, VIDEO, IMAGE }
+    private var currentFilter = FilterType.ALL
 
     // ── Adapter ───────────────────────────────────────────────
     // 최상위(루트 폴더 목록)용 Adapter
@@ -77,6 +85,12 @@ class MainActivity : AppCompatActivity() {
     }
     private var currentSort = SortOrder.DATE_NEWEST
 
+    // ── 삭제 요청 런처 ────────────────────────────────────────
+    private val deleteRequestLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { /* 삭제 완료 후 목록 자동 갱신 (MediaStore Flow) */ }
+
     // ── 권한 요청 ─────────────────────────────────────────────
         private val permissionLauncher: ActivityResultLauncher<Array<String>> =
         registerForActivityResult(
@@ -93,6 +107,7 @@ class MainActivity : AppCompatActivity() {
 
         bindViews()
         setupAdapters()
+        setupMultiselectBar()
         setupToolbar()
         setupCategories()
         setupBottomNav()
@@ -106,6 +121,10 @@ class MainActivity : AppCompatActivity() {
         tvBreadcrumb     = findViewById(R.id.tvBreadcrumb)
         tvItemCount      = findViewById(R.id.tvItemCount)
         layoutBreadcrumb = findViewById(R.id.layoutBreadcrumb)
+        layoutFilterBar  = findViewById(R.id.layoutFilterBar)
+        btnFilterAll     = findViewById(R.id.btnFilterAll)
+        btnFilterVideo   = findViewById(R.id.btnFilterVideo)
+        btnFilterImage   = findViewById(R.id.btnFilterImage)
         layoutEmpty      = findViewById(R.id.layoutEmpty)
         rvFolders        = findViewById(R.id.rvFolders)
         btnBack          = findViewById(R.id.btnBack)
@@ -127,9 +146,136 @@ class MainActivity : AppCompatActivity() {
             onFileClick      = { entry -> openMediaFile(entry) }
         )
 
+        // 멀티셀렉트 선택 변경 콜백
+        fileListAdapter.onSelectionChanged = { count, _ ->
+            updateMultiselectBar(count)
+        }
+
         rvFolders.layoutManager = LinearLayoutManager(this)
         // 처음엔 루트 Adapter 연결
         rvFolders.adapter = rootFolderAdapter
+    }
+
+    // ── 멀티셀렉트 바 ─────────────────────────────────────────
+    private lateinit var multiselectBar: View
+    private lateinit var tvMultiCount: TextView
+
+    private fun setupMultiselectBar() {
+        multiselectBar = findViewById(R.id.multiselectBar)
+        tvMultiCount   = multiselectBar.findViewById(R.id.tvMultiCount)
+
+        // 닫기
+        multiselectBar.findViewById<View>(R.id.btnMultiClose).setOnClickListener {
+            fileListAdapter.exitMultiSelectMode()
+        }
+        // Play
+        multiselectBar.findViewById<View>(R.id.btnMultiPlay).setOnClickListener {
+            val selected = fileListAdapter.getSelectedEntries()
+            if (selected.isEmpty()) return@setOnClickListener
+            startPipPlayer(selected.first().path)
+            fileListAdapter.exitMultiSelectMode()
+        }
+        // 즐겨찾기
+        multiselectBar.findViewById<View>(R.id.btnMultiFavorite).setOnClickListener {
+            Toast.makeText(this, "${fileListAdapter.getSelectedEntries().size}개 즐겨찾기 추가", Toast.LENGTH_SHORT).show()
+            fileListAdapter.exitMultiSelectMode()
+        }
+        // 플레이리스트
+        multiselectBar.findViewById<View>(R.id.btnMultiPlaylist).setOnClickListener {
+            val selected = fileListAdapter.getSelectedEntries()
+            if (selected.isEmpty()) return@setOnClickListener
+            // 첫 번째 항목으로 PlaylistBottomSheet 표시 (다중은 순차 추가)
+            PlaylistBottomSheet.newInstance(selected.first().path)
+                .show(supportFragmentManager, PlaylistBottomSheet.TAG)
+            fileListAdapter.exitMultiSelectMode()
+        }
+        // 공유
+        multiselectBar.findViewById<View>(R.id.btnMultiShare).setOnClickListener {
+            val selected = fileListAdapter.getSelectedEntries()
+            if (selected.isEmpty()) return@setOnClickListener
+            val uris = ArrayList(selected.map { android.net.Uri.fromFile(it.file) })
+            val intent = android.content.Intent(android.content.Intent.ACTION_SEND_MULTIPLE).apply {
+                type = "video/*"
+                putParcelableArrayListExtra(android.content.Intent.EXTRA_STREAM, uris)
+                addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(android.content.Intent.createChooser(intent, "공유"))
+            fileListAdapter.exitMultiSelectMode()
+        }
+        // 삭제
+        multiselectBar.findViewById<View>(R.id.btnMultiDelete).setOnClickListener {
+            val selected = fileListAdapter.getSelectedEntries()
+            if (selected.isEmpty()) return@setOnClickListener
+            android.app.AlertDialog.Builder(this)
+                .setTitle("삭제")
+                .setMessage("선택한 ${selected.size}개 파일을 삭제하시겠습니까?")
+                .setPositiveButton("삭제") { _, _ ->
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                        val contentUris = selected.mapNotNull { entry ->
+                            contentResolver.query(
+                                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                                            arrayOf(android.provider.MediaStore.Video.Media._ID),
+                                            "${android.provider.MediaStore.Video.Media.DATA} = ?",
+                                arrayOf(entry.path), null
+                            )?.use { c ->
+                                            if (c.moveToFirst()) {
+                                    android.content.ContentUris.withAppendedId(
+                                        android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                                        c.getLong(0)
+                                    )
+                                            } else null
+                                        }
+                                    }
+                        if (contentUris.isNotEmpty()) {
+                            val pi = android.provider.MediaStore.createDeleteRequest(
+                                contentResolver, contentUris
+                            )
+                            deleteRequestLauncher.launch(
+                                androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
+                            )
+                        }
+                    }
+                    fileListAdapter.exitMultiSelectMode()
+                }
+                .setNegativeButton("취소", null)
+                .show()
+        }
+        // 추가 메뉴
+        multiselectBar.findViewById<View>(R.id.btnMultiMore).setOnClickListener {
+            showMultiselectMoreMenu()
+        }
+    }
+
+    private fun updateMultiselectBar(count: Int) {
+        if (count > 0) {
+            multiselectBar.visibility = View.VISIBLE
+            tvMultiCount.text = count.toString()
+        } else {
+            multiselectBar.visibility = View.GONE
+        }
+    }
+
+    private fun showMultiselectMoreMenu() {
+        val dialog    = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val sheetView = layoutInflater.inflate(R.layout.bottom_sheet_multiselect_menu, null)
+
+        sheetView.findViewById<View>(R.id.menuSelectAll).setOnClickListener {
+            dialog.dismiss()
+            fileListAdapter.selectAll()
+        }
+        sheetView.findViewById<View>(R.id.menuMoveToFolder).setOnClickListener {
+            dialog.dismiss()
+            Toast.makeText(this, "폴더로 이동 (TODO)", Toast.LENGTH_SHORT).show()
+            fileListAdapter.exitMultiSelectMode()
+        }
+        sheetView.findViewById<View>(R.id.menuCopyToFolder).setOnClickListener {
+            dialog.dismiss()
+            Toast.makeText(this, "폴더로 복사 (TODO)", Toast.LENGTH_SHORT).show()
+            fileListAdapter.exitMultiSelectMode()
+        }
+
+        dialog.setContentView(sheetView)
+        dialog.show()
     }
 
     // ── 레이아웃 상태 ─────────────────────────────────────────
@@ -157,7 +303,8 @@ class MainActivity : AppCompatActivity() {
             loadDirectory(dir, bucketId, restoreScroll = false)
         }
 
-        // 레이아웃 토글
+        setupFilterButtons()
+
         findViewById<ImageButton>(R.id.btnLayoutToggle).setOnClickListener {
             isGridLayout = !isGridLayout
             applyLayoutMode()
@@ -167,7 +314,57 @@ class MainActivity : AppCompatActivity() {
         applyLayoutMode()
     }
 
-    /** 현재 isGridLayout 상태를 LayoutManager + Adapter + 버튼 아이콘에 반영 */
+    private fun setupFilterButtons() {
+        btnFilterAll.setOnClickListener {
+            currentFilter = FilterType.ALL
+            updateFilterButtons()
+            reapplyFilter()
+        }
+        btnFilterVideo.setOnClickListener {
+            currentFilter = FilterType.VIDEO
+            updateFilterButtons()
+            reapplyFilter()
+        }
+        btnFilterImage.setOnClickListener {
+            currentFilter = FilterType.IMAGE
+            updateFilterButtons()
+            reapplyFilter()
+        }
+    }
+
+    /** 현재 필터 상태에 따라 버튼 UI 갱신 */
+    private fun updateFilterButtons() {
+        val selectedBg   = R.drawable.bg_filter_selected
+        val unselectedBg = android.R.color.transparent
+        val selectedColor   = 0xFFFFFFFF.toInt()
+        val unselectedColor = 0xFF666666.toInt()
+
+        btnFilterAll.setBackgroundResource(
+            if (currentFilter == FilterType.ALL) selectedBg else unselectedBg)
+        btnFilterAll.setTextColor(
+            if (currentFilter == FilterType.ALL) selectedColor else unselectedColor)
+
+        btnFilterVideo.setBackgroundResource(
+            if (currentFilter == FilterType.VIDEO) selectedBg else unselectedBg)
+        btnFilterVideo.setTextColor(
+            if (currentFilter == FilterType.VIDEO) selectedColor else unselectedColor)
+
+        btnFilterImage.setBackgroundResource(
+            if (currentFilter == FilterType.IMAGE) selectedBg else unselectedBg)
+        btnFilterImage.setTextColor(
+            if (currentFilter == FilterType.IMAGE) selectedColor else unselectedColor)
+    }
+
+    /** 필터 변경 시 현재 목록에 필터 재적용 */
+    private fun reapplyFilter() {
+        val adapterFilter = when (currentFilter) {
+            FilterType.VIDEO -> FileListAdapter.Filter.VIDEO
+            FilterType.IMAGE -> FileListAdapter.Filter.IMAGE
+            FilterType.ALL   -> FileListAdapter.Filter.ALL
+        }
+        fileListAdapter.setFilter(adapterFilter)
+    }
+
     private fun applyLayoutMode() {
         val toggleBtn = findViewById<ImageButton>(R.id.btnLayoutToggle)
         // 기존 decoration 제거
@@ -238,6 +435,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupBackPressed() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
+                if (fileListAdapter.isMultiSelectMode) {
+                    fileListAdapter.exitMultiSelectMode()
+                    return
+                }
                 if (!navigateUp()) {
                     // 루트에서 뒤로가기 → 앱 종료
                     isEnabled = false
@@ -350,13 +551,14 @@ class MainActivity : AppCompatActivity() {
         tvTitle.text = "Video's"
         // 브레드크럼 / 아이템 수 숨김
         layoutBreadcrumb.visibility = View.GONE
-        tvItemCount.visibility      = View.GONE
+        layoutFilterBar.visibility  = View.GONE
         // 뒤로가기 버튼 숨김
         btnBack.visibility = View.GONE
         // Adapter 를 루트 전환
         rvFolders.adapter = rootFolderAdapter
         layoutEmpty.visibility = View.GONE
         rvFolders.visibility   = View.VISIBLE
+        currentFilter          = FilterType.ALL
 
         if (restoreScroll) {
             restoreScrollPosition(KEY_ROOT)
@@ -397,8 +599,14 @@ class MainActivity : AppCompatActivity() {
         tvTitle.text                = folder.name
         btnBack.visibility          = View.VISIBLE
         layoutBreadcrumb.visibility = View.VISIBLE
-        tvItemCount.visibility      = View.VISIBLE
+        layoutFilterBar.visibility  = View.VISIBLE
         updateBreadcrumb()
+
+        // 새 폴더 진입 시 필터 초기화
+        if (!restoreScroll) {
+            currentFilter = FilterType.ALL
+            updateFilterButtons()
+        }
 
         if (rvFolders.adapter !== fileListAdapter) rvFolders.adapter = fileListAdapter
         if (!restoreScroll) fileListAdapter.submitEntries(emptyList())

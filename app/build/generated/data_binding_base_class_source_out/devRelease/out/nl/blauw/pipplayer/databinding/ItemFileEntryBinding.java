@@ -21,6 +21,9 @@ public final class ItemFileEntryBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final ImageView ivCheckMark;
+
+  @NonNull
   public final ImageView ivEntryAction;
 
   @NonNull
@@ -41,11 +44,16 @@ public final class ItemFileEntryBinding implements ViewBinding {
   @NonNull
   public final TextView tvGifBadge;
 
-  private ItemFileEntryBinding(@NonNull LinearLayout rootView, @NonNull ImageView ivEntryAction,
-      @NonNull ImageView ivEntryThumbnail, @NonNull ImageView ivPlayOverlay,
-      @NonNull TextView tvDuration, @NonNull TextView tvEntryName, @NonNull TextView tvEntrySubtext,
-      @NonNull TextView tvGifBadge) {
+  @NonNull
+  public final View viewSelectOverlay;
+
+  private ItemFileEntryBinding(@NonNull LinearLayout rootView, @NonNull ImageView ivCheckMark,
+      @NonNull ImageView ivEntryAction, @NonNull ImageView ivEntryThumbnail,
+      @NonNull ImageView ivPlayOverlay, @NonNull TextView tvDuration, @NonNull TextView tvEntryName,
+      @NonNull TextView tvEntrySubtext, @NonNull TextView tvGifBadge,
+      @NonNull View viewSelectOverlay) {
     this.rootView = rootView;
+    this.ivCheckMark = ivCheckMark;
     this.ivEntryAction = ivEntryAction;
     this.ivEntryThumbnail = ivEntryThumbnail;
     this.ivPlayOverlay = ivPlayOverlay;
@@ -53,6 +61,7 @@ public final class ItemFileEntryBinding implements ViewBinding {
     this.tvEntryName = tvEntryName;
     this.tvEntrySubtext = tvEntrySubtext;
     this.tvGifBadge = tvGifBadge;
+    this.viewSelectOverlay = viewSelectOverlay;
   }
 
   @Override
@@ -82,6 +91,12 @@ public final class ItemFileEntryBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.ivCheckMark;
+      ImageView ivCheckMark = ViewBindings.findChildViewById(rootView, id);
+      if (ivCheckMark == null) {
+        break missingId;
+      }
+
       id = R.id.ivEntryAction;
       ImageView ivEntryAction = ViewBindings.findChildViewById(rootView, id);
       if (ivEntryAction == null) {
@@ -124,8 +139,15 @@ public final class ItemFileEntryBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemFileEntryBinding((LinearLayout) rootView, ivEntryAction, ivEntryThumbnail,
-          ivPlayOverlay, tvDuration, tvEntryName, tvEntrySubtext, tvGifBadge);
+      id = R.id.viewSelectOverlay;
+      View viewSelectOverlay = ViewBindings.findChildViewById(rootView, id);
+      if (viewSelectOverlay == null) {
+        break missingId;
+      }
+
+      return new ItemFileEntryBinding((LinearLayout) rootView, ivCheckMark, ivEntryAction,
+          ivEntryThumbnail, ivPlayOverlay, tvDuration, tvEntryName, tvEntrySubtext, tvGifBadge,
+          viewSelectOverlay);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -10,35 +10,57 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!--
-        ConstraintLayout + dimensionRatio 로 썸네일 비율 고정.
-        너비는 부모(GridLayoutManager 가 계산한 셀 너비)에 맞추고,
-        높이는 ratio "W,16:9" 로 너비 기준 자동 계산.
-        기기 해상도/밀도에 무관하게 항상 동일 비율 유지.
-    -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- 썸네일 컨테이너: FrameLayout 으로 레이어 겹침 -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_grid_thumb"
         android:clipToOutline="true">
 
+        <!-- 비율 컨테이너 (9:16) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivEntryThumbnail"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:background="#111111"
+                android:contentDescription="thumbnail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="W,16:9" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 파란 오버레이 (선택 시) -->
+        <View
+            android:id="@+id/viewSelectOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#664A7FD4"
+            android:visibility="gone" />
+
+        <!-- 체크마크 (선택 시, 중앙) -->
         <ImageView
-            android:id="@+id/ivEntryThumbnail"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:scaleType="centerCrop"
-            android:background="#E8ECF0"
-            android:contentDescription="thumbnail"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintDimensionRatio="W,9:16" />
+            android:id="@+id/ivCheckMark"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="top|left"
+            android:src="@drawable/ic_check_selected"
+            android:visibility="gone"
+            android:contentDescription="selected" />
 
         <!-- NEW 뱃지 (좌상단) -->
         <TextView
             android:id="@+id/tvNewBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
             android:layout_margin="6dp"
             android:text="NEW"
             android:textSize="10sp"
@@ -49,15 +71,14 @@
             android:paddingEnd="6dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:visibility="gone" />
 
         <!-- 재생시간 (우하단) -->
         <TextView
             android:id="@+id/tvDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
             android:layout_margin="6dp"
             android:textSize="11sp"
             android:textColor="#FFFFFF"
@@ -66,15 +87,14 @@
             android:paddingEnd="5dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:visibility="gone" />
 
         <!-- GIF 뱃지 (좌하단) -->
         <TextView
             android:id="@+id/tvGifBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
             android:layout_margin="5dp"
             android:text="GIF"
             android:textSize="9sp"
@@ -84,11 +104,9 @@
             android:paddingEnd="4dp"
             android:paddingTop="1dp"
             android:paddingBottom="1dp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            android:visibility="gone" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
 
     <!-- 파일명 + 더보기 버튼 행 -->
     <LinearLayout

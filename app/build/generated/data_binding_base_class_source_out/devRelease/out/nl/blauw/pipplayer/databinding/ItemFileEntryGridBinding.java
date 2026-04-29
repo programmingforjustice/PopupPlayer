@@ -21,6 +21,9 @@ public final class ItemFileEntryGridBinding implements ViewBinding {
   private final LinearLayout rootView;
 
   @NonNull
+  public final ImageView ivCheckMark;
+
+  @NonNull
   public final ImageView ivEntryAction;
 
   @NonNull
@@ -38,16 +41,22 @@ public final class ItemFileEntryGridBinding implements ViewBinding {
   @NonNull
   public final TextView tvNewBadge;
 
-  private ItemFileEntryGridBinding(@NonNull LinearLayout rootView, @NonNull ImageView ivEntryAction,
-      @NonNull ImageView ivEntryThumbnail, @NonNull TextView tvDuration,
-      @NonNull TextView tvEntryName, @NonNull TextView tvGifBadge, @NonNull TextView tvNewBadge) {
+  @NonNull
+  public final View viewSelectOverlay;
+
+  private ItemFileEntryGridBinding(@NonNull LinearLayout rootView, @NonNull ImageView ivCheckMark,
+      @NonNull ImageView ivEntryAction, @NonNull ImageView ivEntryThumbnail,
+      @NonNull TextView tvDuration, @NonNull TextView tvEntryName, @NonNull TextView tvGifBadge,
+      @NonNull TextView tvNewBadge, @NonNull View viewSelectOverlay) {
     this.rootView = rootView;
+    this.ivCheckMark = ivCheckMark;
     this.ivEntryAction = ivEntryAction;
     this.ivEntryThumbnail = ivEntryThumbnail;
     this.tvDuration = tvDuration;
     this.tvEntryName = tvEntryName;
     this.tvGifBadge = tvGifBadge;
     this.tvNewBadge = tvNewBadge;
+    this.viewSelectOverlay = viewSelectOverlay;
   }
 
   @Override
@@ -77,6 +86,12 @@ public final class ItemFileEntryGridBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.ivCheckMark;
+      ImageView ivCheckMark = ViewBindings.findChildViewById(rootView, id);
+      if (ivCheckMark == null) {
+        break missingId;
+      }
+
       id = R.id.ivEntryAction;
       ImageView ivEntryAction = ViewBindings.findChildViewById(rootView, id);
       if (ivEntryAction == null) {
@@ -113,8 +128,14 @@ public final class ItemFileEntryGridBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemFileEntryGridBinding((LinearLayout) rootView, ivEntryAction, ivEntryThumbnail,
-          tvDuration, tvEntryName, tvGifBadge, tvNewBadge);
+      id = R.id.viewSelectOverlay;
+      View viewSelectOverlay = ViewBindings.findChildViewById(rootView, id);
+      if (viewSelectOverlay == null) {
+        break missingId;
+      }
+
+      return new ItemFileEntryGridBinding((LinearLayout) rootView, ivCheckMark, ivEntryAction,
+          ivEntryThumbnail, tvDuration, tvEntryName, tvGifBadge, tvNewBadge, viewSelectOverlay);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -4,14 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:fitsSystemWindows="true">
+    android:background="#FFFFFF">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layout_marginBottom="60dp">
+
+        <!-- ── 멀티셀렉트 플로팅 바 (선택 시에만 표시) ── -->
+        <include
+            android:id="@+id/multiselectBar"
+            layout="@layout/layout_multiselect_bar"
+            android:visibility="gone" />
 
         <!-- ── TOP APP BAR ── -->
         <LinearLayout
@@ -218,17 +223,80 @@
                 android:singleLine="true" />
         </HorizontalScrollView>
 
-        <!-- ── 항목 수 (탐색 중에만 표시) ── -->
-        <TextView
-            android:id="@+id/tvItemCount"
-            android:layout_width="wrap_content"
+        <!-- ── 항목 수 + 필터 버튼 그룹 (탐색 중에만 표시) ── -->
+        <LinearLayout
+            android:id="@+id/layoutFilterBar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="#999999"
-            android:paddingStart="16dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="2dp"
-            android:visibility="gone" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvItemCount"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="12sp"
+                android:textColor="#999999" />
+
+            <!-- all / video / image 필터 버튼 그룹 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_filter_group"
+                android:padding="2dp">
+
+                <TextView
+                    android:id="@+id/btnFilterAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="all"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@drawable/bg_filter_selected"
+                    android:textColor="#FFFFFF"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/btnFilterVideo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="video"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="#666666"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/btnFilterImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="image"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:background="@android:color/transparent"
+                    android:textColor="#666666"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <!-- ── 구분선 ── -->
         <View

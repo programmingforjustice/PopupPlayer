@@ -111,9 +111,63 @@ class FileListAdapter(
         private val GRID_VIDEO_OPT = GRID_THUMB_OPT.clone().frame(1_000_000L)
     }
 
+    // ── 멀티셀렉트 상태 ───────────────────────────────────────
+    private val selectedPaths = mutableSetOf<String>()
+    var isMultiSelectMode = false
+        private set
+
+    var onSelectionChanged: ((count: Int, paths: Set<String>) -> Unit)? = null
+
+    fun enterMultiSelectMode(path: String) {
+        isMultiSelectMode = true
+        selectedPaths.clear()
+        selectedPaths.add(path)
+        notifyDataSetChanged()
+        onSelectionChanged?.invoke(selectedPaths.size, selectedPaths.toSet())
+    }
+
+    fun exitMultiSelectMode() {
+        isMultiSelectMode = false
+        selectedPaths.clear()
+        notifyDataSetChanged()
+        onSelectionChanged?.invoke(0, emptySet())
+    }
+
+    fun selectAll() {
+        rawEntries.filter { it.type != EntryType.DIRECTORY }
+            .forEach { selectedPaths.add(it.path) }
+        notifyDataSetChanged()
+        onSelectionChanged?.invoke(selectedPaths.size, selectedPaths.toSet())
+    }
+
+    fun getSelectedEntries(): List<FileEntry> =
+        rawEntries.filter { it.path in selectedPaths }
+
+    private fun toggleSelection(path: String) {
+        if (path in selectedPaths) {
+            selectedPaths.remove(path)
+            if (selectedPaths.isEmpty()) {
+                exitMultiSelectMode()
+                return
+            }
+        } else {
+            selectedPaths.add(path)
+        }
+        onSelectionChanged?.invoke(selectedPaths.size, selectedPaths.toSet())
+    }
+
     // ── 상태 ─────────────────────────────────────────────────
     var isGrid: Boolean = false
         set(value) { if (field != value) { field = value; rebuildList() } }
+
+    // 필터: ALL / VIDEO / IMAGE
+    enum class Filter { ALL, VIDEO, IMAGE }
+    private var currentFilter = Filter.ALL
+
+    fun setFilter(filter: Filter) {
+        currentFilter = filter
+        rebuildList()
+    }
 
     private var rawEntries: List<FileEntry> = emptyList()
 
@@ -122,10 +176,17 @@ class FileListAdapter(
         rebuildList()
     }
 
+    private fun filteredEntries(): List<FileEntry> = when (currentFilter) {
+        Filter.VIDEO -> rawEntries.filter { it.type == EntryType.VIDEO }
+        Filter.IMAGE -> rawEntries.filter { it.type == EntryType.IMAGE || it.type == EntryType.GIF }
+        Filter.ALL   -> rawEntries
+    }
+
     private fun rebuildList() {
-        val items = mutableListOf<ListItem>()
-        val dirs  = rawEntries.filter { it.type == EntryType.DIRECTORY }
-        val media = rawEntries.filter { it.type != EntryType.DIRECTORY }
+        val items    = mutableListOf<ListItem>()
+        val filtered = filteredEntries()
+        val dirs     = filtered.filter { it.type == EntryType.DIRECTORY }
+        val media    = filtered.filter { it.type != EntryType.DIRECTORY }
         if (isGrid) {
             if (dirs.isNotEmpty()) {
                 items.add(ListItem.Header("Mappen"))
@@ -174,13 +235,15 @@ class FileListAdapter(
     }
 
     class ListMediaVH(view: View) : RecyclerView.ViewHolder(view) {
-        val ivThumb:   ImageView = view.findViewById(R.id.ivEntryThumbnail)
-        val ivOverlay: ImageView = view.findViewById(R.id.ivPlayOverlay)
-        val tvDuration: TextView = view.findViewById(R.id.tvDuration)
-        val tvGif:     TextView  = view.findViewById(R.id.tvGifBadge)
-        val tvName:    TextView  = view.findViewById(R.id.tvEntryName)
-        val tvSub:     TextView  = view.findViewById(R.id.tvEntrySubtext)
-        val ivAction:  ImageView = view.findViewById(R.id.ivEntryAction)
+        val ivThumb:           ImageView = view.findViewById(R.id.ivEntryThumbnail)
+        val ivOverlay:         ImageView = view.findViewById(R.id.ivPlayOverlay)
+        val tvDuration:        TextView  = view.findViewById(R.id.tvDuration)
+        val tvGif:             TextView  = view.findViewById(R.id.tvGifBadge)
+        val tvName:            TextView  = view.findViewById(R.id.tvEntryName)
+        val tvSub:             TextView  = view.findViewById(R.id.tvEntrySubtext)
+        val ivAction:          ImageView = view.findViewById(R.id.ivEntryAction)
+        val viewSelectOverlay: View      = view.findViewById(R.id.viewSelectOverlay)
+        val ivCheckMark:       ImageView = view.findViewById(R.id.ivCheckMark)
     }
 
     class GridDirVH(view: View) : RecyclerView.ViewHolder(view) {
@@ -190,12 +253,14 @@ class FileListAdapter(
     }
 
     class GridMediaVH(view: View) : RecyclerView.ViewHolder(view) {
-        val ivThumb:   ImageView = view.findViewById(R.id.ivEntryThumbnail)
-        val tvNew:     TextView  = view.findViewById(R.id.tvNewBadge)
-        val tvDur:     TextView  = view.findViewById(R.id.tvDuration)
-        val tvGif:     TextView  = view.findViewById(R.id.tvGifBadge)
-        val tvName:    TextView  = view.findViewById(R.id.tvEntryName)
-        val ivAction:  ImageView = view.findViewById(R.id.ivEntryAction)
+        val ivThumb:           ImageView = view.findViewById(R.id.ivEntryThumbnail)
+        val tvNew:             TextView  = view.findViewById(R.id.tvNewBadge)
+        val tvDur:             TextView  = view.findViewById(R.id.tvDuration)
+        val tvGif:             TextView  = view.findViewById(R.id.tvGifBadge)
+        val tvName:            TextView  = view.findViewById(R.id.tvEntryName)
+        val ivAction:          ImageView = view.findViewById(R.id.ivEntryAction)
+        val viewSelectOverlay: View      = view.findViewById(R.id.viewSelectOverlay)
+        val ivCheckMark:       ImageView = view.findViewById(R.id.ivCheckMark)
     }
 
     // ── onCreateViewHolder ────────────────────────────────────
@@ -237,11 +302,21 @@ class FileListAdapter(
             is ListMediaVH -> {
                 val entry = (item as ListItem.Entry).entry
                 val ctx   = holder.itemView.context
-                holder.tvName.text = entry.name
-                holder.tvSub.text  = entry.subtextFor(ctx)
-                holder.ivAction.visibility = View.VISIBLE
+                holder.tvName.text         = entry.name
+                holder.tvSub.text          = entry.subtextFor(ctx)
+                holder.ivAction.visibility = if (isMultiSelectMode) View.GONE else View.VISIBLE
                 holder.ivAction.setImageResource(android.R.drawable.ic_menu_more)
                 holder.ivAction.setOnClickListener { v -> showMenu(entry, v) }
+
+                // 선택 상태: 배경 + 오버레이 + 체크마크
+                val isSelected = entry.path in selectedPaths
+                holder.itemView.setBackgroundColor(
+                    if (isMultiSelectMode && isSelected) 0xFFF1F1F1.toInt()
+                    else 0x00FFFFFF
+                )
+                holder.viewSelectOverlay.visibility = if (isMultiSelectMode && isSelected) View.VISIBLE else View.GONE
+                holder.ivCheckMark.visibility       = if (isMultiSelectMode && isSelected) View.VISIBLE else View.GONE
+
                 when (entry.type) {
                     EntryType.VIDEO -> {
                         holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_CROP
@@ -275,7 +350,24 @@ class FileListAdapter(
                     }
                     else -> Unit
                 }
-                holder.itemView.setOnClickListener { onFileClick(entry) }
+
+                // 일반 클릭
+                holder.itemView.setOnClickListener {
+                    if (isMultiSelectMode) {
+                        toggleSelection(entry.path)
+                        notifyItemChanged(position)
+                    } else {
+                        onFileClick(entry)
+                    }
+                }
+                // 롱클릭 → 멀티셀렉트 진입
+                holder.itemView.setOnLongClickListener {
+                    if (!isMultiSelectMode) {
+                        enterMultiSelectMode(entry.path)
+                        notifyDataSetChanged()
+                    }
+                    true
+                }
             }
 
             is GridDirVH -> {
@@ -291,7 +383,17 @@ class FileListAdapter(
                 val ctx   = holder.itemView.context
                 holder.tvName.text = entry.name
                 holder.tvNew.visibility = View.GONE
+                holder.ivAction.visibility = if (isMultiSelectMode) View.GONE else View.VISIBLE
                 holder.ivAction.setOnClickListener { v -> showMenu(entry, v) }
+
+                val isSelected = entry.path in selectedPaths
+                holder.itemView.setBackgroundColor(
+                    if (isMultiSelectMode && isSelected) 0xFFF1F1F1.toInt()
+                    else 0x00FFFFFF
+                )
+                holder.viewSelectOverlay.visibility = if (isMultiSelectMode && isSelected) View.VISIBLE else View.GONE
+                holder.ivCheckMark.visibility       = if (isMultiSelectMode && isSelected) View.VISIBLE else View.GONE
+
                 when (entry.type) {
                     EntryType.VIDEO -> {
                         // duration 오버레이 표시
@@ -319,7 +421,21 @@ class FileListAdapter(
                     }
                     else -> Unit
                 }
-                holder.itemView.setOnClickListener { onFileClick(entry) }
+                holder.itemView.setOnClickListener {
+                    if (isMultiSelectMode) {
+                        toggleSelection(entry.path)
+                        notifyItemChanged(position)
+                    } else {
+                        onFileClick(entry)
+                    }
+                }
+                holder.itemView.setOnLongClickListener {
+                    if (!isMultiSelectMode) {
+                        enterMultiSelectMode(entry.path)
+                        notifyDataSetChanged()
+                    }
+                    true
+                }
             }
         }
     }

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/layout_multiselect_bar.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="8dp"
+    android:paddingEnd="4dp"
+    android:background="#FFFFFF"
+    android:elevation="8dp">
+
+    <!-- X 닫기 버튼 -->
+    <ImageButton
+        android:id="@+id/btnMultiClose"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="close" />
+
+    <!-- 선택된 아이템 수 -->
+    <TextView
+        android:id="@+id/tvMultiCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#111111"
+        android:text="0" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
+    <!-- Play -->
+    <ImageButton
+        android:id="@+id/btnMultiPlay"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_multi_play"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="play" />
+
+    <!-- 즐겨찾기 -->
+    <ImageButton
+        android:id="@+id/btnMultiFavorite"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_menu_favorite"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="favorite" />
+
+    <!-- 플레이리스트 추가 -->
+    <ImageButton
+        android:id="@+id/btnMultiPlaylist"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_menu_playlist"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="playlist" />
+
+    <!-- 공유 -->
+    <ImageButton
+        android:id="@+id/btnMultiShare"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_share"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="share" />
+
+    <!-- 삭제 -->
+    <ImageButton
+        android:id="@+id/btnMultiDelete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_item_remove"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="delete" />
+
+    <!-- 추가 메뉴 -->
+    <ImageButton
+        android:id="@+id/btnMultiMore"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_more"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="more" />
+
+</LinearLayout>
