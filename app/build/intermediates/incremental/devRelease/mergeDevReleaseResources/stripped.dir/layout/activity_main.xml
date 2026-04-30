@@ -12,12 +12,6 @@
         android:orientation="vertical"
         android:layout_marginBottom="60dp">
 
-        <!-- ── 멀티셀렉트 플로팅 바 (선택 시에만 표시) ── -->
-        <include
-            android:id="@+id/multiselectBar"
-            layout="@layout/layout_multiselect_bar"
-            android:visibility="gone" />
-
         <!-- ── TOP APP BAR ── -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -351,5 +345,15 @@
         app:itemTextColor="@drawable/bottom_nav_selector"
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu" />
+
+    <!-- ── 멀티셀렉트 플로팅 바 ── -->
+    <!-- CoordinatorLayout 직접 자식으로 TOP APP BAR 영역을 덮는 floating 형태 -->
+    <include
+        android:id="@+id/multiselectBar"
+        layout="@layout/layout_multiselect_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="top"
+        android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

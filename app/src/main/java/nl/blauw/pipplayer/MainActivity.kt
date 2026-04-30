@@ -184,9 +184,9 @@ class MainActivity : AppCompatActivity() {
         multiselectBar.findViewById<View>(R.id.btnMultiPlaylist).setOnClickListener {
             val selected = fileListAdapter.getSelectedEntries()
             if (selected.isEmpty()) return@setOnClickListener
-            // 첫 번째 항목으로 PlaylistBottomSheet 표시 (다중은 순차 추가)
-            PlaylistBottomSheet.newInstance(selected.first().path)
-                .show(supportFragmentManager, PlaylistBottomSheet.TAG)
+            val paths = selected.map { it.path }
+            MultiPlaylistBottomSheet.newInstance(paths)
+                .show(supportFragmentManager, MultiPlaylistBottomSheet.TAG)
             fileListAdapter.exitMultiSelectMode()
         }
         // 공유
