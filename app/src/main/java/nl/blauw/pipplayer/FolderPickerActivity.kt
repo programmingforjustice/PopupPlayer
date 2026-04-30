@@ -1,10 +1,13 @@
 package nl.blauw.pipplayer
 
 import android.app.Dialog
+import android.content.ContentUris
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.media.MediaScannerConnection
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -207,35 +210,74 @@ class FolderPickerActivity : AppCompatActivity() {
         val dest = currentDir
         lifecycleScope.launch {
             val succeeded = mutableListOf<String>()
+            val failed    = mutableListOf<String>()
             withContext(Dispatchers.IO) {
                 for (srcPath in sourcePaths) {
-                    val src     = File(srcPath)
-                    val target  = File(dest, src.name)
+                    val srcFile = File(srcPath)
+                    val target  = File(dest, srcFile.name)
                     try {
-                        if (mode == MODE_COPY) {
-                            src.copyTo(target, overwrite = true)
-                            succeeded.add(src.name)
-                        } else {
-                            val moved = src.renameTo(target)
-                            if (!moved) {
-                                src.copyTo(target, overwrite = true)
-                                src.delete()
-                            }
-                            succeeded.add(src.name)
+                        // Open source via content URI if available (handles scoped storage)
+                        val srcUri    = resolveContentUri(srcPath)
+                        val inputStream = if (srcUri != null)
+                            contentResolver.openInputStream(srcUri)
+                        else
+                            srcFile.inputStream()
+
+                        checkNotNull(inputStream) { "Cannot open source: ${srcFile.name}" }
+
+                        inputStream.use { input ->
+                            target.outputStream().use { output -> input.copyTo(output) }
                         }
-                    } catch (_: Exception) {}
+
+                        // Let MediaStore know about the new file
+                        MediaScannerConnection.scanFile(
+                            applicationContext, arrayOf(target.absolutePath), null, null
+                        )
+
+                        if (mode == MODE_MOVE) {
+                            // Delete source — try contentResolver first, fall back to File
+                            if (srcUri != null) {
+                                runCatching { contentResolver.delete(srcUri, null, null) }
+                                    .onFailure { srcFile.delete() }
+                            } else {
+                                srcFile.delete()
+                            }
+                        }
+
+                        succeeded.add(srcFile.name)
+                    } catch (e: Exception) {
+                        failed.add(srcFile.name)
+                        android.util.Log.e("FolderPicker", "Failed: ${srcFile.name} → $e")
+                    }
                 }
             }
             if (succeeded.isNotEmpty()) {
-                Toast.makeText(
-                    this@FolderPickerActivity,
-                    succeeded.joinToString(", "),
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(this@FolderPickerActivity, succeeded.joinToString(", "), Toast.LENGTH_LONG).show()
+            }
+            if (failed.isNotEmpty()) {
+                Toast.makeText(this@FolderPickerActivity, "실패: ${failed.joinToString(", ")}", Toast.LENGTH_LONG).show()
             }
             finish()
         }
     }
+
+    private fun resolveContentUri(path: String): android.net.Uri? =
+        contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            arrayOf(MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.MEDIA_TYPE),
+            "${MediaStore.Files.FileColumns.DATA} = ?",
+            arrayOf(path), null
+        )?.use { c ->
+            if (!c.moveToFirst()) return@use null
+            val id   = c.getLong(0)
+            val type = c.getInt(1)
+            val base = when (type) {
+                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                else -> MediaStore.Files.getContentUri("external")
+            }
+            ContentUris.withAppendedId(base, id)
+        }
 
     // ── Inner Adapter ─────────────────────────────────────────
     inner class FolderAdapter(
