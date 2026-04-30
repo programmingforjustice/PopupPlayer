@@ -356,4 +356,13 @@
         android:layout_gravity="top"
         android:visibility="gone" />
 
+    <!-- ── 검색 플로팅 바 ── -->
+    <include
+        android:id="@+id/searchBar"
+        layout="@layout/layout_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="top"
+        android:visibility="gone" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

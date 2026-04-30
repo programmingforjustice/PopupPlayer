@@ -169,6 +169,13 @@ class FileListAdapter(
         rebuildList()
     }
 
+    private var searchQuery: String = ""
+
+    fun setSearchQuery(query: String) {
+        searchQuery = query
+        rebuildList()
+    }
+
     private var rawEntries: List<FileEntry> = emptyList()
 
     fun submitEntries(entries: List<FileEntry>) {
@@ -182,10 +189,14 @@ class FileListAdapter(
         rebuildList()
     }
 
-    private fun filteredEntries(): List<FileEntry> = when (currentFilter) {
-        Filter.VIDEO -> rawEntries.filter { it.type == EntryType.VIDEO }
-        Filter.IMAGE -> rawEntries.filter { it.type == EntryType.IMAGE || it.type == EntryType.GIF }
-        Filter.ALL   -> rawEntries
+    private fun filteredEntries(): List<FileEntry> {
+        val byType = when (currentFilter) {
+            Filter.VIDEO -> rawEntries.filter { it.type == EntryType.VIDEO }
+            Filter.IMAGE -> rawEntries.filter { it.type == EntryType.IMAGE || it.type == EntryType.GIF }
+            Filter.ALL   -> rawEntries
+        }
+        return if (searchQuery.isBlank()) byType
+        else byType.filter { it.name.contains(searchQuery, ignoreCase = true) }
     }
 
     private fun rebuildList() {

@@ -8,7 +8,11 @@ import android.os.Bundle
 import android.os.Build
 import android.provider.MediaStore
 import android.provider.Settings
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -118,6 +122,7 @@ class MainActivity : AppCompatActivity() {
         bindViews()
         setupAdapters()
         setupMultiselectBar()
+        setupSearchBar()
         setupToolbar()
         setupCategories()
         setupBottomNav()
@@ -169,6 +174,10 @@ class MainActivity : AppCompatActivity() {
     // ── 멀티셀렉트 바 ─────────────────────────────────────────
     private lateinit var multiselectBar: View
     private lateinit var tvMultiCount: TextView
+
+    // ── 검색 바 ───────────────────────────────────────────────
+    private lateinit var searchBar: View
+    private lateinit var etSearch: EditText
 
     private fun setupMultiselectBar() {
         multiselectBar = findViewById(R.id.multiselectBar)
@@ -377,6 +386,43 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    // ── 검색 바 ───────────────────────────────────────────────
+
+    private fun setupSearchBar() {
+        searchBar = findViewById(R.id.searchBar)
+        etSearch  = searchBar.findViewById(R.id.etSearch)
+
+        findViewById<ImageButton>(R.id.btnSearch).setOnClickListener {
+            searchBar.visibility = View.VISIBLE
+            etSearch.requestFocus()
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(etSearch, InputMethodManager.SHOW_IMPLICIT)
+        }
+
+        searchBar.findViewById<View>(R.id.btnSearchClose).setOnClickListener {
+            closeSearchBar()
+        }
+
+        etSearch.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s?.toString() ?: ""
+                if (folderStack.isEmpty()) rootFolderAdapter.setSearchQuery(query)
+                else fileListAdapter.setSearchQuery(query)
+            }
+        })
+    }
+
+    private fun closeSearchBar() {
+        searchBar.visibility = View.GONE
+        etSearch.text.clear()
+        rootFolderAdapter.setSearchQuery("")
+        fileListAdapter.setSearchQuery("")
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(etSearch.windowToken, 0)
+    }
+
     // ── 레이아웃 상태 ─────────────────────────────────────────
     private var isGridLayout = false
 
@@ -546,6 +592,10 @@ class MainActivity : AppCompatActivity() {
                     fileListAdapter.exitMultiSelectMode()
                     return
                 }
+                if (searchBar.visibility == View.VISIBLE) {
+                    closeSearchBar()
+                    return
+                }
                 if (!navigateUp()) {
                     // 루트에서 뒤로가기 → 앱 종료
                     isEnabled = false
@@ -561,6 +611,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun navigateUp(): Boolean {
         if (folderStack.isEmpty()) return false
+        clearSearchQuery()
         folderStack.removeLast()
         if (folderStack.isEmpty()) {
             showRootScreen(restoreScroll = true)
@@ -645,8 +696,8 @@ class MainActivity : AppCompatActivity() {
             scanMediaFoldersFlow().collect { updated ->
                 // emit 된 FolderItem 으로 맵 갱신
                 currentMap[updated.path] = updated
-                // 이름 오름차순으로 정렬 후 submitList
-                rootFolderAdapter.submitList(
+                // 이름 오름차순으로 정렬 후 표시 (검색 필터 반영)
+                rootFolderAdapter.submitSearchableList(
                     currentMap.values.sortedBy { it.name.lowercase() }
                 )
             }
@@ -679,8 +730,16 @@ class MainActivity : AppCompatActivity() {
     /** 새 폴더로 이동 (스택에 push) */
     private fun navigateTo(folder: File, bucketId: Long) {
         if (folderStack.isNotEmpty()) saveScrollPosition()
+        clearSearchQuery()
         folderStack.addLast(folder to bucketId)
         loadDirectory(folder, bucketId, restoreScroll = false)
+    }
+
+    private fun clearSearchQuery() {
+        if (!::etSearch.isInitialized) return
+        etSearch.text.clear()
+        rootFolderAdapter.setSearchQuery("")
+        fileListAdapter.setSearchQuery("")
     }
 
     /**

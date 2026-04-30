@@ -41,6 +41,26 @@ class FolderAdapter(
     private val onFolderClick: (FolderItem) -> Unit
 ) : ListAdapter<FolderItem, FolderAdapter.FolderViewHolder>(DIFF_CALLBACK) {
 
+    private var masterList: List<FolderItem> = emptyList()
+    private var searchQuery: String = ""
+
+    /** submitList 대신 이 메서드로 전체 목록을 전달. 검색 필터가 적용된 뒤 submitList 호출. */
+    fun submitSearchableList(list: List<FolderItem>) {
+        masterList = list
+        applyFilter()
+    }
+
+    fun setSearchQuery(query: String) {
+        searchQuery = query
+        applyFilter()
+    }
+
+    private fun applyFilter() {
+        val filtered = if (searchQuery.isBlank()) masterList
+        else masterList.filter { it.name.contains(searchQuery, ignoreCase = true) }
+        submitList(filtered)
+    }
+
     inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val ivThumbnail: ImageView = itemView.findViewById(R.id.ivFolderThumbnail)
         val tvBadge: TextView      = itemView.findViewById(R.id.tvBadge)
