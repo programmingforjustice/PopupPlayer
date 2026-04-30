@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/dialog_delete_confirm.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_dialog_rounded"
+    android:padding="20dp">
+
+    <!-- 타이틀 + 닫기 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/tvDeleteTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Delete the following item"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="#111111" />
+
+        <ImageButton
+            android:id="@+id/btnDialogClose"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="close" />
+
+    </LinearLayout>
+
+    <!-- 설명 -->
+    <TextView
+        android:id="@+id/tvDeleteDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="This item will be moved to Recycle Bin &amp; kept for 30 days before being permanently deleted from your device."
+        android:textSize="13sp"
+        android:textColor="#666666"
+        android:lineSpacingMultiplier="1.3"
+        android:layout_marginBottom="16dp" />
+
+    <!-- 미디어 미리보기 카드 -->
+    <LinearLayout
+        android:id="@+id/layoutPreview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_preview_card"
+        android:padding="12dp"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:id="@+id/ivPreviewThumb"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:scaleType="centerCrop"
+            android:src="@android:drawable/ic_menu_slideshow"
+            android:background="#E0E4EA"
+            android:contentDescription="thumbnail" />
+
+        <TextView
+            android:id="@+id/tvPreviewName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+    </LinearLayout>
+
+    <!-- 버튼 행 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <!-- 영구 삭제 -->
+        <TextView
+            android:id="@+id/btnPermanentDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Permanently Delete"
+            android:textSize="14sp"
+            android:textColor="#444444"
+            android:paddingEnd="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <!-- 휴지통으로 이동 -->
+        <TextView
+            android:id="@+id/btnMoveToRecycleBin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Move to Recycle Bin"
+            android:textSize="14sp"
+            android:textColor="#4A7FD4"
+            android:textStyle="bold"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true" />
+
+    </LinearLayout>
+
+</LinearLayout>

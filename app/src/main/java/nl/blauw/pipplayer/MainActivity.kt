@@ -206,39 +206,7 @@ class MainActivity : AppCompatActivity() {
         multiselectBar.findViewById<View>(R.id.btnMultiDelete).setOnClickListener {
             val selected = fileListAdapter.getSelectedEntries()
             if (selected.isEmpty()) return@setOnClickListener
-            android.app.AlertDialog.Builder(this)
-                .setTitle("삭제")
-                .setMessage("선택한 ${selected.size}개 파일을 삭제하시겠습니까?")
-                .setPositiveButton("삭제") { _, _ ->
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
-                        val contentUris = selected.mapNotNull { entry ->
-                            contentResolver.query(
-                                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                                            arrayOf(android.provider.MediaStore.Video.Media._ID),
-                                            "${android.provider.MediaStore.Video.Media.DATA} = ?",
-                                arrayOf(entry.path), null
-                            )?.use { c ->
-                                            if (c.moveToFirst()) {
-                                    android.content.ContentUris.withAppendedId(
-                                        android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
-                                        c.getLong(0)
-                                    )
-                                            } else null
-                                        }
-                                    }
-                        if (contentUris.isNotEmpty()) {
-                            val pi = android.provider.MediaStore.createDeleteRequest(
-                                contentResolver, contentUris
-                            )
-                            deleteRequestLauncher.launch(
-                                androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
-                            )
-                        }
-                    }
-                    fileListAdapter.exitMultiSelectMode()
-                }
-                .setNegativeButton("취소", null)
-                .show()
+            showDeleteConfirmDialog(selected)
         }
         // 추가 메뉴
         multiselectBar.findViewById<View>(R.id.btnMultiMore).setOnClickListener {
@@ -246,7 +214,116 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateMultiselectBar(count: Int) {
+    private fun showDeleteConfirmDialog(selected: List<FileEntry>) {
+        val dialog    = android.app.Dialog(this)
+        val sheetView = layoutInflater.inflate(R.layout.dialog_delete_confirm, null)
+        dialog.setContentView(sheetView)
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.88).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                                    )
+
+        // 타이틀 / 설명 — 단일 vs 다중
+        val tvTitle = sheetView.findViewById<TextView>(R.id.tvDeleteTitle)
+        val tvDesc  = sheetView.findViewById<TextView>(R.id.tvDeleteDesc)
+        val tvName  = sheetView.findViewById<TextView>(R.id.tvPreviewName)
+        val ivThumb = sheetView.findViewById<ImageView>(R.id.ivPreviewThumb)
+
+        if (selected.size == 1) {
+            tvTitle.text = "Delete the following item"
+            tvDesc.text  = "This item will be moved to Recycle Bin & kept for 30 days before being permanently deleted from your device."
+            tvName.text  = selected.first().name
+            // 썸네일 로딩
+            Glide.with(ivThumb)
+                .asBitmap()
+                .load(selected.first().file)
+                .apply(RequestOptions().frame(1_000_000L).transform(
+                    com.bumptech.glide.load.resource.bitmap.CenterCrop()))
+                .into(ivThumb)
+        } else {
+            tvTitle.text = "Delete the following items"
+            tvDesc.text  = "These items will be moved to Recycle Bin & kept for 30 days before being permanently deleted from your device."
+            tvName.text  = "${selected.size} Items"
+            ivThumb.setImageResource(android.R.drawable.ic_menu_slideshow)
+                                        }
+
+        sheetView.findViewById<View>(R.id.btnDialogClose).setOnClickListener { dialog.dismiss() }
+
+        // 영구 삭제
+        sheetView.findViewById<View>(R.id.btnPermanentDelete).setOnClickListener {
+            dialog.dismiss()
+            permanentlyDeleteFiles(selected)
+                                    }
+
+        // 휴지통으로 이동
+        sheetView.findViewById<View>(R.id.btnMoveToRecycleBin).setOnClickListener {
+            dialog.dismiss()
+            moveToRecycleBin(selected)
+        }
+
+        dialog.show()
+        fileListAdapter.exitMultiSelectMode()
+    }
+
+    /** 영구 삭제 — MediaStore.createDeleteRequest */
+    private fun permanentlyDeleteFiles(selected: List<FileEntry>) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            lifecycleScope.launch {
+                val uris = withContext(Dispatchers.IO) { resolveContentUris(selected) }
+                if (uris.isEmpty()) return@launch
+                val pi = android.provider.MediaStore.createDeleteRequest(contentResolver, uris)
+                deleteRequestLauncher.launch(
+                    androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
+                )
+            }
+        }
+    }
+
+    /** 휴지통으로 이동 — MediaStore.createTrashRequest */
+    private fun moveToRecycleBin(selected: List<FileEntry>) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            lifecycleScope.launch {
+                val uris = withContext(Dispatchers.IO) { resolveContentUris(selected) }
+                if (uris.isEmpty()) return@launch
+                val pi = android.provider.MediaStore.createTrashRequest(contentResolver, uris, true)
+                trashRequestLauncher.launch(
+                    androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
+                )
+            }
+        }
+    }
+
+    /** FileEntry → MediaStore contentUri 변환 */
+    private fun resolveContentUris(entries: List<FileEntry>): List<android.net.Uri> =
+        entries.mapNotNull { entry ->
+            contentResolver.query(
+                android.provider.MediaStore.Files.getContentUri("external"),
+                arrayOf(android.provider.MediaStore.Files.FileColumns._ID,
+                        android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE),
+                "${android.provider.MediaStore.Files.FileColumns.DATA} = ?",
+                arrayOf(entry.path), null
+            )?.use { c ->
+                if (c.moveToFirst()) {
+                    val id   = c.getLong(0)
+                    val type = c.getInt(1)
+                    val base = when (type) {
+                        android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO ->
+                            android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                        android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE ->
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                        else ->
+                            android.provider.MediaStore.Files.getContentUri("external")
+                    }
+                    android.content.ContentUris.withAppendedId(base, id)
+                } else null
+            }
+        }
+
+    private val trashRequestLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { /* 완료 — MediaStore 변경으로 목록 자동 갱신 */ }
         if (count > 0) {
             multiselectBar.visibility = View.VISIBLE
             tvMultiCount.text = count.toString()

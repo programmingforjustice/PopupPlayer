@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/item_recycle_bin.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- 썸네일 + duration -->
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_grid_thumb"
+        android:clipToOutline="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivThumb"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:scaleType="centerCrop"
+                android:background="#111111"
+                android:contentDescription="thumbnail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="W,16:9" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="4dp"
+            android:textSize="10sp"
+            android:textColor="#FFFFFF"
+            android:background="#AA000000"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <!-- 파일명 + 남은 시간 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp">
+
+        <TextView
+            android:id="@+id/tvFileName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#111111"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:lineSpacingMultiplier="1.1" />
+
+        <!-- 남은 보관 기간 -->
+        <TextView
+            android:id="@+id/tvDaysLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#888888"
+            android:layout_marginTop="3dp" />
+
+    </LinearLayout>
+
+    <!-- 더보기 -->
+    <ImageButton
+        android:id="@+id/btnMore"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@android:drawable/ic_menu_more"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="more" />
+
+</LinearLayout>
