@@ -1,5 +1,6 @@
 package nl.blauw.pipplayer
 
+import android.content.ContentResolver
 import android.content.ContentUris
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -89,48 +91,74 @@ class RecycleBinActivity : AppCompatActivity() {
     private fun queryTrashedFiles(): List<TrashedItem> {
         val result = mutableListOf<TrashedItem>()
         val projection = arrayOf(
-            MediaStore.Video.Media._ID,
-            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Files.FileColumns._ID,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.MEDIA_TYPE,
             MediaStore.Video.Media.DURATION,
-            MediaStore.Video.Media.DATE_EXPIRES   // 만료 시각 (epoch s)
+            MediaStore.Files.FileColumns.DATE_EXPIRES
         )
-        // IS_TRASHED = 1 로 휴지통 항목만 조회
-        val selection = "${MediaStore.Video.Media.IS_TRASHED} = 1"
 
-        val queryUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-            .buildUpon()
-            .appendQueryParameter(MediaStore.QUERY_ARG_MATCH_TRASHED, "1")
-            .build()
+        val queryArgs = android.os.Bundle().apply {
+            putInt(MediaStore.QUERY_ARG_MATCH_TRASHED, MediaStore.MATCH_ONLY)
+            // 비디오 + 이미지만 포함
+            putString(
+                ContentResolver.QUERY_ARG_SQL_SELECTION,
+                "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}, ${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE})"
+            )
+            putString(
+                ContentResolver.QUERY_ARG_SORT_COLUMNS,
+                MediaStore.Files.FileColumns.DATE_EXPIRES
+            )
+            putInt(
+                ContentResolver.QUERY_ARG_SORT_DIRECTION,
+                ContentResolver.QUERY_SORT_DIRECTION_ASCENDING
+            )
+        }
 
         contentResolver.query(
-            queryUri, projection, selection, null,
-            "${MediaStore.Video.Media.DATE_EXPIRES} ASC"
+            MediaStore.Files.getContentUri("external"),
+            projection,
+            queryArgs,
+            null
         )?.use { cursor ->
-            val idCol      = cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID)
-            val nameCol    = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME)
-            val durCol     = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DURATION)
-            val expiresCol = cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATE_EXPIRES)
+            val idCol        = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
+            val nameCol      = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
+            val mediaTypeCol = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+            val durCol       = cursor.getColumnIndex(MediaStore.Video.Media.DURATION)
+            val expiresCol   = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_EXPIRES)
 
             while (cursor.moveToNext()) {
-                val id         = cursor.getLong(idCol)
-                val name       = cursor.getString(nameCol) ?: "unknown"
-                val duration   = cursor.getLong(durCol)
-                val expiresAt  = cursor.getLong(expiresCol) * 1000L // s → ms
-                // dateTrashed = expiresAt - 30일
+                val id        = cursor.getLong(idCol)
+                val name      = cursor.getString(nameCol) ?: "unknown"
+                val mediaType = cursor.getInt(mediaTypeCol)
+                val duration  = if (durCol >= 0 && mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
+                                    cursor.getLong(durCol) else 0L
+                val expiresAt   = cursor.getLong(expiresCol) * 1000L
                 val dateTrashed = expiresAt - TimeUnit.DAYS.toMillis(30)
-                val uri = ContentUris.withAppendedId(
-                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, id
-                )
+
+                // contentUri — 타입에 맞는 base URI 사용
+                val baseUri = when (mediaType) {
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO ->
+                        MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE ->
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                    else ->
+                        MediaStore.Files.getContentUri("external")
+                }
+                val uri = ContentUris.withAppendedId(baseUri, id)
                 result.add(TrashedItem(id, name, duration, dateTrashed, uri))
             }
         }
         return result
     }
 
-    // ── 복원 ─────────────────────────────────────────────────
+    // ── 복원 (휴지통에서 꺼내기) ──────────────────────────────
     private fun restoreItem(item: TrashedItem) {
         lifecycleScope.launch {
-            val pi = MediaStore.createRestoreRequest(contentResolver, listOf(item.contentUri))
+            // createTrashRequest(trash = false) → 휴지통에서 복원
+            val pi = MediaStore.createTrashRequest(
+                contentResolver, listOf(item.contentUri), false
+            )
             restoreRequestLauncher.launch(
                 androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
             )

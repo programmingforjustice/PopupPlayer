@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -21,12 +22,15 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -89,7 +93,13 @@ class MainActivity : AppCompatActivity() {
     private val deleteRequestLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
-        ) { /* 삭제 완료 후 목록 자동 갱신 (MediaStore Flow) */ }
+        ) {
+            // 영구 삭제 완료 → 해당 항목만 즉시 제거
+            if (pendingDeletePaths.isNotEmpty()) {
+                fileListAdapter.removeEntries(pendingDeletePaths)
+                pendingDeletePaths = emptySet()
+            }
+        }
 
     // ── 권한 요청 ─────────────────────────────────────────────
         private val permissionLauncher: ActivityResultLauncher<Array<String>> =
@@ -246,7 +256,7 @@ class MainActivity : AppCompatActivity() {
             tvDesc.text  = "These items will be moved to Recycle Bin & kept for 30 days before being permanently deleted from your device."
             tvName.text  = "${selected.size} Items"
             ivThumb.setImageResource(android.R.drawable.ic_menu_slideshow)
-                                        }
+        }
 
         sheetView.findViewById<View>(R.id.btnDialogClose).setOnClickListener { dialog.dismiss() }
 
@@ -254,7 +264,7 @@ class MainActivity : AppCompatActivity() {
         sheetView.findViewById<View>(R.id.btnPermanentDelete).setOnClickListener {
             dialog.dismiss()
             permanentlyDeleteFiles(selected)
-                                    }
+        }
 
         // 휴지통으로 이동
         sheetView.findViewById<View>(R.id.btnMoveToRecycleBin).setOnClickListener {
@@ -272,6 +282,7 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val uris = withContext(Dispatchers.IO) { resolveContentUris(selected) }
                 if (uris.isEmpty()) return@launch
+                pendingDeletePaths = selected.map { it.path }.toSet()
                 val pi = android.provider.MediaStore.createDeleteRequest(contentResolver, uris)
                 deleteRequestLauncher.launch(
                     androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
@@ -286,6 +297,7 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val uris = withContext(Dispatchers.IO) { resolveContentUris(selected) }
                 if (uris.isEmpty()) return@launch
+                pendingDeletePaths = selected.map { it.path }.toSet()
                 val pi = android.provider.MediaStore.createTrashRequest(contentResolver, uris, true)
                 trashRequestLauncher.launch(
                     androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
@@ -320,10 +332,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    private var pendingDeletePaths = emptySet<String>()
+
     private val trashRequestLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
-        ) { /* 완료 — MediaStore 변경으로 목록 자동 갱신 */ }
+        ) {
+            // 휴지통 이동 완료 → 해당 항목만 즉시 제거
+            if (pendingDeletePaths.isNotEmpty()) {
+                fileListAdapter.removeEntries(pendingDeletePaths)
+                pendingDeletePaths = emptySet()
+            }
+        }
+
+    private fun updateMultiselectBar(count: Int) {
         if (count > 0) {
             multiselectBar.visibility = View.VISIBLE
             tvMultiCount.text = count.toString()
@@ -495,6 +517,14 @@ class MainActivity : AppCompatActivity() {
     private fun setupCategories() {
         findViewById<View>(R.id.categoryPlaylists).setOnClickListener {
             startActivity(Intent(this, PlaylistActivity::class.java))
+        }
+
+        findViewById<View>(R.id.categoryCleaner).setOnClickListener {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                startActivity(Intent(this, RecycleBinActivity::class.java))
+            } else {
+                Toast.makeText(this, "Android 11 이상에서 지원됩니다.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
     private fun setupBottomNav() {

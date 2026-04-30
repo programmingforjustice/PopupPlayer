@@ -176,6 +176,12 @@ class FileListAdapter(
         rebuildList()
     }
 
+    /** 특정 경로들을 rawEntries 에서 즉시 제거 (MediaStore 재쿼리 없이) */
+    fun removeEntries(paths: Set<String>) {
+        rawEntries = rawEntries.filter { it.path !in paths }
+        rebuildList()
+    }
+
     private fun filteredEntries(): List<FileEntry> = when (currentFilter) {
         Filter.VIDEO -> rawEntries.filter { it.type == EntryType.VIDEO }
         Filter.IMAGE -> rawEntries.filter { it.type == EntryType.IMAGE || it.type == EntryType.GIF }

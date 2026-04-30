@@ -48,6 +48,8 @@
 
     <activity android:name=".MediaPickerActivity" />
 
+    <activity android:name=".RecycleBinActivity" />
+
     <service android:name=".PlayerService" 
       android:foregroundServiceType="mediaPlayback"
       android:exported="true"
