@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="8dp"
+    android:paddingEnd="4dp"
+    android:background="#FFFFFF"
+    android:elevation="8dp"
+    android:translationZ="8dp">
+
+    <ImageButton
+        android:id="@+id/btnRbMultiClose"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="close" />
+
+    <TextView
+        android:id="@+id/tvRbMultiCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="#111111"
+        android:text="0" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/btnRbMultiRestore"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_restore"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="restore" />
+
+    <ImageButton
+        android:id="@+id/btnRbMultiDelete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_item_remove"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="permanent delete" />
+
+    <ImageButton
+        android:id="@+id/btnRbMultiMore"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_more"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="more" />
+
+</LinearLayout>

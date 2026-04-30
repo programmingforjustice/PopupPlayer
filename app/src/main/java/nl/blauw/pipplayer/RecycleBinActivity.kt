@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,11 +37,10 @@ class RecycleBinActivity : AppCompatActivity() {
     data class TrashedItem(
         val id: Long,
         val displayName: String,
-        val duration: Long,       // ms
-        val dateTrashed: Long,    // epoch ms
+        val duration: Long,
+        val dateTrashed: Long,
         val contentUri: android.net.Uri
     ) {
-        /** 삭제 후 30일 기준 남은 날 수 */
         val daysLeft: Int get() {
             val elapsed = System.currentTimeMillis() - dateTrashed
             val days = TimeUnit.MILLISECONDS.toDays(elapsed)
@@ -51,6 +51,9 @@ class RecycleBinActivity : AppCompatActivity() {
     private lateinit var rvRecycleBin: RecyclerView
     private lateinit var layoutEmpty: LinearLayout
     private lateinit var adapter: RecycleBinAdapter
+
+    private lateinit var multiselectBar: View
+    private lateinit var tvMultiCount: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,19 +68,78 @@ class RecycleBinActivity : AppCompatActivity() {
         }
 
         setupRecyclerView()
+        setupMultiselectBar()
+        setupBackPressed()
         loadTrashedFiles()
     }
 
     private fun setupRecyclerView() {
         adapter = RecycleBinAdapter(
-            onRestoreClick  = { item -> restoreItem(item) },
-            onDeleteClick   = { item -> permanentlyDelete(item) }
+            onRestoreClick = { item -> restoreItem(item) },
+            onDeleteClick  = { item -> permanentlyDelete(item) }
         )
+        adapter.onSelectionChanged = { count -> updateMultiselectBar(count) }
+
         rvRecycleBin.layoutManager = LinearLayoutManager(this)
-        rvRecycleBin.adapter       = adapter
+        rvRecycleBin.adapter = adapter
     }
 
-    // ── MediaStore 에서 휴지통 항목 조회 ──────────────────────
+    private fun setupMultiselectBar() {
+        multiselectBar = findViewById(R.id.rbMultiselectBar)
+        tvMultiCount   = multiselectBar.findViewById(R.id.tvRbMultiCount)
+
+        multiselectBar.findViewById<View>(R.id.btnRbMultiClose).setOnClickListener {
+            adapter.exitMultiSelectMode()
+        }
+        multiselectBar.findViewById<View>(R.id.btnRbMultiRestore).setOnClickListener {
+            val selected = adapter.getSelectedItems()
+            if (selected.isEmpty()) return@setOnClickListener
+            restoreItems(selected)
+        }
+        multiselectBar.findViewById<View>(R.id.btnRbMultiDelete).setOnClickListener {
+            val selected = adapter.getSelectedItems()
+            if (selected.isEmpty()) return@setOnClickListener
+            showBulkDeleteConfirmDialog(selected)
+        }
+        multiselectBar.findViewById<View>(R.id.btnRbMultiMore).setOnClickListener {
+            showMultiselectMoreMenu()
+        }
+    }
+
+    private fun setupBackPressed() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (adapter.isMultiSelectMode) {
+                    adapter.exitMultiSelectMode()
+                    return
+                }
+                isEnabled = false
+                onBackPressedDispatcher.onBackPressed()
+            }
+        })
+    }
+
+    private fun updateMultiselectBar(count: Int) {
+        if (count > 0) {
+            multiselectBar.visibility = View.VISIBLE
+            tvMultiCount.text = count.toString()
+        } else {
+            multiselectBar.visibility = View.GONE
+        }
+    }
+
+    private fun showMultiselectMoreMenu() {
+        val dialog    = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val sheetView = layoutInflater.inflate(R.layout.bottom_sheet_rb_multiselect_menu, null)
+        sheetView.findViewById<View>(R.id.menuRbSelectAll).setOnClickListener {
+            dialog.dismiss()
+            adapter.selectAll()
+        }
+        dialog.setContentView(sheetView)
+        dialog.show()
+    }
+
+    // ── MediaStore 쿼리 ───────────────────────────────────────
     private fun loadTrashedFiles() {
         lifecycleScope.launch {
             val items = withContext(Dispatchers.IO) { queryTrashedFiles() }
@@ -100,7 +162,6 @@ class RecycleBinActivity : AppCompatActivity() {
 
         val queryArgs = android.os.Bundle().apply {
             putInt(MediaStore.QUERY_ARG_MATCH_TRASHED, MediaStore.MATCH_ONLY)
-            // 비디오 + 이미지만 포함
             putString(
                 ContentResolver.QUERY_ARG_SQL_SELECTION,
                 "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (${MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO}, ${MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE})"
@@ -136,7 +197,6 @@ class RecycleBinActivity : AppCompatActivity() {
                 val expiresAt   = cursor.getLong(expiresCol) * 1000L
                 val dateTrashed = expiresAt - TimeUnit.DAYS.toMillis(30)
 
-                // contentUri — 타입에 맞는 base URI 사용
                 val baseUri = when (mediaType) {
                     MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO ->
                         MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -152,10 +212,9 @@ class RecycleBinActivity : AppCompatActivity() {
         return result
     }
 
-    // ── 복원 (휴지통에서 꺼내기) ──────────────────────────────
+    // ── 단일 복원 ─────────────────────────────────────────────
     private fun restoreItem(item: TrashedItem) {
         lifecycleScope.launch {
-            // createTrashRequest(trash = false) → 휴지통에서 복원
             val pi = MediaStore.createTrashRequest(
                 contentResolver, listOf(item.contentUri), false
             )
@@ -165,7 +224,19 @@ class RecycleBinActivity : AppCompatActivity() {
         }
     }
 
-    // ── 영구 삭제 ─────────────────────────────────────────────
+    // ── 멀티 복원 ─────────────────────────────────────────────
+    private fun restoreItems(items: List<TrashedItem>) {
+        lifecycleScope.launch {
+            val uris = items.map { it.contentUri }
+            val pi = MediaStore.createTrashRequest(contentResolver, uris, false)
+            adapter.exitMultiSelectMode()
+            restoreRequestLauncher.launch(
+                androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
+            )
+        }
+    }
+
+    // ── 단일 영구 삭제 ────────────────────────────────────────
     private fun permanentlyDelete(item: TrashedItem) {
         android.app.AlertDialog.Builder(this)
             .setTitle("영구 삭제")
@@ -184,14 +255,39 @@ class RecycleBinActivity : AppCompatActivity() {
             .show()
     }
 
+    // ── 멀티 영구 삭제 확인 다이얼로그 ───────────────────────
+    private fun showBulkDeleteConfirmDialog(items: List<TrashedItem>) {
+        val count = items.size
+        val message = if (count == 1)
+            "\"${items.first().displayName}\" 을(를) 영구 삭제하시겠습니까?\n복구할 수 없습니다."
+        else
+            "${count}개 항목을 영구 삭제하시겠습니까?\n복구할 수 없습니다."
+
+        android.app.AlertDialog.Builder(this)
+            .setTitle("영구 삭제")
+            .setMessage(message)
+            .setPositiveButton("삭제") { _, _ ->
+                lifecycleScope.launch {
+                    val uris = items.map { it.contentUri }
+                    val pi = MediaStore.createDeleteRequest(contentResolver, uris)
+                    adapter.exitMultiSelectMode()
+                    deleteRequestLauncher.launch(
+                        androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
+                    )
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
     private val restoreRequestLauncher =
         registerForActivityResult(
-            androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult()
+            ActivityResultContracts.StartIntentSenderForResult()
         ) { loadTrashedFiles() }
 
     private val deleteRequestLauncher =
         registerForActivityResult(
-            androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult()
+            ActivityResultContracts.StartIntentSenderForResult()
         ) { loadTrashedFiles() }
 
     // ── Adapter ───────────────────────────────────────────────
@@ -200,17 +296,62 @@ class RecycleBinActivity : AppCompatActivity() {
         private val onDeleteClick:  (TrashedItem) -> Unit
     ) : ListAdapter<TrashedItem, RecycleBinAdapter.VH>(DIFF) {
 
+        private val selectedIds = mutableSetOf<Long>()
+        var isMultiSelectMode = false
+            private set
+
+        var onSelectionChanged: ((Int) -> Unit)? = null
+
+        fun enterMultiSelectMode(id: Long) {
+            isMultiSelectMode = true
+            selectedIds.clear()
+            selectedIds.add(id)
+            notifyDataSetChanged()
+            onSelectionChanged?.invoke(selectedIds.size)
+        }
+
+        fun exitMultiSelectMode() {
+            isMultiSelectMode = false
+            selectedIds.clear()
+            notifyDataSetChanged()
+            onSelectionChanged?.invoke(0)
+        }
+
+        fun selectAll() {
+            for (i in 0 until itemCount) selectedIds.add(getItem(i).id)
+            notifyDataSetChanged()
+            onSelectionChanged?.invoke(selectedIds.size)
+        }
+
+        fun getSelectedItems(): List<TrashedItem> =
+            (0 until itemCount).map { getItem(it) }.filter { it.id in selectedIds }
+
+        private fun toggleSelection(id: Long) {
+            if (id in selectedIds) {
+                selectedIds.remove(id)
+                if (selectedIds.isEmpty()) {
+                    exitMultiSelectMode()
+                    return
+                }
+            } else {
+                selectedIds.add(id)
+            }
+            onSelectionChanged?.invoke(selectedIds.size)
+        }
+
         private val THUMB_OPT = RequestOptions()
             .transform(CenterCrop())
             .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
             .placeholder(android.R.drawable.ic_menu_gallery)
 
         inner class VH(view: View) : RecyclerView.ViewHolder(view) {
-            val ivThumb:    ImageView   = view.findViewById(R.id.ivThumb)
-            val tvDuration: TextView    = view.findViewById(R.id.tvDuration)
-            val tvFileName: TextView    = view.findViewById(R.id.tvFileName)
-            val tvDaysLeft: TextView    = view.findViewById(R.id.tvDaysLeft)
-            val btnMore:    ImageButton = view.findViewById(R.id.btnMore)
+            val ivThumb:           ImageView   = view.findViewById(R.id.ivThumb)
+            val tvDuration:        TextView    = view.findViewById(R.id.tvDuration)
+            val tvFileName:        TextView    = view.findViewById(R.id.tvFileName)
+            val tvDaysLeft:        TextView    = view.findViewById(R.id.tvDaysLeft)
+            val btnMore:           ImageButton = view.findViewById(R.id.btnMore)
+            val viewSelectOverlay: View        = view.findViewById(R.id.viewSelectOverlay)
+            val ivCheckMark:       ImageView   = view.findViewById(R.id.ivCheckMark)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -224,7 +365,6 @@ class RecycleBinActivity : AppCompatActivity() {
             holder.tvFileName.text = item.displayName
             holder.tvDaysLeft.text = "${item.daysLeft} dagen"
 
-            // duration
             if (item.duration > 0) {
                 val total = item.duration / 1000
                 val m = (total % 3600) / 60
@@ -235,14 +375,22 @@ class RecycleBinActivity : AppCompatActivity() {
                 holder.tvDuration.visibility = View.GONE
             }
 
-            // 썸네일 (휴지통 항목은 contentUri 로 Glide 로딩)
             Glide.with(holder.ivThumb)
                 .asBitmap()
                 .load(item.contentUri)
                 .apply(THUMB_OPT)
                 .into(holder.ivThumb)
 
-            // 더보기 → 복원 / 영구삭제
+            // 선택 상태 오버레이
+            val isSelected = item.id in selectedIds
+            holder.viewSelectOverlay.visibility = if (isMultiSelectMode && isSelected) View.VISIBLE else View.GONE
+            holder.ivCheckMark.visibility       = if (isMultiSelectMode && isSelected) View.VISIBLE else View.GONE
+            holder.itemView.setBackgroundColor(
+                if (isMultiSelectMode && isSelected) 0xFFF1F1F1.toInt() else 0x00FFFFFF
+            )
+
+            // 더보기 버튼: 멀티셀렉트 모드에서는 숨김
+            holder.btnMore.visibility = if (isMultiSelectMode) View.GONE else View.VISIBLE
             holder.btnMore.setOnClickListener {
                 com.google.android.material.bottomsheet.BottomSheetDialog(holder.itemView.context).also { dialog ->
                     val v = LayoutInflater.from(holder.itemView.context)
@@ -258,6 +406,19 @@ class RecycleBinActivity : AppCompatActivity() {
                     dialog.setContentView(v)
                     dialog.show()
                 }
+            }
+
+            holder.itemView.setOnClickListener {
+                if (isMultiSelectMode) {
+                    toggleSelection(item.id)
+                    notifyItemChanged(position)
+                }
+            }
+            holder.itemView.setOnLongClickListener {
+                if (!isMultiSelectMode) {
+                    enterMultiSelectMode(item.id)
+                }
+                true
             }
         }
 

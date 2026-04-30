@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/item_recycle_bin.xml -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,7 +14,7 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!-- 썸네일 + duration -->
+    <!-- 썸네일 + duration + 선택 오버레이 -->
     <FrameLayout
         android:layout_width="100dp"
         android:layout_height="wrap_content"
@@ -56,6 +55,24 @@
             android:paddingBottom="1dp"
             android:visibility="gone" />
 
+        <!-- 파란 오버레이 (선택 시) -->
+        <View
+            android:id="@+id/viewSelectOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#664A7FD4"
+            android:visibility="gone" />
+
+        <!-- 체크마크 (선택 시) -->
+        <ImageView
+            android:id="@+id/ivCheckMark"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="top|start"
+            android:src="@drawable/ic_check_selected"
+            android:visibility="gone"
+            android:contentDescription="selected" />
+
     </FrameLayout>
 
     <!-- 파일명 + 남은 시간 -->
@@ -77,7 +94,6 @@
             android:ellipsize="end"
             android:lineSpacingMultiplier="1.1" />
 
-        <!-- 남은 보관 기간 -->
         <TextView
             android:id="@+id/tvDaysLeft"
             android:layout_width="wrap_content"
