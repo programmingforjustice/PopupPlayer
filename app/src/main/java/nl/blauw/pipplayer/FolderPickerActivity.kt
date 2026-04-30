@@ -240,7 +240,10 @@ class FolderPickerActivity : AppCompatActivity() {
     // ── Inner Adapter ─────────────────────────────────────────
     inner class FolderAdapter(
         private val onClick: (File) -> Unit
-    ) : ListAdapter<File, FolderAdapter.VH>(DIFF) {
+    ) : ListAdapter<File, FolderAdapter.VH>(object : DiffUtil.ItemCallback<File>() {
+        override fun areItemsTheSame(a: File, b: File)    = a.absolutePath == b.absolutePath
+        override fun areContentsTheSame(a: File, b: File) = a.absolutePath == b.absolutePath
+    }) {
 
         inner class VH(view: View) : RecyclerView.ViewHolder(view) {
             val tvName:  TextView = view.findViewById(R.id.tvFolderName)
@@ -259,11 +262,6 @@ class FolderPickerActivity : AppCompatActivity() {
             val subCount = folder.listFiles { f -> f.isDirectory }?.size ?: 0
             holder.tvCount.text = "$subCount mappen"
             holder.itemView.setOnClickListener { onClick(folder) }
-        }
-
-        private val DIFF = object : DiffUtil.ItemCallback<File>() {
-            override fun areItemsTheSame(a: File, b: File)    = a.absolutePath == b.absolutePath
-            override fun areContentsTheSame(a: File, b: File) = a.absolutePath == b.absolutePath
         }
     }
 }
