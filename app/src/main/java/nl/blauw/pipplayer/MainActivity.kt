@@ -1,17 +1,20 @@
 package nl.blauw.pipplayer
 
 import android.Manifest
+import android.content.ContentUris
 import android.content.pm.PackageManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Build
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.webkit.MimeTypeMap
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -36,6 +39,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -341,7 +345,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    private var pendingDeletePaths = emptySet<String>()
+    private var pendingDeletePaths  = emptySet<String>()
+    private var pendingPickerMode   = ""
+    private var pendingPickerPaths  = emptyList<String>()
+
+    // ── SAF 폴더 선택 런처 ────────────────────────────────────
+    private val folderPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { treeUri ->
+            if (treeUri == null) return@registerForActivityResult
+            // 영속 권한 획득
+            contentResolver.takePersistableUriPermission(
+                treeUri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            performCopyMove(treeUri, pendingPickerPaths, pendingPickerMode)
+        }
 
     private val trashRequestLauncher =
         registerForActivityResult(
@@ -373,28 +391,101 @@ class MainActivity : AppCompatActivity() {
         }
         sheetView.findViewById<View>(R.id.menuMoveToFolder).setOnClickListener {
             dialog.dismiss()
-            val paths = ArrayList(fileListAdapter.getSelectedEntries().map { it.path })
-            val intent = Intent(this, FolderPickerActivity::class.java).apply {
-                putExtra(FolderPickerActivity.EXTRA_MODE, FolderPickerActivity.MODE_MOVE)
-                putStringArrayListExtra(FolderPickerActivity.EXTRA_PATHS, paths)
-            }
-            startActivity(intent)
+            pendingPickerPaths = fileListAdapter.getSelectedEntries().map { it.path }
+            pendingPickerMode  = "MOVE"
             fileListAdapter.exitMultiSelectMode()
+            folderPickerLauncher.launch(null)
         }
         sheetView.findViewById<View>(R.id.menuCopyToFolder).setOnClickListener {
             dialog.dismiss()
-            val paths = ArrayList(fileListAdapter.getSelectedEntries().map { it.path })
-            val intent = Intent(this, FolderPickerActivity::class.java).apply {
-                putExtra(FolderPickerActivity.EXTRA_MODE, FolderPickerActivity.MODE_COPY)
-                putStringArrayListExtra(FolderPickerActivity.EXTRA_PATHS, paths)
-            }
-            startActivity(intent)
+            pendingPickerPaths = fileListAdapter.getSelectedEntries().map { it.path }
+            pendingPickerMode  = "COPY"
             fileListAdapter.exitMultiSelectMode()
+            folderPickerLauncher.launch(null)
         }
 
         dialog.setContentView(sheetView)
         dialog.show()
     }
+
+    // ── SAF 복사/이동 실행 ────────────────────────────────────
+    private fun performCopyMove(treeUri: Uri, paths: List<String>, mode: String) {
+        val docId  = DocumentsContract.getTreeDocumentId(treeUri)
+        val dirUri = DocumentsContract.buildDocumentUriUsingTree(treeUri, docId)
+
+        lifecycleScope.launch {
+            val succeeded = mutableListOf<String>()
+            val failed    = mutableListOf<String>()
+
+            withContext(Dispatchers.IO) {
+                for (path in paths) {
+                    val srcFile = File(path)
+                    try {
+                        val ext      = srcFile.extension.lowercase()
+                        val mimeType = MimeTypeMap.getSingleton()
+                            .getMimeTypeFromExtension(ext) ?: "application/octet-stream"
+
+                        // SAF로 목적지 파일 생성 (이름은 확장자 없이 전달 — 공급자가 MIME로 확장자 추가)
+                        val newDocUri = DocumentsContract.createDocument(
+                            contentResolver, dirUri, mimeType, srcFile.nameWithoutExtension
+                        ) ?: throw IOException("대상 파일 생성 실패")
+
+                        // 소스 읽기 (scoped storage 대응: content URI 우선)
+                        val srcUri = resolveSingleContentUri(path)
+                        val input  = if (srcUri != null) contentResolver.openInputStream(srcUri)
+                                     else srcFile.inputStream()
+                        checkNotNull(input) { "소스를 열 수 없음" }
+
+                        input.use { i ->
+                            (contentResolver.openOutputStream(newDocUri)
+                                ?: throw IOException("출력 스트림 열기 실패"))
+                                .use { o -> i.copyTo(o) }
+                        }
+
+                        if (mode == "MOVE") {
+                            if (srcUri != null) {
+                                runCatching { contentResolver.delete(srcUri, null, null) }
+                                    .onFailure { srcFile.delete() }
+                            } else {
+                                srcFile.delete()
+                            }
+                            fileListAdapter.removeEntries(setOf(path))
+                        }
+
+                        succeeded.add(srcFile.name)
+                    } catch (e: Exception) {
+                        failed.add(srcFile.name)
+                        android.util.Log.e("MainActivity", "CopyMove 실패: ${srcFile.name}", e)
+                    }
+                }
+            }
+
+            if (succeeded.isNotEmpty()) {
+                Toast.makeText(this@MainActivity, succeeded.joinToString(", "), Toast.LENGTH_LONG).show()
+            }
+            if (failed.isNotEmpty()) {
+                Toast.makeText(this@MainActivity, "실패: ${failed.joinToString(", ")}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun resolveSingleContentUri(path: String): Uri? =
+        contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            arrayOf(MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.MEDIA_TYPE),
+            "${MediaStore.Files.FileColumns.DATA} = ?",
+            arrayOf(path), null
+        )?.use { c ->
+            if (!c.moveToFirst()) return@use null
+            val id   = c.getLong(0)
+            val type = c.getInt(1)
+            val base = when (type) {
+                MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+                MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                else -> MediaStore.Files.getContentUri("external")
+            }
+            ContentUris.withAppendedId(base, id)
+        }
 
     // ── 검색 바 ───────────────────────────────────────────────
 

@@ -50,8 +50,6 @@
 
     <activity android:name=".RecycleBinActivity" />
 
-    <activity android:name=".FolderPickerActivity" />
-
     <service android:name=".PlayerService" 
       android:foregroundServiceType="mediaPlayback"
       android:exported="true"
