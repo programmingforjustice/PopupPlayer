@@ -2,6 +2,7 @@ package nl.blauw.pipplayer
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.format.Formatter
 import android.view.LayoutInflater
 import android.view.View
@@ -288,9 +289,35 @@ class PlaylistDetailActivity : AppCompatActivity() {
             val isVideo = item.mediaPath.substringAfterLast('.', "").lowercase() in
                     setOf("mp4","mkv","avi","mov","wmv","flv","webm","3gp","m4v","ts")
 
-            holder.tvTitle.text   = file.name
-            holder.tvMeta.text    = Formatter.formatShortFileSize(holder.itemView.context, file.length())
-            holder.tvDuration.visibility = if (isVideo) View.VISIBLE else View.GONE
+            holder.tvTitle.text = file.name
+            holder.tvMeta.text  = Formatter.formatShortFileSize(holder.itemView.context, file.length())
+
+            if (isVideo) {
+                holder.tvDuration.visibility = View.VISIBLE
+                holder.tvDuration.text = ""
+                lifecycleScope.launch {
+                    val ms = withContext(Dispatchers.IO) {
+                        contentResolver.query(
+                            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+                            arrayOf(MediaStore.Video.Media.DURATION),
+                            "${MediaStore.Video.Media.DATA} = ?",
+                            arrayOf(item.mediaPath), null
+                        )?.use { c -> if (c.moveToFirst()) c.getLong(0) else 0L } ?: 0L
+                    }
+                    if (ms > 0L) {
+                        val total = ms / 1000
+                        val h = total / 3600
+                        val m = (total % 3600) / 60
+                        val s = total % 60
+                        holder.tvDuration.text = if (h > 0) "%d:%02d:%02d".format(h, m, s)
+                                                 else "%02d:%02d".format(m, s)
+                    } else {
+                        holder.tvDuration.visibility = View.GONE
+                    }
+                }
+            } else {
+                holder.tvDuration.visibility = View.GONE
+            }
 
             // 썸네일
             if (isVideo) {

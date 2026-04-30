@@ -229,7 +229,6 @@ class RecycleBinActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val uris = items.map { it.contentUri }
             val pi = MediaStore.createTrashRequest(contentResolver, uris, false)
-            adapter.exitMultiSelectMode()
             restoreRequestLauncher.launch(
                 androidx.activity.result.IntentSenderRequest.Builder(pi.intentSender).build()
             )
@@ -283,7 +282,12 @@ class RecycleBinActivity : AppCompatActivity() {
     private val restoreRequestLauncher =
         registerForActivityResult(
             ActivityResultContracts.StartIntentSenderForResult()
-        ) { loadTrashedFiles() }
+        ) { result ->
+            if (result.resultCode == android.app.Activity.RESULT_OK) {
+                adapter.exitMultiSelectMode()
+            }
+            loadTrashedFiles()
+        }
 
     private val deleteRequestLauncher =
         registerForActivityResult(

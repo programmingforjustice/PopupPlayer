@@ -77,12 +77,19 @@ class PlaylistActivity : AppCompatActivity() {
         }
     }
 
+    private val detailLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
+    ) {
+        // Force rebind so item counts reflect any deletions in PlaylistDetailActivity
+        adapter.notifyDataSetChanged()
+    }
+
     private fun openDetail(playlist: Playlist) {
         val intent = Intent(this, PlaylistDetailActivity::class.java).apply {
             putExtra(PlaylistDetailActivity.EXTRA_PLAYLIST_ID,   playlist.id)
             putExtra(PlaylistDetailActivity.EXTRA_PLAYLIST_NAME, playlist.name)
         }
-        startActivity(intent)
+        detailLauncher.launch(intent)
     }
 
     private fun showNewPlaylistDialog() {
