@@ -373,12 +373,22 @@ class MainActivity : AppCompatActivity() {
         }
         sheetView.findViewById<View>(R.id.menuMoveToFolder).setOnClickListener {
             dialog.dismiss()
-            Toast.makeText(this, "폴더로 이동 (TODO)", Toast.LENGTH_SHORT).show()
+            val paths = ArrayList(fileListAdapter.getSelectedEntries().map { it.path })
+            val intent = Intent(this, FolderPickerActivity::class.java).apply {
+                putExtra(FolderPickerActivity.EXTRA_MODE, FolderPickerActivity.MODE_MOVE)
+                putStringArrayListExtra(FolderPickerActivity.EXTRA_PATHS, paths)
+            }
+            startActivity(intent)
             fileListAdapter.exitMultiSelectMode()
         }
         sheetView.findViewById<View>(R.id.menuCopyToFolder).setOnClickListener {
             dialog.dismiss()
-            Toast.makeText(this, "폴더로 복사 (TODO)", Toast.LENGTH_SHORT).show()
+            val paths = ArrayList(fileListAdapter.getSelectedEntries().map { it.path })
+            val intent = Intent(this, FolderPickerActivity::class.java).apply {
+                putExtra(FolderPickerActivity.EXTRA_MODE, FolderPickerActivity.MODE_COPY)
+                putStringArrayListExtra(FolderPickerActivity.EXTRA_PATHS, paths)
+            }
+            startActivity(intent)
             fileListAdapter.exitMultiSelectMode()
         }
 
