@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
         ) { grants: Map<String, Boolean> ->
-            if (grants.values.all { it }) loadRootFolders()
+            if (grants.values.all { it }) loadRoot()
             else Toast.makeText(this, "저장소 권한이 필요합니다.", Toast.LENGTH_LONG).show()
         }
 
@@ -148,6 +148,7 @@ class MainActivity : AppCompatActivity() {
         rvFolders        = findViewById(R.id.rvFolders)
         btnBack          = findViewById(R.id.btnBack)
         btnSort          = findViewById(R.id.btnSort)
+        btnFilterToggle  = findViewById(R.id.btnFilterToggle)
         bottomNav        = findViewById(R.id.bottomNav)
     }
 
@@ -531,6 +532,8 @@ class MainActivity : AppCompatActivity() {
 
     // ── 레이아웃 상태 ─────────────────────────────────────────
     private var isGridLayout = false
+    private var showFoldersMode = true
+    private lateinit var btnFilterToggle: ImageButton
 
     // ── 툴바 버튼 ─────────────────────────────────────────────
     private fun setupToolbar() {
@@ -555,6 +558,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupFilterButtons()
+
+        btnFilterToggle.setOnClickListener {
+            showFoldersMode = !showFoldersMode
+            updateFilterToggleButton()
+            if (folderStack.isEmpty()) {
+                showRootScreen()
+                if (showFoldersMode) loadRootFolders()
+            } else {
+                val (dir, bucketId) = folderStack.last()
+                loadDirectory(dir, bucketId, restoreScroll = false)
+            }
+        }
 
         findViewById<ImageButton>(R.id.btnLayoutToggle).setOnClickListener {
             isGridLayout = !isGridLayout
@@ -780,7 +795,7 @@ class MainActivity : AppCompatActivity() {
         val allGranted = permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
-        if (allGranted) loadRootFolders() else permissionLauncher.launch(permissions)
+        if (allGranted) loadRoot() else permissionLauncher.launch(permissions)
     }
 
     // ─────────────────────────────────────────────────────────
@@ -811,21 +826,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showRootScreen(restoreScroll: Boolean = false) {
-        // 타이틀 원복
-        tvTitle.text = "Video's"
-        // 브레드크럼 / 아이템 수 숨김
+        tvTitle.text                = "Video's"
         layoutBreadcrumb.visibility = View.GONE
-        layoutFilterBar.visibility  = View.GONE
-        // 뒤로가기 버튼 숨김
-        btnBack.visibility = View.GONE
-        // Adapter 를 루트 전환
-        rvFolders.adapter = rootFolderAdapter
-        layoutEmpty.visibility = View.GONE
-        rvFolders.visibility   = View.VISIBLE
-        currentFilter          = FilterType.ALL
+        btnBack.visibility          = View.GONE
+        currentFilter               = FilterType.ALL
 
-        if (restoreScroll) {
-            restoreScrollPosition(KEY_ROOT)
+        if (showFoldersMode) {
+            layoutFilterBar.visibility = View.GONE
+            if (rvFolders.adapter !== rootFolderAdapter) rvFolders.adapter = rootFolderAdapter
+            layoutEmpty.visibility = View.GONE
+            rvFolders.visibility   = View.VISIBLE
+            if (restoreScroll) restoreScrollPosition(KEY_ROOT)
+        } else {
+            layoutFilterBar.visibility = View.VISIBLE
+            updateFilterButtons()
+            loadAllMedia()
         }
     }
 
@@ -887,24 +902,24 @@ class MainActivity : AppCompatActivity() {
             // ── IO 스레드에서 전체 항목 수집 및 정렬 수행 ──────────────
             //    메인 스레드에는 최종 정렬된 List 만 전달
             scanDirectoryFlow(folder, bucketId).collect { (isPartial, entries) ->
-
-                // submitList 는 메인 스레드에서 호출 (collect 컨텍스트 = Main)
-                val isEmpty = entries.isEmpty()
+                val visible   = if (showFoldersMode) entries
+                                else entries.filter { it.type != EntryType.DIRECTORY }
+                val isEmpty   = visible.isEmpty()
                 layoutEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
                 rvFolders.visibility   = if (isEmpty) View.GONE    else View.VISIBLE
 
-                val dirCount  = entries.count { it.type == EntryType.DIRECTORY }
-                val fileCount = entries.size - dirCount
-                tvItemCount.text = if (isPartial) "폴더 ${dirCount}개  •  파일 ${fileCount}개+" // 로딩 중 표시
+                val dirCount  = visible.count { it.type == EntryType.DIRECTORY }
+                val fileCount = visible.size - dirCount
+                tvItemCount.text = if (isPartial) "폴더 ${dirCount}개  •  파일 ${fileCount}개+"
                                    else           "폴더 ${dirCount}개  •  파일 ${fileCount}개"
 
                 if (restoreScroll) {
-                    fileListAdapter.submitEntries(entries)
+                    fileListAdapter.submitEntries(visible)
                     if (!isPartial) {
                         rvFolders.post { restoreScrollPosition(folder.absolutePath) }
                     }
                 } else {
-                    fileListAdapter.submitEntries(entries)
+                    fileListAdapter.submitEntries(visible)
                 }
             }
 
@@ -1060,6 +1075,82 @@ class MainActivity : AppCompatActivity() {
      * - 집계 완료 직후 thumbnailPath 가 채워진 FolderItem 을 한꺼번에 emit
      * - UI 는 쿼리 1회 완료 시점에 전체 목록(썸네일 포함)을 표시
      */
+    // ── 필터 토글 헬퍼 ───────────────────────────────────────
+    private fun loadRoot() {
+        if (showFoldersMode) loadRootFolders() else loadAllMedia()
+    }
+
+    private fun updateFilterToggleButton() {
+        btnFilterToggle.setImageResource(
+            if (showFoldersMode) R.drawable.filter_toggle_normal
+            else                 R.drawable.filter_toggle_only_media
+        )
+    }
+
+    private fun loadAllMedia() {
+        if (rvFolders.adapter !== fileListAdapter) rvFolders.adapter = fileListAdapter
+        fileListAdapter.submitEntries(emptyList())
+        lifecycleScope.launch {
+            scanAllMediaFlow().collect { (isPartial, entries) ->
+                val isEmpty = entries.isEmpty()
+                layoutEmpty.visibility = if (isEmpty) View.VISIBLE else View.GONE
+                rvFolders.visibility   = if (isEmpty) View.GONE    else View.VISIBLE
+                tvItemCount.text = if (isPartial) "미디어 ${entries.size}개+"
+                                   else           "미디어 ${entries.size}개"
+                fileListAdapter.submitEntries(entries)
+            }
+            rvFolders.scrollToPosition(0)
+        }
+    }
+
+    private fun scanAllMediaFlow(): Flow<Pair<Boolean, List<FileEntry>>> = flow {
+        val projection = arrayOf(
+            MediaStore.Files.FileColumns.DATA,
+            MediaStore.Files.FileColumns.MEDIA_TYPE,
+            MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Video.Media.DURATION
+        )
+        val selection = "${MediaStore.Files.FileColumns.MEDIA_TYPE} IN (?,?)"
+        val selArgs   = arrayOf(
+            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString()
+        )
+        val sortOrder = when (currentSort) {
+            SortOrder.NAME_ASC      -> "${MediaStore.Files.FileColumns.DISPLAY_NAME} ASC"
+            SortOrder.NAME_DESC     -> "${MediaStore.Files.FileColumns.DISPLAY_NAME} DESC"
+            SortOrder.DATE_NEWEST   -> "${MediaStore.Files.FileColumns.DATE_MODIFIED} DESC"
+            SortOrder.DATE_OLDEST   -> "${MediaStore.Files.FileColumns.DATE_MODIFIED} ASC"
+            SortOrder.SIZE_LARGEST  -> "${MediaStore.Files.FileColumns.SIZE} DESC"
+            SortOrder.SIZE_SMALLEST -> "${MediaStore.Files.FileColumns.SIZE} ASC"
+        }
+        val all = mutableListOf<FileEntry>()
+        contentResolver.query(
+            MediaStore.Files.getContentUri("external"),
+            projection, selection, selArgs, sortOrder
+        )?.use { c ->
+            val dataCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATA)
+            val typeCol = c.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
+            val mimeCol = c.getColumnIndex(MediaStore.Files.FileColumns.MIME_TYPE)
+            val durCol  = c.getColumnIndex(MediaStore.Video.Media.DURATION)
+            while (c.moveToNext()) {
+                val path  = c.getString(dataCol) ?: continue
+                val mType = c.getInt(typeCol)
+                val mime  = if (mimeCol >= 0) c.getString(mimeCol) ?: "" else ""
+                val dur   = if (durCol >= 0 && mType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO)
+                                c.getLong(durCol) else 0L
+                val ext   = path.substringAfterLast('.', "").lowercase()
+                val type  = when {
+                    mType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> EntryType.VIDEO
+                    ext in GIF_EXT || mime.contains("gif")                 -> EntryType.GIF
+                    else                                                    -> EntryType.IMAGE
+                }
+                all.add(FileEntry(File(path), type, dur))
+                if (all.size == FIRST_CHUNK_SIZE) emit(true to all.toList())
+            }
+        }
+        emit(false to all)
+    }.flowOn(Dispatchers.IO)
+
     private fun scanMediaFoldersFlow(): Flow<FolderItem> = flow {
  
         data class FolderAccum(
