@@ -124,7 +124,7 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     override fun create(mediaUri: Uri): PopupPlayer {
         //return VideoPopupPlayer(context, mediaUrl)
-        return BasicVideoPopupPlayer(context, mediaUri.toString ?: "")
+        return BasicVideoPopupPlayer(context, mediaUri.toString() ?: "")
         //return AdaptivePopupPlayer(context, mediaUri.toString() ?: "")
         
     }
