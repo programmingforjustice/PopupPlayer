@@ -89,8 +89,8 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     init {
         onFromJsonString = { popupPlayer, layoutParams, playerInfo -> 
-           // (popupPlayer as VideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
-            (popupPlayer as AdaptivePopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
+            (popupPlayer as BasicVideoPopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
+           // (popupPlayer as AdaptivePopupPlayer).isPlaying = playerInfo.getBoolean("isPlaying")
         }
     }
     
@@ -124,8 +124,8 @@ class VideoPopupPlayerFactory(context: Context) : PopupPlayerFactory(context) {
     
     override fun create(mediaUri: Uri): PopupPlayer {
         //return VideoPopupPlayer(context, mediaUrl)
-        //return BasicVideoPopupPlayer(context, mediaUrl)
-        return AdaptivePopupPlayer(context, mediaUri.toString() ?: "")
+        return BasicVideoPopupPlayer(context, mediaUrl)
+        //return AdaptivePopupPlayer(context, mediaUri.toString() ?: "")
         
     }
 }
