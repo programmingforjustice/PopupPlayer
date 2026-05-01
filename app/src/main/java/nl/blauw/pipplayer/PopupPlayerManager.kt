@@ -55,13 +55,20 @@ object PopupPlayerManager : JsonSerializable {
                 player.dispose()
                 launchPlaylistItem(playlist, newIndex, pos)
             }
-            when (player) {
-                is AdaptivePopupPlayer -> { player.onPrev = { navigate(-1) }; player.onNext = { navigate(1) } }
-                is ImagePopupPlayer    -> { player.onPrev = { navigate(-1) }; player.onNext = { navigate(1) } }
-            }
+            applyNavCallbacks(player, navigate)
         }
         player.show()
         player.play()
+    }
+
+    private fun applyNavCallbacks(player: PopupPlayer, navigate: (Int) -> Unit) {
+        val prev: () -> Unit = { navigate(-1) }
+        val next: () -> Unit = { navigate(1) }
+        when (player) {
+            is AdaptivePopupPlayer   -> { player.onPrev = prev; player.onNext = next }
+            is BasicVideoPopupPlayer -> { player.onPrev = prev; player.onNext = next }
+            is ImagePopupPlayer      -> { player.onPrev = prev; player.onNext = next }
+        }
     }
 
     override fun toJsonString(): String {
