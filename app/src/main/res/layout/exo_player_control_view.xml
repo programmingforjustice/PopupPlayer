@@ -30,7 +30,13 @@
     android:background="#1E90FF"
     android:gravity="right"
     android:orientation="horizontal">
-      
+
+    <ImageButton
+        android:id="@+id/touch_through_button"
+        android:src="@drawable/ic_touch_through" 
+        android:layout_width="24dp"
+	android:layout_height="24dp"
+	android:background="?android:attr/selectableItemBackground" />     
       
     <ImageButton
         android:id="@+id/top_order_escalation_button"
