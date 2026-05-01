@@ -46,8 +46,8 @@ object PopupPlayerManager : JsonSerializable {
     }
 
     fun navigatePlaylist(delta: Int) {
-        val newIndex = playlistIndex + delta
-        if (newIndex < 0 || newIndex >= playlist.size) return
+        if (playlist.isEmpty()) return
+        val newIndex = ((playlistIndex + delta) % playlist.size + playlist.size) % playlist.size
         val old = activePlaylistPlayer ?: return
 
         val lp = old.layoutParams

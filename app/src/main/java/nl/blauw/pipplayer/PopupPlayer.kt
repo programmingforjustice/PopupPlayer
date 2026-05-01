@@ -205,6 +205,15 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             PopupPlayerManager.escalateTopOrder(this)
             show(layoutParams)
         }
+
+        val hasPlaylist = PopupPlayerManager.playlist.size > 1
+        val prevBtn = imageViewLayout.findViewById<ImageButton>(R.id.prev_button)
+        val nextBtn = imageViewLayout.findViewById<ImageButton>(R.id.next_button)
+        val v = if (hasPlaylist) View.VISIBLE else View.GONE
+        prevBtn?.visibility = v
+        nextBtn?.visibility = v
+        prevBtn?.setOnClickListener { PopupPlayerManager.navigatePlaylist(-1) }
+        nextBtn?.setOnClickListener { PopupPlayerManager.navigatePlaylist(1) }
     }
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
@@ -580,7 +589,9 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
         }
     var isStarted = false
     
-    override val layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
+    // Own params used before first show(); after show(), layoutParams delegates to inner player
+    // so that drag updates (PlayerTouchListener modifies inner layoutParams) are reflected.
+    private val _layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
             Utils.convertDpToPixelsInt(2f, context),
             Utils.convertDpToPixelsInt(2f, context),
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -594,7 +605,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
             x = PopupPlayer.DEFAULT_POPUP_X
             y = PopupPlayer.DEFAULT_POPUP_Y
         }
-    
+
+    override val layoutParams: WindowManager.LayoutParams
+        get() = if (isStarted) popupPlayer.layoutParams else _layoutParams
+
     init {
         createPopupWindow()
     }

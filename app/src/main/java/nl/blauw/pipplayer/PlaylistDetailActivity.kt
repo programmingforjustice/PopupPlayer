@@ -95,7 +95,13 @@ class PlaylistDetailActivity : AppCompatActivity() {
             // TODO: 플레이리스트 삭제 / 이름 변경
         }
         findViewById<Button>(R.id.btnPlayAll).setOnClickListener {
-            playAll()
+            val items = adapter.currentList
+            if (items.isEmpty()) return@setOnClickListener
+            val intent = android.content.Intent(this, PlayerService::class.java).apply {
+                putExtra(PlayerService.COMMAND, PlayerService.ACTION_START_PIP_PLAYLIST)
+                putStringArrayListExtra(PlayerService.EXTRA_PATHS, ArrayList(items.map { it.mediaPath }))
+            }
+            startForegroundService(intent)
         }
         findViewById<ImageButton>(R.id.btnRepeat).setOnClickListener {
             Toast.makeText(this, "반복 재생", Toast.LENGTH_SHORT).show()
