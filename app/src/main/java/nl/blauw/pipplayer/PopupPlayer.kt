@@ -135,7 +135,8 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             url -> Uri.parse(url) 
         }*/
         //bitmap = bitmap ?: BitmapFactory.decodeFile(contentUrl) ?: throw IllegalStateException("cannot load image.")
-        bitmap = bitmap ?: loadBitmap(context, Uri.parse(contentUrl)) ?: throw IllegalStateException("cannot load image.")
+        bitmap = bitmap ?: contentUrl?.let { loadBitmap(context, Uri.parse(it)) }
+            ?: throw IllegalStateException("cannot load image.")
         bitmap?.run {
             if (params != null) {
                 layoutParams.height = params.height
@@ -626,9 +627,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
     private fun createPopupWindow() {
         this@AdaptivePopupPlayer.popupPlayer = BasicVideoPopupPlayer(context, contentUrl).apply {
             setOnIsPlayingChangedListener {
-                currentPosition = this@AdaptivePopupPlayer.popupPlayer.getCurrentPosition() 
-                
-                val imagePopupPlayer = ImagePopupPlayer(context, null, this.exportCurrentFrame()).apply {
+                currentPosition = this@AdaptivePopupPlayer.popupPlayer.getCurrentPosition()
+                val frame = this.exportCurrentFrame() ?: return@setOnIsPlayingChangedListener
+
+                val imagePopupPlayer = ImagePopupPlayer(context, null, frame).apply {
                         setOnClickListener {
                        var layoutParams = this@AdaptivePopupPlayer.popupPlayer.layoutParams
                        this@AdaptivePopupPlayer.popupPlayer.dispose()
