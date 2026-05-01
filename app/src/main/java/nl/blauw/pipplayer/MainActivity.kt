@@ -562,13 +562,9 @@ class MainActivity : AppCompatActivity() {
         btnFilterToggle.setOnClickListener {
             showFoldersMode = !showFoldersMode
             updateFilterToggleButton()
-            if (folderStack.isEmpty()) {
-                showRootScreen()
-                if (showFoldersMode) loadRootFolders()
-            } else {
-                val (dir, bucketId) = folderStack.last()
-                loadDirectory(dir, bucketId, restoreScroll = false)
-            }
+            folderStack.clear()
+            showRootScreen()
+            if (showFoldersMode) loadRootFolders()
         }
 
         findViewById<ImageButton>(R.id.btnLayoutToggle).setOnClickListener {
