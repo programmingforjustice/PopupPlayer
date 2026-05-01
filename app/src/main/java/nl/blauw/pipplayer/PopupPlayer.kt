@@ -83,12 +83,14 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         val view = popupPlayerView ?: return
         isGhostMode = !isGhostMode
         if (isGhostMode) {
-            view.alpha = 0.02f
+            view.alpha = 0.2f
+            layoutParams.alpha = 0.2f
             layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             windowManager.updateViewLayout(view, layoutParams)
             showGhostExitOverlay()
         } else {
             view.alpha = 1.0f
+            layoutParams.alpha = 1.0f
             layoutParams.flags = layoutParams.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
             windowManager.updateViewLayout(view, layoutParams)
             removeGhostExitOverlay()
