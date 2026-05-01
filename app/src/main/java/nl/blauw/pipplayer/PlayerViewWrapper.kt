@@ -38,7 +38,21 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
     fun setupTouchListener(action: (View, MotionEvent) -> Boolean) {
         super.setOnTouchListener(action)
     }
-    
+
+    fun setupPrevButton(action: (View) -> Unit) {
+        super.findViewById<ImageButton>(R.id.prev_button)?.setOnClickListener(action)
+    }
+
+    fun setupNextButton(action: (View) -> Unit) {
+        super.findViewById<ImageButton>(R.id.next_button)?.setOnClickListener(action)
+    }
+
+    fun setPrevNextVisibility(visible: Boolean) {
+        val v = if (visible) View.VISIBLE else View.GONE
+        super.findViewById<View>(R.id.prev_button)?.visibility = v
+        super.findViewById<View>(R.id.next_button)?.visibility = v
+    }
+
     /*fun applyToPlayerView(command: (playerView: PlayerView) -> Unit) {
         command(playerView)
     }*/

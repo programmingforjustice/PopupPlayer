@@ -127,8 +127,13 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
+
+        val hasPlaylist = PopupPlayerManager.playlist.size > 1
+        playerViewWrapper.setPrevNextVisibility(hasPlaylist)
+        playerViewWrapper.setupPrevButton { PopupPlayerManager.navigatePlaylist(-1) }
+        playerViewWrapper.setupNextButton { PopupPlayerManager.navigatePlaylist(1) }
     }
-    
+
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
         return playerView.also {
                 setupPlayer()

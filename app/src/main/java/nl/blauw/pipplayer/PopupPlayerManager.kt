@@ -16,7 +16,12 @@ object PopupPlayerManager : JsonSerializable {
     private var playerList: MutableList<PopupPlayer> = mutableListOf()
     private var orderList: MutableList<PopupPlayer> = mutableListOf()
     private lateinit var factory: PopupPlayerFactory
-    
+
+    var playlist: List<String> = emptyList()
+        private set
+    private var playlistIndex: Int = -1
+    private var activePlaylistPlayer: PopupPlayer? = null
+
     fun initialize(context: Context) {
         this.context = context
         this.factory = DefaultPopupPlayerFactory(context)
@@ -28,7 +33,41 @@ object PopupPlayerManager : JsonSerializable {
             orderList.add(it)
         }
     }
-    
+
+    fun startPlaylist(paths: List<String>) {
+        playlist = paths
+        playlistIndex = 0
+        activePlaylistPlayer = null
+        if (paths.isEmpty()) return
+        val player = create(paths[0])
+        activePlaylistPlayer = player
+        player.show()
+        player.play()
+    }
+
+    fun navigatePlaylist(delta: Int) {
+        val newIndex = playlistIndex + delta
+        if (newIndex < 0 || newIndex >= playlist.size) return
+        val old = activePlaylistPlayer ?: return
+
+        val lp = old.layoutParams
+        val savedX = lp.x; val savedY = lp.y
+        val savedW = lp.width; val savedH = lp.height
+
+        remove(old)
+        old.dispose()
+
+        playlistIndex = newIndex
+        val new = create(playlist[newIndex])
+        new.layoutParams.x = savedX
+        new.layoutParams.y = savedY
+        new.layoutParams.width = savedW
+        new.layoutParams.height = savedH
+        activePlaylistPlayer = new
+        new.show()
+        new.play()
+    }
+
     override fun toJsonString(): String {
         return orderList
         //return playerList
@@ -124,13 +163,16 @@ object PopupPlayerManager : JsonSerializable {
     
     fun clear() {
         playerList
-          /*.filter{ popupPlayer -> 
+          /*.filter{ popupPlayer ->
             !popupPlayer.isDisposed
           }*/
-          .forEach { popupPlayer -> 
-            popupPlayer.dispose() 
+          .forEach { popupPlayer ->
+            popupPlayer.dispose()
           }
         playerList = mutableListOf()
         orderList = mutableListOf()
+        playlist = emptyList()
+        playlistIndex = -1
+        activePlaylistPlayer = null
     }
 }
