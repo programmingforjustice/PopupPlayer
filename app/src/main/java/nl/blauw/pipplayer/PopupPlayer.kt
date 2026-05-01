@@ -30,8 +30,8 @@ interface PopupPlayer {
         const val MAX_POPUP_WIDTH = 400
         const val MAX_POPUP_HEIGHT = 400
 
-        const val DEFAULT_POPUP_X = 100
-        const val DEFAULT_POPUP_Y = 200
+        const val DEFAULT_POPUP_X = 0
+        const val DEFAULT_POPUP_Y = 0
 
         const val CONTROLLER_SHOW_TIMEOUT = 2500
         const val DEFAULT_WINDOW_FLAGS = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
@@ -316,19 +316,22 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     private fun setupPlayer() {
         val playerWrapper = player as PlayerWrapper
         
-        playerWrapper.setVideoSizeChangedListener { videoSize -> 
-                //Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
+        playerWrapper.setVideoSizeChangedListener { videoSize ->
                 val width = videoSize.width
                 val height = videoSize.height
                 if (width > 0 && height > 0) {
                     val scaleFactor = width.toDouble() / height
                     playerView.tag = scaleFactor
-                    
+
                     if (!isPlaying) {
-                      layoutParams.width = width
-                      layoutParams.height = height
+                      val dm    = context.resources.displayMetrics
+                      val maxW  = dm.widthPixels  / 2
+                      val maxH  = dm.heightPixels / 2
+                      val scale = minOf(maxW.toDouble() / width, maxH.toDouble() / height)
+                      layoutParams.width  = (width  * scale).toInt()
+                      layoutParams.height = (height * scale).toInt()
                       windowManager.updateViewLayout(playerView, layoutParams)
-                      
+
                       isPlaying = true
                     }
             }

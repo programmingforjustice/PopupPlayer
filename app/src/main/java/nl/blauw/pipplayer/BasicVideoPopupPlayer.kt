@@ -58,19 +58,22 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     private fun setupPlayer() {
         val playerWrapper = player as PlayerWrapper
         
-        playerWrapper.setVideoSizeChangedListener { videoSize -> 
-                //Toast.makeText(context, "width: ${videoSize.width}, height:${videoSize.height}", Toast.LENGTH_SHORT).show()
+        playerWrapper.setVideoSizeChangedListener { videoSize ->
                 val width = videoSize.width
                 val height = videoSize.height
                 if (width > 0 && height > 0) {
                     val scaleFactor = width.toDouble() / height
                     playerView.tag = scaleFactor
-                    
+
                     if (!isPlaying) {
-                      layoutParams.width = width
-                      layoutParams.height = height
+                      val dm    = context.resources.displayMetrics
+                      val maxW  = dm.widthPixels  / 2
+                      val maxH  = dm.heightPixels / 2
+                      val scale = minOf(maxW.toDouble() / width, maxH.toDouble() / height)
+                      layoutParams.width  = (width  * scale).toInt()
+                      layoutParams.height = (height * scale).toInt()
                       windowManager.updateViewLayout(playerView, layoutParams)
-                      
+
                       isPlaying = true
                     }
             }
