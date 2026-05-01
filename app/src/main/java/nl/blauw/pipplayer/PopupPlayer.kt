@@ -14,6 +14,8 @@ import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.SeekBar
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.util.RepeatModeUtil
@@ -78,6 +80,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     var isGhostMode = false
         private set
     private var ghostExitOverlay: View? = null
+    private var ghostSeekBar: SeekBar? = null
+    private var ghostOverlayParams: WindowManager.LayoutParams? = null
 
     fun toggleGhostMode() {
         val view = popupPlayerView ?: return
@@ -98,27 +102,70 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     }
 
     private fun showGhostExitOverlay() {
-        val size = Utils.convertDpToPixelsInt(44f, context)
+        val btnSize = Utils.convertDpToPixelsInt(44f, context)
+        val pad     = Utils.convertDpToPixelsInt(6f,  context)
+
         val p = WindowManager.LayoutParams(
-            size, size,
+            WindowManager.LayoutParams.WRAP_CONTENT,
+            WindowManager.LayoutParams.WRAP_CONTENT,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
             else
                 @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_TOAST,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
             x = layoutParams.x
             y = layoutParams.y
         }
+        ghostOverlayParams = p
+
+        // Opacity SeekBar — hidden until long-press
+        val seekBar = SeekBar(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                Utils.convertDpToPixelsInt(160f, context),
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply { topMargin = pad }
+            max      = 100
+            progress = 20   // matches initial 20% ghost opacity
+            visibility = View.GONE
+            setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(sb: SeekBar, progress: Int, fromUser: Boolean) {
+                    val alpha = progress.coerceAtLeast(5) / 100f
+                    popupPlayerView?.alpha       = alpha
+                    this@BasePopupPlayer.layoutParams.alpha = alpha
+                    popupPlayerView?.let { windowManager.updateViewLayout(it, this@BasePopupPlayer.layoutParams) }
+                }
+                override fun onStartTrackingTouch(sb: SeekBar) {}
+                override fun onStopTrackingTouch(sb: SeekBar) {}
+            })
+        }
+        ghostSeekBar = seekBar
+
         val btn = ImageButton(context).apply {
+            layoutParams = LinearLayout.LayoutParams(btnSize, btnSize)
             setImageResource(R.drawable.ic_touch_through)
             setBackgroundColor(0xCC1565C0.toInt())
             setOnClickListener { toggleGhostMode() }
+            setOnLongClickListener {
+                seekBar.visibility = if (seekBar.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                ghostOverlayParams?.let { windowManager.updateViewLayout(ghostExitOverlay, it) }
+                true
+            }
         }
-        ghostExitOverlay = btn
-        windowManager.addView(btn, p)
+
+        val container = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity     = Gravity.CENTER_HORIZONTAL
+            setBackgroundColor(0xCC000000.toInt())
+            setPadding(pad, pad, pad, pad)
+            addView(btn)
+            addView(seekBar)
+        }
+        ghostExitOverlay = container
+        windowManager.addView(container, p)
     }
 
     fun removeGhostExitOverlay() {
@@ -126,6 +173,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             runCatching { windowManager.removeViewImmediate(it) }
             ghostExitOverlay = null
         }
+        ghostSeekBar      = null
+        ghostOverlayParams = null
     }
 
     override fun show(params: WindowManager.LayoutParams?) {
