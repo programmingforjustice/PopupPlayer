@@ -127,7 +127,13 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             layoutParams = LinearLayout.LayoutParams(
                 Utils.convertDpToPixelsInt(160f, context),
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { topMargin = pad }
+            ).apply { 
+                topMargin = pad 
+                thumbTintList = ColorStateList.valueOf(Color.GREEN)
+                progressTintList = ColorStateList.valueOf(Color.GREEN)
+                progressBackgroundTintList = ColorStateList.valueOf(Color.parseColor("#55FFFFFF"))   
+            }
+
             max      = 100
             progress = 20   // matches initial 20% ghost opacity
             visibility = View.GONE
@@ -159,8 +165,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity     = Gravity.CENTER_HORIZONTAL
-            setBackgroundColor(0xCC000000.toInt())
-            setPadding(pad, pad, pad, pad)
+            setBackgroundColor(0x00FFFFFF.toInt())
+            //setPadding(pad, pad, pad, pad)
             addView(btn)
             addView(seekBar)
         }
