@@ -119,7 +119,9 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     private var onClickListener: (() -> Unit)? = null
     private var onClose: (() -> Unit)? = null
     var onOrderEscalation: (() -> Unit)? = null
-    
+    var onPrev: (() -> Unit)? = null
+    var onNext: (() -> Unit)? = null
+
     init {
         val inflater = LayoutInflater.from(context) 
         imageViewLayout = inflater.inflate(R.layout.popup_player_image_view, null, false)
@@ -139,8 +141,12 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
                 layoutParams.height = params.height
                 layoutParams.width = params.width
             } else {
-                layoutParams.height = height
-                layoutParams.width = width
+                val dm    = context.resources.displayMetrics
+                val maxW  = dm.widthPixels  / 2
+                val maxH  = dm.heightPixels / 2
+                val scale = minOf(maxW.toDouble() / width, maxH.toDouble() / height)
+                layoutParams.width  = (width  * scale).toInt()
+                layoutParams.height = (height * scale).toInt()
             }
             
             imageViewLayout.tag = width.toDouble() / height //scaleFactor
@@ -206,14 +212,13 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             show(layoutParams)
         }
 
-        val hasPlaylist = PopupPlayerManager.playlist.size > 1
         val prevBtn = imageViewLayout.findViewById<ImageButton>(R.id.prev_button)
         val nextBtn = imageViewLayout.findViewById<ImageButton>(R.id.next_button)
-        val v = if (hasPlaylist) View.VISIBLE else View.GONE
+        val v = if (onPrev != null) View.VISIBLE else View.GONE
         prevBtn?.visibility = v
         nextBtn?.visibility = v
-        prevBtn?.setOnClickListener { PopupPlayerManager.navigatePlaylist(-1) }
-        nextBtn?.setOnClickListener { PopupPlayerManager.navigatePlaylist(1) }
+        prevBtn?.setOnClickListener { onPrev?.invoke() }
+        nextBtn?.setOnClickListener { onNext?.invoke() }
     }
     
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
@@ -315,7 +320,9 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
       private set
     var isFullscreen: Boolean = false
       private set
-      
+    var onPrev: (() -> Unit)? = null
+    var onNext: (() -> Unit)? = null
+
     init {
         player = playerFactory.create(contentUrl)
         playerView = playerViewFactory.create(player)
@@ -386,10 +393,9 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
 
-        val hasPlaylist = PopupPlayerManager.playlist.size > 1
-        playerViewWrapper.setPrevNextVisibility(hasPlaylist)
-        playerViewWrapper.setupPrevButton { PopupPlayerManager.navigatePlaylist(-1) }
-        playerViewWrapper.setupNextButton { PopupPlayerManager.navigatePlaylist(1) }
+        playerViewWrapper.setPrevNextVisibility(onPrev != null)
+        playerViewWrapper.setupPrevButton { onPrev?.invoke() }
+        playerViewWrapper.setupNextButton { onNext?.invoke() }
     }
 
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
@@ -588,7 +594,11 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
             popupPlayer.isPlaying = value
         }
     var isStarted = false
-    
+    var onPrev: (() -> Unit)? = null
+        set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.onPrev = value }
+    var onNext: (() -> Unit)? = null
+        set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.onNext = value }
+
     // Own params used before first show(); after show(), layoutParams delegates to inner player
     // so that drag updates (PlayerTouchListener modifies inner layoutParams) are reflected.
     private val _layoutParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
@@ -623,11 +633,11 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
                        var layoutParams = this@AdaptivePopupPlayer.popupPlayer.layoutParams
                        this@AdaptivePopupPlayer.popupPlayer.dispose()
                         createPopupWindow()
-                        
+
                        (this@AdaptivePopupPlayer.popupPlayer as? BasicVideoPopupPlayer)?.isPlaying = true
                        this@AdaptivePopupPlayer.popupPlayer.show(layoutParams)
                        this@AdaptivePopupPlayer.popupPlayer.play(currentPosition)
-                            
+
                         }
                         setOnClose {
                             PopupPlayerManager.remove(this@AdaptivePopupPlayer)
@@ -635,6 +645,8 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
                         onOrderEscalation = {
                             PopupPlayerManager.escalateOrder(this@AdaptivePopupPlayer)
                         }
+                        onPrev = this@AdaptivePopupPlayer.onPrev
+                        onNext = this@AdaptivePopupPlayer.onNext
                 }
                 
                 imagePopupPlayer.show(this@AdaptivePopupPlayer.popupPlayer.layoutParams)
@@ -652,6 +664,9 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
             }
             //this.isPlaying = this@AdaptivePopupPlayer.isPlaying
         }
+        // Apply current nav callbacks to the newly created inner player
+        (popupPlayer as? BasicVideoPopupPlayer)?.onPrev = onPrev
+        (popupPlayer as? BasicVideoPopupPlayer)?.onNext = onNext
         PopupPlayerManager.escalateTopOrder(this@AdaptivePopupPlayer)
     }
     

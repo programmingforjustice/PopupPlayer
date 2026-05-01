@@ -40,6 +40,8 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     
     private var onClose: (() -> Unit)? = null
     var onOrderEscalation: (() -> Unit)? = null
+    var onPrev: (() -> Unit)? = null
+    var onNext: (() -> Unit)? = null
       
     init {
         player = playerFactory.create(contentUrl)
@@ -128,10 +130,9 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         val playerTouchListener = PlayerTouchListener(context, windowManager, layoutParams)
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
 
-        val hasPlaylist = PopupPlayerManager.playlist.size > 1
-        playerViewWrapper.setPrevNextVisibility(hasPlaylist)
-        playerViewWrapper.setupPrevButton { PopupPlayerManager.navigatePlaylist(-1) }
-        playerViewWrapper.setupNextButton { PopupPlayerManager.navigatePlaylist(1) }
+        playerViewWrapper.setPrevNextVisibility(onPrev != null)
+        playerViewWrapper.setupPrevButton { onPrev?.invoke() }
+        playerViewWrapper.setupNextButton { onNext?.invoke() }
     }
 
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
