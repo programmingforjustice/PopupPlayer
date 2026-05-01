@@ -19,16 +19,19 @@ class PlayerService : Service() {
 
     private val commandMap = mapOf(
         ACTION_START_PIP to ::startPopupPlayer,
+        ACTION_START_PIP_PLAYLIST to ::startPlaylistPlayer,
         ACTION_SAVE_CURRENT_PLAYLIST to ::savePlayList,
         ACTION_RESTORE_CURRENT_PLAYLIST to ::restorePlayList
     )
 
     companion object {
         const val ACTION_START_PIP = "nl.blauw.pipplayer.ACTION_START_PIP"
+        const val ACTION_START_PIP_PLAYLIST = "nl.blauw.pipplayer.ACTION_START_PIP_PLAYLIST"
         const val ACTION_SAVE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.SAVE_CURRENT_PLAYLIST"
         const val ACTION_RESTORE_CURRENT_PLAYLIST = "nl.blauw.pipplayer.RESTORE_CURRENT_PLAYLIST"
         const val COMMAND = "command"
-        
+        const val EXTRA_PATHS = "paths"
+
         private const val CHANNEL_ID = "PopupPlayerChannel"
     }
 
@@ -61,6 +64,12 @@ class PlayerService : Service() {
         }
     }
     
+    private fun startPlaylistPlayer(intent: Intent?) {
+        val paths = intent?.getStringArrayListExtra(EXTRA_PATHS)
+            ?: throw IllegalStateException("cannot get paths from intent.")
+        PopupPlayerManager.startPlaylist(paths)
+    }
+
     private fun savePlayList(intent: Intent?) = PopupPlayerManager.savePlayList()
     
     private fun restorePlayList(intent: Intent?) = PopupPlayerManager.restorePlayList()

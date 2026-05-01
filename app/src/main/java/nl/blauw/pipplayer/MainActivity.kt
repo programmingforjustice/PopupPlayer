@@ -195,7 +195,12 @@ class MainActivity : AppCompatActivity() {
         multiselectBar.findViewById<View>(R.id.btnMultiPlay).setOnClickListener {
             val selected = fileListAdapter.getSelectedEntries()
             if (selected.isEmpty()) return@setOnClickListener
-            startPipPlayer(selected.first().path)
+            val paths = ArrayList(selected.map { it.path })
+            val intent = Intent(this, PlayerService::class.java).apply {
+                putExtra(PlayerService.COMMAND, PlayerService.ACTION_START_PIP_PLAYLIST)
+                putStringArrayListExtra(PlayerService.EXTRA_PATHS, paths)
+            }
+            startForegroundService(intent)
             fileListAdapter.exitMultiSelectMode()
         }
         // 즐겨찾기
