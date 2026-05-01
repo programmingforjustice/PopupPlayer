@@ -39,6 +39,10 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         super.setOnTouchListener(action)
     }
 
+    fun setupTouchThroughButton(action: (View) -> Unit) {
+        super.findViewById<ImageButton>(R.id.touch_through_button)?.setOnClickListener(action)
+    }
+
     fun setupPrevButton(action: (View) -> Unit) {
         super.findViewById<ImageButton>(R.id.prev_button)?.setOnClickListener(action)
     }

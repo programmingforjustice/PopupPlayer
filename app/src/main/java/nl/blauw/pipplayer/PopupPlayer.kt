@@ -74,6 +74,58 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         
     override var isPlaying = false
 
+    // ── Ghost mode ───────────────────────────────────────────
+    var isGhostMode = false
+        private set
+    private var ghostExitOverlay: View? = null
+
+    fun toggleGhostMode() {
+        val view = popupPlayerView ?: return
+        isGhostMode = !isGhostMode
+        if (isGhostMode) {
+            view.alpha = 0.2f
+            layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            windowManager.updateViewLayout(view, layoutParams)
+            showGhostExitOverlay()
+        } else {
+            view.alpha = 1.0f
+            layoutParams.flags = layoutParams.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
+            windowManager.updateViewLayout(view, layoutParams)
+            removeGhostExitOverlay()
+        }
+    }
+
+    private fun showGhostExitOverlay() {
+        val size = Utils.convertDpToPixelsInt(44f, context)
+        val p = WindowManager.LayoutParams(
+            size, size,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_TOAST,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.TOP or Gravity.START
+            x = layoutParams.x
+            y = layoutParams.y
+        }
+        val btn = ImageButton(context).apply {
+            setImageResource(R.drawable.ic_touch_through)
+            setBackgroundColor(0xCC1565C0.toInt())
+            setOnClickListener { toggleGhostMode() }
+        }
+        ghostExitOverlay = btn
+        windowManager.addView(btn, p)
+    }
+
+    fun removeGhostExitOverlay() {
+        ghostExitOverlay?.let {
+            runCatching { windowManager.removeViewImmediate(it) }
+            ghostExitOverlay = null
+        }
+    }
+
     override fun show(params: WindowManager.LayoutParams?) {
         //val view = createDisplayView(params)
         popupPlayerView = createDisplayView(params)
@@ -397,6 +449,7 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
         playerViewWrapper.setPrevNextVisibility(onPrev != null)
         playerViewWrapper.setupPrevButton { onPrev?.invoke() }
         playerViewWrapper.setupNextButton { onNext?.invoke() }
+        playerViewWrapper.setupTouchThroughButton { toggleGhostMode() }
     }
 
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
@@ -495,18 +548,19 @@ class VideoPopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     fun release() {
+        removeGhostExitOverlay()
         player.release()
         playerView.player = null
         removePopupWindow()
     }
-    
+
     override fun dispose() {
         if (!isDisposed) {
             release()
             isDisposed = true
         }
     }
-    
+
     fun toggleFullscreen() { 
         if (isFullscreen) {
             exitFullscreen()

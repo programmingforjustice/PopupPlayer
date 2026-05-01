@@ -133,6 +133,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         playerViewWrapper.setPrevNextVisibility(onPrev != null)
         playerViewWrapper.setupPrevButton { onPrev?.invoke() }
         playerViewWrapper.setupNextButton { onNext?.invoke() }
+        playerViewWrapper.setupTouchThroughButton { toggleGhostMode() }
     }
 
     override fun createDisplayView(params: WindowManager.LayoutParams?): View {
@@ -175,6 +176,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     }
     
     fun release() {
+        removeGhostExitOverlay()
         player.release()
         playerView.player = null
         removePopupWindow()
