@@ -33,7 +33,8 @@ object PopupPlayerManager : JsonSerializable {
 
     fun startPlaylist(paths: List<String>) {
         if (paths.isEmpty()) return
-        launchPlaylistItem(paths, 0, null)
+        val initialMode = if (paths.size > 1) NavMode.REPEAT_ALL else NavMode.NONE
+        launchPlaylistItem(paths, 0, null, initialMode)
     }
 
     private fun launchPlaylistItem(playlist: List<String>, index: Int, inheritedPos: WindowManager.LayoutParams?, navMode: NavMode = NavMode.NONE, ghostMode: Boolean = false) {

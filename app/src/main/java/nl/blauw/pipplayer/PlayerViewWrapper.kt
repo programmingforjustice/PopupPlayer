@@ -57,6 +57,13 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         super.findViewById<View>(R.id.next_button)?.visibility = v
     }
 
+    fun setNavModeButtonsVisibility(visible: Boolean) {
+        val v = if (visible) View.VISIBLE else View.GONE
+        super.findViewById<View>(R.id.shuffle_button)?.visibility = v
+        super.findViewById<View>(R.id.repeat_one_button)?.visibility = v
+        super.findViewById<View>(R.id.repeat_all_button)?.visibility = v
+    }
+
     fun setupShuffleButton(action: (View) -> Unit) {
         super.findViewById<ImageButton>(R.id.shuffle_button)?.setOnClickListener(action)
     }

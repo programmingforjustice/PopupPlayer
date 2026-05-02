@@ -132,6 +132,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         playerViewWrapper.setupTouchListener(playerTouchListener::onTouch)
 
         playerViewWrapper.setPrevNextVisibility(onPrev != null)
+        playerViewWrapper.setNavModeButtonsVisibility(onPrev != null)
         playerViewWrapper.setupPrevButton { onPrev?.invoke() }
         playerViewWrapper.setupNextButton { onNext?.invoke() }
         playerViewWrapper.setupTouchThroughButton { toggleGhostMode() }
