@@ -36,7 +36,7 @@ object PopupPlayerManager : JsonSerializable {
         launchPlaylistItem(paths, 0, null)
     }
 
-    private fun launchPlaylistItem(playlist: List<String>, index: Int, inheritedPos: WindowManager.LayoutParams?, navMode: NavMode = NavMode.NONE) {
+    private fun launchPlaylistItem(playlist: List<String>, index: Int, inheritedPos: WindowManager.LayoutParams?, navMode: NavMode = NavMode.NONE, ghostMode: Boolean = false) {
         val player = create(playlist[index])
         inheritedPos?.let {
             player.layoutParams.x      = it.x
@@ -47,6 +47,7 @@ object PopupPlayerManager : JsonSerializable {
         if (playlist.size > 1) {
             var currentMode = navMode
             val navigate: (Int) -> Unit = { delta ->
+                val wasGhostMode = player.isGhostMode
                 val newIndex = when (currentMode) {
                     NavMode.SHUFFLE -> {
                         var r = (0 until playlist.size).random()
@@ -64,13 +65,14 @@ object PopupPlayerManager : JsonSerializable {
                 }
                 remove(player)
                 player.dispose()
-                launchPlaylistItem(playlist, newIndex, pos, currentMode)
+                launchPlaylistItem(playlist, newIndex, pos, currentMode, wasGhostMode)
             }
             val setMode: (NavMode) -> Unit = { currentMode = it }
             applyNavCallbacks(player, navigate, setMode, currentMode)
         }
         player.show()
         player.play()
+        if (ghostMode) player.enableGhostMode()
     }
 
     private fun applyNavCallbacks(player: PopupPlayer, navigate: (Int) -> Unit, setMode: (NavMode) -> Unit, initialMode: NavMode) {

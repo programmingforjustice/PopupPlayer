@@ -53,6 +53,8 @@ interface PopupPlayer {
     fun getMediaUri(): Uri?
     fun getPlayerView(): View?
     fun updatePlayerView(params: WindowManager.LayoutParams)
+    val isGhostMode: Boolean get() = false
+    fun enableGhostMode() {}
 }
 
 abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
@@ -183,6 +185,10 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         }
         ghostSeekBar      = null
         ghostOverlayParams = null
+    }
+
+    override fun enableGhostMode() {
+        if (!isGhostMode) toggleGhostMode()
     }
 
     override fun show(params: WindowManager.LayoutParams?) {
@@ -716,6 +722,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
         set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.navMode = value }
     var onNavModeChanged: ((NavMode) -> Unit)? = null
         set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.onNavModeChanged = value }
+    override val isGhostMode: Boolean get() = (popupPlayer as? BasePopupPlayer)?.isGhostMode ?: false
+    override fun enableGhostMode() {
+        (popupPlayer as? BasePopupPlayer)?.let { if (!it.isGhostMode) it.toggleGhostMode() }
+    }
 
     // Own params used before first show(); after show(), layoutParams delegates to inner player
     // so that drag updates (PlayerTouchListener modifies inner layoutParams) are reflected.
