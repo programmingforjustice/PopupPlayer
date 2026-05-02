@@ -9,6 +9,8 @@ import java.util.Collections
 import org.json.JSONArray
 import org.json.JSONObject
 
+enum class NavMode { NONE, SHUFFLE, REPEAT_ONE, REPEAT_ALL }
+
 object PopupPlayerManager : JsonSerializable {
     private const val PLAY_LIST_PATH = "play_list.txt"
     
@@ -34,7 +36,7 @@ object PopupPlayerManager : JsonSerializable {
         launchPlaylistItem(paths, 0, null)
     }
 
-    private fun launchPlaylistItem(playlist: List<String>, index: Int, inheritedPos: WindowManager.LayoutParams?) {
+    private fun launchPlaylistItem(playlist: List<String>, index: Int, inheritedPos: WindowManager.LayoutParams?, navMode: NavMode = NavMode.NONE) {
         val player = create(playlist[index])
         inheritedPos?.let {
             player.layoutParams.x      = it.x
@@ -43,8 +45,17 @@ object PopupPlayerManager : JsonSerializable {
             player.layoutParams.height = it.height
         }
         if (playlist.size > 1) {
+            var currentMode = navMode
             val navigate: (Int) -> Unit = { delta ->
-                val newIndex = ((index + delta) % playlist.size + playlist.size) % playlist.size
+                val newIndex = when (currentMode) {
+                    NavMode.SHUFFLE -> {
+                        var r = (0 until playlist.size).random()
+                        if (r == index) r = (r + 1) % playlist.size
+                        r
+                    }
+                    NavMode.REPEAT_ONE -> index
+                    else -> ((index + delta) % playlist.size + playlist.size) % playlist.size
+                }
                 val pos = WindowManager.LayoutParams().also {
                     it.x      = player.layoutParams.x
                     it.y      = player.layoutParams.y
@@ -53,21 +64,28 @@ object PopupPlayerManager : JsonSerializable {
                 }
                 remove(player)
                 player.dispose()
-                launchPlaylistItem(playlist, newIndex, pos)
+                launchPlaylistItem(playlist, newIndex, pos, currentMode)
             }
-            applyNavCallbacks(player, navigate)
+            val setMode: (NavMode) -> Unit = { currentMode = it }
+            applyNavCallbacks(player, navigate, setMode, currentMode)
         }
         player.show()
         player.play()
     }
 
-    private fun applyNavCallbacks(player: PopupPlayer, navigate: (Int) -> Unit) {
+    private fun applyNavCallbacks(player: PopupPlayer, navigate: (Int) -> Unit, setMode: (NavMode) -> Unit, initialMode: NavMode) {
         val prev: () -> Unit = { navigate(-1) }
         val next: () -> Unit = { navigate(1) }
         when (player) {
-            is AdaptivePopupPlayer   -> { player.onPrev = prev; player.onNext = next }
-            is BasicVideoPopupPlayer -> { player.onPrev = prev; player.onNext = next }
-            is ImagePopupPlayer      -> { player.onPrev = prev; player.onNext = next }
+            is AdaptivePopupPlayer -> {
+                player.onPrev = prev; player.onNext = next
+                player.onNavModeChanged = setMode; player.navMode = initialMode
+            }
+            is BasicVideoPopupPlayer -> {
+                player.onPrev = prev; player.onNext = next
+                player.onNavModeChanged = setMode; player.navMode = initialMode
+            }
+            is ImagePopupPlayer -> { player.onPrev = prev; player.onNext = next }
         }
     }
 

@@ -155,6 +155,7 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             layoutParams = LinearLayout.LayoutParams(btnSize, btnSize)
             setImageResource(R.drawable.ic_touch_through)
             setBackgroundColor(0xCC1565C0.toInt())
+            //setBackgroundColor(0xCC81A6C6.toInt())
             setOnClickListener { toggleGhostMode() }
             setOnLongClickListener {
                 seekBar.visibility = if (seekBar.visibility == View.VISIBLE) View.GONE else View.VISIBLE
@@ -711,6 +712,10 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
         set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.onPrev = value }
     var onNext: (() -> Unit)? = null
         set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.onNext = value }
+    var navMode: NavMode = NavMode.NONE
+        set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.navMode = value }
+    var onNavModeChanged: ((NavMode) -> Unit)? = null
+        set(value) { field = value; (popupPlayer as? BasicVideoPopupPlayer)?.onNavModeChanged = value }
 
     // Own params used before first show(); after show(), layoutParams delegates to inner player
     // so that drag updates (PlayerTouchListener modifies inner layoutParams) are reflected.
@@ -781,6 +786,8 @@ class AdaptivePopupPlayer @JvmOverloads constructor(private val context: Context
         // Apply current nav callbacks to the newly created inner player
         (popupPlayer as? BasicVideoPopupPlayer)?.onPrev = onPrev
         (popupPlayer as? BasicVideoPopupPlayer)?.onNext = onNext
+        (popupPlayer as? BasicVideoPopupPlayer)?.navMode = navMode
+        (popupPlayer as? BasicVideoPopupPlayer)?.onNavModeChanged = onNavModeChanged
         PopupPlayerManager.escalateTopOrder(this@AdaptivePopupPlayer)
     }
     

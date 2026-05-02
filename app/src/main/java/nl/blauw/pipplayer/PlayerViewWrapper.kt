@@ -57,6 +57,30 @@ class PlayerViewWrapper(private val context: Context): PlayerView(context) {
         super.findViewById<View>(R.id.next_button)?.visibility = v
     }
 
+    fun setupShuffleButton(action: (View) -> Unit) {
+        super.findViewById<ImageButton>(R.id.shuffle_button)?.setOnClickListener(action)
+    }
+
+    fun setupRepeatOneButton(action: (View) -> Unit) {
+        super.findViewById<ImageButton>(R.id.repeat_one_button)?.setOnClickListener(action)
+    }
+
+    fun setupRepeatAllButton(action: (View) -> Unit) {
+        super.findViewById<ImageButton>(R.id.repeat_all_button)?.setOnClickListener(action)
+    }
+
+    fun updateNavModeButtons(mode: NavMode) {
+        super.findViewById<ImageButton>(R.id.shuffle_button)?.setImageResource(
+            if (mode == NavMode.SHUFFLE) R.drawable.ic_shuffle else R.drawable.ic_shuffle_inactive
+        )
+        super.findViewById<ImageButton>(R.id.repeat_one_button)?.setImageResource(
+            if (mode == NavMode.REPEAT_ONE) R.drawable.ic_repeat_one else R.drawable.ic_repeat_one_inactive
+        )
+        super.findViewById<ImageButton>(R.id.repeat_all_button)?.setImageResource(
+            if (mode == NavMode.REPEAT_ALL) R.drawable.ic_repeat else R.drawable.ic_repeat_inactive
+        )
+    }
+
     /*fun applyToPlayerView(command: (playerView: PlayerView) -> Unit) {
         command(playerView)
     }*/
