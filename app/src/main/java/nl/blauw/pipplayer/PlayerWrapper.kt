@@ -30,9 +30,16 @@ class PlayerWrapper(private val player: Player): Player by player {
         var onVideoSizeChangedListener: ((VideoSize) -> Unit)? = null
         var onRenderedFirstFrameListener: (() -> Unit)? = null
         var onIsPlayingChangedListener: (() -> Unit)? = null
-        
+        var onPlaybackEndedListener: (() -> Unit)? = null
+
         private var isSeekInProgress: Boolean = false
-        
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (playbackState == Player.STATE_ENDED) {
+                onPlaybackEndedListener?.invoke()
+            }
+        }
+
         override fun onVideoSizeChanged(videoSize: VideoSize) {
             //Toast.makeText(context, "onVideoSizeChangedListener : ${if (onVideoSizeChangedListener == null) false else true}", Toast.LENGTH_SHORT).show()
             onVideoSizeChangedListener?.invoke(videoSize)
@@ -100,6 +107,10 @@ class PlayerWrapper(private val player: Player): Player by player {
     
     fun setOnIsPlayingChangedListener(action: (() -> Unit)?) {
         playerListener.onIsPlayingChangedListener = action
+    }
+
+    fun setOnPlaybackEndedListener(action: (() -> Unit)?) {
+        playerListener.onPlaybackEndedListener = action
     }
     
     /*fun applyToPlayer(command: (player: Player) -> Unit) {

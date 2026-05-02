@@ -83,9 +83,8 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
             }
         }
          
-         playerWrapper.setOnIsPlayingChangedListener {
-                //replacePlayerViewWithImageView()
-                    onIsPlayingChangedListener?.invoke()
+        playerWrapper.setOnIsPlayingChangedListener {
+            if (!isDisposed) onIsPlayingChangedListener?.invoke()
         }
     }
 
@@ -140,16 +139,19 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         playerViewWrapper.setupShuffleButton {
             navMode = if (navMode == NavMode.SHUFFLE) NavMode.NONE else NavMode.SHUFFLE
             onNavModeChanged?.invoke(navMode)
+            applyNavMode(navMode)
             playerViewWrapper.updateNavModeButtons(navMode)
         }
         playerViewWrapper.setupRepeatOneButton {
             navMode = if (navMode == NavMode.REPEAT_ONE) NavMode.NONE else NavMode.REPEAT_ONE
             onNavModeChanged?.invoke(navMode)
+            applyNavMode(navMode)
             playerViewWrapper.updateNavModeButtons(navMode)
         }
         playerViewWrapper.setupRepeatAllButton {
             navMode = if (navMode == NavMode.REPEAT_ALL) NavMode.NONE else NavMode.REPEAT_ALL
             onNavModeChanged?.invoke(navMode)
+            applyNavMode(navMode)
             playerViewWrapper.updateNavModeButtons(navMode)
         }
         playerViewWrapper.updateNavModeButtons(navMode)
@@ -164,8 +166,33 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     
     override fun getCurrentPosition(): Long = player.currentPosition
     
+    private fun applyNavMode(mode: NavMode) {
+        val wrapper = player as? PlayerWrapper
+        when (mode) {
+            NavMode.REPEAT_ONE -> {
+                player.repeatMode = Player.REPEAT_MODE_ONE
+                wrapper?.setOnPlaybackEndedListener(null)
+            }
+            NavMode.REPEAT_ALL, NavMode.SHUFFLE -> {
+                if (onNext != null) {
+                    player.repeatMode = Player.REPEAT_MODE_OFF
+                    wrapper?.setOnPlaybackEndedListener {
+                        if (!isDisposed) onNext?.invoke()
+                    }
+                } else {
+                    player.repeatMode = Player.REPEAT_MODE_ALL
+                    wrapper?.setOnPlaybackEndedListener(null)
+                }
+            }
+            NavMode.NONE -> {
+                player.repeatMode = Player.REPEAT_MODE_ALL
+                wrapper?.setOnPlaybackEndedListener(null)
+            }
+        }
+    }
+
     override fun play(currentPosition: Long) {
-        player.repeatMode = Player.REPEAT_MODE_ALL
+        applyNavMode(navMode)
         player.prepare()
         player.seekTo(currentPosition)
         player.playWhenReady = true
