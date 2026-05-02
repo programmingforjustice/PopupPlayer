@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnFilterVideo: TextView
     private lateinit var btnFilterImage: TextView
     private lateinit var layoutEmpty: LinearLayout
+    private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var rvFolders: RecyclerView
     private lateinit var btnBack: ImageButton
     private lateinit var btnSort: ImageButton
@@ -145,6 +147,7 @@ class MainActivity : AppCompatActivity() {
         btnFilterVideo   = findViewById(R.id.btnFilterVideo)
         btnFilterImage   = findViewById(R.id.btnFilterImage)
         layoutEmpty      = findViewById(R.id.layoutEmpty)
+        swipeRefresh     = findViewById(R.id.swipeRefresh)
         rvFolders        = findViewById(R.id.rvFolders)
         btnBack          = findViewById(R.id.btnBack)
         btnSort          = findViewById(R.id.btnSort)
@@ -174,6 +177,15 @@ class MainActivity : AppCompatActivity() {
         rvFolders.layoutManager = LinearLayoutManager(this)
         // 처음엔 루트 Adapter 연결
         rvFolders.adapter = rootFolderAdapter
+
+        swipeRefresh.setOnRefreshListener {
+            if (folderStack.isEmpty()) {
+                loadRoot()
+            } else {
+                val (dir, bucketId) = folderStack.last()
+                loadDirectory(dir, bucketId, restoreScroll = false)
+            }
+        }
     }
 
     // ── 멀티셀렉트 바 ─────────────────────────────────────────
@@ -807,17 +819,15 @@ class MainActivity : AppCompatActivity() {
      */
     private fun loadRootFolders() {
         lifecycleScope.launch {
-            // 현재 Adapter 에 표시 중인 목록을 변경 가능한 맵으로 관리
             val currentMap = LinkedHashMap<String, FolderItem>()
 
             scanMediaFoldersFlow().collect { updated ->
-                // emit 된 FolderItem 으로 맵 갱신
                 currentMap[updated.path] = updated
-                // 이름 오름차순으로 정렬 후 표시 (검색 필터 반영)
                 rootFolderAdapter.submitSearchableList(
                     currentMap.values.sortedBy { it.name.lowercase() }
                 )
             }
+            swipeRefresh.isRefreshing = false
         }
     }
 
@@ -920,6 +930,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (!restoreScroll) rvFolders.scrollToPosition(0)
+            swipeRefresh.isRefreshing = false
         }
     }
 
@@ -1096,6 +1107,7 @@ class MainActivity : AppCompatActivity() {
                 fileListAdapter.submitEntries(entries)
             }
             rvFolders.scrollToPosition(0)
+            swipeRefresh.isRefreshing = false
         }
     }
 
