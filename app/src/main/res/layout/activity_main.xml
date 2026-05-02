@@ -96,36 +96,6 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
-                <LinearLayout android:id="@+id/categoryMusic"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/ic_btn_speak_now"
-                        android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="Music" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Music" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
-                </LinearLayout>
-
-                <LinearLayout android:id="@+id/categoryStatusSaver"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/stat_sys_download_done"
-                        android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="Status Saver" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Status Saver" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
-                </LinearLayout>
-
                 <LinearLayout android:id="@+id/categoryPlaylists"
                     android:layout_width="72dp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:gravity="center"
@@ -156,21 +126,6 @@
                         android:gravity="center" android:layout_marginTop="4dp" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/categoryLocalNet"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/ic_menu_manage"
-                        android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="Local Net" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Local Net" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
-                </LinearLayout>
-
                 <LinearLayout android:id="@+id/categoryUrlStream"
                     android:layout_width="72dp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:gravity="center"
@@ -186,11 +141,26 @@
                         android:gravity="center" android:layout_marginTop="4dp" />
                 </LinearLayout>
 
+                <LinearLayout android:id="@+id/categorySettings"
+                    android:layout_width="72dp" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true" android:focusable="true">
+                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
+                        android:src="@android:drawable/ic_menu_manage"
+                        android:background="@drawable/category_icon_bg"
+                        android:padding="12dp" android:contentDescription="Local Net" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="Local Net" android:textSize="11sp" android:textColor="#333333"
+                        android:gravity="center" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
             </LinearLayout>
         </HorizontalScrollView>
 
         <!-- Page indicator dots -->
-        <LinearLayout
+        <!-- <LinearLayout
             android:id="@+id/layoutDots"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -202,7 +172,7 @@
                 android:background="@drawable/dot_active" android:layout_marginEnd="4dp" />
             <View android:layout_width="6dp" android:layout_height="6dp"
                 android:background="@drawable/dot_inactive" />
-        </LinearLayout>
+        </LinearLayout> -->
 
         <!-- ── 브레드크럼 (탐색 중에만 표시) ── -->
         <HorizontalScrollView
