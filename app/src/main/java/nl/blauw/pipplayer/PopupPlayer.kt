@@ -80,7 +80,7 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
     override var isPlaying = false
 
     // ── Ghost mode ───────────────────────────────────────────
-    var isGhostMode = false
+    override var isGhostMode = false
         private set
     private var ghostExitOverlay: View? = null
     private var ghostSeekBar: SeekBar? = null
