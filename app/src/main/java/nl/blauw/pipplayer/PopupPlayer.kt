@@ -89,7 +89,7 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         isGhostMode = !isGhostMode
         if (isGhostMode) {
             view.alpha = 0.2f
-            layoutParams.alpha = 0.2f
+            layoutParams.alpha = 0.5f
             layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             windowManager.updateViewLayout(view, layoutParams)
             showGhostExitOverlay()
@@ -136,7 +136,7 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             }
 
             max      = 100
-            progress = 20   // matches initial 20% ghost opacity
+            progress = 50   // matches initial 20% ghost opacity
             visibility = View.GONE
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(sb: SeekBar, progress: Int, fromUser: Boolean) {
