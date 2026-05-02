@@ -81,7 +81,6 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
 
     // ── Ghost mode ───────────────────────────────────────────
     override var isGhostMode = false
-        private set
     private var ghostExitOverlay: View? = null
     private var ghostSeekBar: SeekBar? = null
     private var ghostOverlayParams: WindowManager.LayoutParams? = null
