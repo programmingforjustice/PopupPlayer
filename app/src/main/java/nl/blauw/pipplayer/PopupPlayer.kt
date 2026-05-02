@@ -179,8 +179,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                         startRawY    = event.rawY
                         startOverlayX = ghostOverlayParams?.x ?: 0
                         startOverlayY = ghostOverlayParams?.y ?: 0
-                        startPlayerX  = layoutParams.x
-                        startPlayerY  = layoutParams.y
+                        startPlayerX  = this@BasePopupPlayer.layoutParams.x
+                        startPlayerY  = this@BasePopupPlayer.layoutParams.y
                         isDragging = false
                         false
                     }
@@ -196,9 +196,9 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                             p.x = (startOverlayX + dx).toInt()
                             p.y = (startOverlayY + dy).toInt()
                             ghostExitOverlay?.let { windowManager.updateViewLayout(it, p) }
-                            layoutParams.x = (startPlayerX + dx).toInt()
-                            layoutParams.y = (startPlayerY + dy).toInt()
-                            popupPlayerView?.let { windowManager.updateViewLayout(it, layoutParams) }
+                            this@BasePopupPlayer.layoutParams.x = (startPlayerX + dx).toInt()
+                            this@BasePopupPlayer.layoutParams.y = (startPlayerY + dy).toInt()
+                            popupPlayerView?.let { windowManager.updateViewLayout(it, this@BasePopupPlayer.layoutParams) }
                             true
                         } else false
                     }
