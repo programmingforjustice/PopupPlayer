@@ -9,6 +9,7 @@ import android.graphics.PixelFormat
 import android.graphics.Color
 import android.os.Build
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.View
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -157,12 +158,53 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             layoutParams = LinearLayout.LayoutParams(btnSize, btnSize)
             setImageResource(R.drawable.ic_touch_through)
             setBackgroundColor(0xCC1565C0.toInt())
-            //setBackgroundColor(0xCC81A6C6.toInt())
             setOnClickListener { toggleGhostMode() }
             setOnLongClickListener {
                 seekBar.visibility = if (seekBar.visibility == View.VISIBLE) View.GONE else View.VISIBLE
                 ghostOverlayParams?.let { windowManager.updateViewLayout(ghostExitOverlay, it) }
                 true
+            }
+            val dragThreshold = Utils.convertDpToPixelsInt(8f, context).toFloat()
+            var startRawX = 0f
+            var startRawY = 0f
+            var startOverlayX = 0
+            var startOverlayY = 0
+            var startPlayerX = 0
+            var startPlayerY = 0
+            var isDragging = false
+            setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        startRawX    = event.rawX
+                        startRawY    = event.rawY
+                        startOverlayX = ghostOverlayParams?.x ?: 0
+                        startOverlayY = ghostOverlayParams?.y ?: 0
+                        startPlayerX  = layoutParams.x
+                        startPlayerY  = layoutParams.y
+                        isDragging = false
+                        false
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        val dx = event.rawX - startRawX
+                        val dy = event.rawY - startRawY
+                        if (!isDragging && (kotlin.math.abs(dx) > dragThreshold || kotlin.math.abs(dy) > dragThreshold)) {
+                            isDragging = true
+                            v.cancelLongPress()
+                        }
+                        if (isDragging) {
+                            val p = ghostOverlayParams ?: return@setOnTouchListener true
+                            p.x = (startOverlayX + dx).toInt()
+                            p.y = (startOverlayY + dy).toInt()
+                            ghostExitOverlay?.let { windowManager.updateViewLayout(it, p) }
+                            layoutParams.x = (startPlayerX + dx).toInt()
+                            layoutParams.y = (startPlayerY + dy).toInt()
+                            popupPlayerView?.let { windowManager.updateViewLayout(it, layoutParams) }
+                            true
+                        } else false
+                    }
+                    MotionEvent.ACTION_UP -> isDragging.also { isDragging = false }
+                    else -> false
+                }
             }
         }
 
