@@ -311,8 +311,7 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         val crossButton = imageViewLayout.findViewById<ImageButton>(R.id.cross_button)
         crossButton.setOnClickListener {
             onClose?.invoke()
-            windowManager.removeViewImmediate(imageViewLayout)
-            PopupPlayerManager.remove(this)
+            dispose()
         }
         
         val orderEscalationButton = imageViewLayout.findViewById<ImageButton>(R.id.order_escalation_button)
@@ -328,6 +327,9 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             PopupPlayerManager.escalateTopOrder(this)
             show(layoutParams)
         }
+
+        val touchThroughButton = imageViewLayout.findViewById<ImageButton>(R.id.touch_through_button)
+        touchThroughButton?.setOnClickListener { toggleGhostMode() }
 
         val prevBtn = imageViewLayout.findViewById<ImageButton>(R.id.prev_button)
         val nextBtn = imageViewLayout.findViewById<ImageButton>(R.id.next_button)
@@ -384,9 +386,10 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     }
     
     override fun removePopupWindow() {
+        removeGhostExitOverlay()
         windowManager.removeViewImmediate(imageViewLayout)
     }
-    
+
     override fun dispose() {
         removePopupWindow()
         PopupPlayerManager.remove(this)
