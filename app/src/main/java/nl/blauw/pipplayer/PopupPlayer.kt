@@ -131,9 +131,10 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply { 
                 topMargin = pad 
-                thumbTintList = ColorStateList.valueOf(Color.GREEN)
-                progressTintList = ColorStateList.valueOf(Color.GREEN)
-                progressBackgroundTintList = ColorStateList.valueOf(Color.parseColor("#55FFFFFF"))   
+                thumbTintList = ColorStateList.valueOf(Color.parseColor("#CC1565C0"))
+                progressTintList = ColorStateList.valueOf(Color.parseColor("#55d1d1d1"))
+                //progressBackgroundTintList = ColorStateList.valueOf(Color.parseColor("#55FFFFFF"))  
+                progressBackgroundTintList = ColorStateList.valueOf(Color.parseColor("#55d1d1d1"))   
             }
 
             max      = 100
@@ -168,7 +169,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         val container = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             gravity     = Gravity.CENTER_HORIZONTAL
-            setBackgroundColor(0x00FFFFFF.toInt())
+            //setBackgroundColor(0x00FFFFFF.toInt())
+            setBackgroundColor(0x99F7F7F7.toInt())
             //setPadding(pad, pad, pad, pad)
             addView(btn)
             addView(seekBar)
