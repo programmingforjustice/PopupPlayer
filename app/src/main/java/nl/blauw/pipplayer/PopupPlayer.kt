@@ -59,6 +59,10 @@ interface PopupPlayer {
 }
 
 abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
+    companion object {
+        var savedGhostAlpha: Float = 0.5f
+    }
+
     protected val windowManager: WindowManager  = (context.getSystemService(Context.WINDOW_SERVICE) as? WindowManager) ?: throw IllegalStateException("WindowManager is not available")
     
     protected var popupPlayerView: View? = null
@@ -90,8 +94,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
         val view = popupPlayerView ?: return
         isGhostMode = !isGhostMode
         if (isGhostMode) {
-            view.alpha = 0.5f
-            layoutParams.alpha = 0.5f
+            view.alpha = savedGhostAlpha
+            layoutParams.alpha = savedGhostAlpha
             layoutParams.flags = layoutParams.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
             windowManager.updateViewLayout(view, layoutParams)
             showGhostExitOverlay()
@@ -139,11 +143,12 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             }
 
             max      = 100
-            progress = 50   // matches initial 20% ghost opacity
+            progress = (savedGhostAlpha * 100).toInt()
             visibility = View.GONE
             setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(sb: SeekBar, progress: Int, fromUser: Boolean) {
                     val alpha = progress.coerceAtLeast(5) / 100f
+                    savedGhostAlpha = alpha
                     popupPlayerView?.alpha       = alpha
                     this@BasePopupPlayer.layoutParams.alpha = alpha
                     popupPlayerView?.let { windowManager.updateViewLayout(it, this@BasePopupPlayer.layoutParams) }
@@ -158,12 +163,20 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             layoutParams = LinearLayout.LayoutParams(btnSize, btnSize)
             setImageResource(R.drawable.ic_touch_through)
             setBackgroundColor(0xCC1565C0.toInt())
-            setOnClickListener { toggleGhostMode() }
+            setOnClickListener { 
+                if (seekBar.visibility == View.VISIBLE) {
+                    ghostOverlayParams?.let { windowManager.updateViewLayout(ghostExitOverlay, it) }
+                    seekBar.visibility = View.GONE 
+                } else {
+                    toggleGhostMode()  
+                }  
+            }
             setOnLongClickListener {
-                seekBar.visibility = if (seekBar.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+                seekBar.visibility = View.VISIBLE
                 ghostOverlayParams?.let { windowManager.updateViewLayout(ghostExitOverlay, it) }
                 true
             }
+
             val dragThreshold = Utils.convertDpToPixelsInt(8f, context).toFloat()
             var startRawX = 0f
             var startRawY = 0f
