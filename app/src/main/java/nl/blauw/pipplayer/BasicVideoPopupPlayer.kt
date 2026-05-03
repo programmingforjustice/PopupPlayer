@@ -70,14 +70,16 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
                     playerView.tag = scaleFactor
 
                     if (!isPlaying) {
-                      val dm    = context.resources.displayMetrics
-                      val maxW  = dm.widthPixels  / 2
-                      val maxH  = dm.heightPixels / 2
-                      val scale = minOf(maxW.toDouble() / width, maxH.toDouble() / height)
-                      layoutParams.width  = (width  * scale).toInt()
-                      layoutParams.height = (height * scale).toInt()
+                      val defaultSizePx = Utils.convertDpToPixelsInt(2f, context)
+                      if (layoutParams.width == defaultSizePx && layoutParams.height == defaultSizePx) {
+                          val dm    = context.resources.displayMetrics
+                          val maxW  = dm.widthPixels  / 2
+                          val maxH  = dm.heightPixels / 2
+                          val scale = minOf(maxW.toDouble() / width, maxH.toDouble() / height)
+                          layoutParams.width  = (width  * scale).toInt()
+                          layoutParams.height = (height * scale).toInt()
+                      }
                       windowManager.updateViewLayout(playerView, layoutParams)
-
                       isPlaying = true
                     }
             }

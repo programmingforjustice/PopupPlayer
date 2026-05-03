@@ -193,8 +193,9 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                         }
                         if (isDragging) {
                             val p = ghostOverlayParams ?: return@setOnTouchListener true
-                            p.x = (startOverlayX + dx).toInt()
-                            p.y = (startOverlayY + dy).toInt()
+                            val dm = context.resources.displayMetrics
+                            p.x = (startOverlayX + dx).toInt().coerceIn(0, dm.widthPixels - btnSize)
+                            p.y = (startOverlayY + dy).toInt().coerceIn(0, dm.heightPixels - btnSize)
                             ghostExitOverlay?.let { windowManager.updateViewLayout(it, p) }
                             this@BasePopupPlayer.layoutParams.x = (startPlayerX + dx).toInt()
                             this@BasePopupPlayer.layoutParams.y = (startPlayerY + dy).toInt()

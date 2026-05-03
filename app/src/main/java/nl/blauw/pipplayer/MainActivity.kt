@@ -552,21 +552,22 @@ class MainActivity : AppCompatActivity() {
         btnBack.setOnClickListener { navigateUp() }
 
         btnSort.setOnClickListener {
-            if (folderStack.isEmpty()) return@setOnClickListener
-            // 6단계 순환
             currentSort = when (currentSort) {
-                SortOrder.NAME_ASC     -> SortOrder.NAME_DESC
-                SortOrder.NAME_DESC    -> SortOrder.DATE_NEWEST
-                SortOrder.DATE_NEWEST  -> SortOrder.DATE_OLDEST
-                SortOrder.DATE_OLDEST  -> SortOrder.SIZE_LARGEST
-                SortOrder.SIZE_LARGEST -> SortOrder.SIZE_SMALLEST
+                SortOrder.NAME_ASC      -> SortOrder.NAME_DESC
+                SortOrder.NAME_DESC     -> SortOrder.DATE_NEWEST
+                SortOrder.DATE_NEWEST   -> SortOrder.DATE_OLDEST
+                SortOrder.DATE_OLDEST   -> SortOrder.SIZE_LARGEST
+                SortOrder.SIZE_LARGEST  -> SortOrder.SIZE_SMALLEST
                 SortOrder.SIZE_SMALLEST -> SortOrder.NAME_ASC
             }
             updateSortButton()
             Toast.makeText(this, sortLabel(), Toast.LENGTH_SHORT).show()
-            // ✅ Fix: folderStack.last()는 Pair<File,Long> → .first, .second 분리
-            val (dir, bucketId) = folderStack.last()
-            loadDirectory(dir, bucketId, restoreScroll = false)
+            if (!showFoldersMode) {
+                loadAllMedia()
+            } else if (folderStack.isNotEmpty()) {
+                val (dir, bucketId) = folderStack.last()
+                loadDirectory(dir, bucketId, restoreScroll = false)
+            }
         }
 
         setupFilterButtons()
