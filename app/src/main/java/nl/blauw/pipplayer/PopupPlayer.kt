@@ -167,8 +167,6 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
             val dragThreshold = Utils.convertDpToPixelsInt(8f, context).toFloat()
             var startRawX = 0f
             var startRawY = 0f
-            var startOverlayX = 0
-            var startOverlayY = 0
             var startPlayerX = 0
             var startPlayerY = 0
             var isDragging = false
@@ -177,10 +175,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                     MotionEvent.ACTION_DOWN -> {
                         startRawX    = event.rawX
                         startRawY    = event.rawY
-                        startOverlayX = ghostOverlayParams?.x ?: 0
-                        startOverlayY = ghostOverlayParams?.y ?: 0
-                        startPlayerX  = this@BasePopupPlayer.layoutParams.x
-                        startPlayerY  = this@BasePopupPlayer.layoutParams.y
+                        startPlayerX = this@BasePopupPlayer.layoutParams.x
+                        startPlayerY = this@BasePopupPlayer.layoutParams.y
                         isDragging = false
                         false
                     }
@@ -193,13 +189,12 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                         }
                         if (isDragging) {
                             val p = ghostOverlayParams ?: return@setOnTouchListener true
-                            val dm = context.resources.displayMetrics
-                            p.x = (startOverlayX + dx).toInt().coerceIn(0, dm.widthPixels - btnSize)
-                            p.y = (startOverlayY + dy).toInt().coerceIn(0, dm.heightPixels - btnSize)
-                            ghostExitOverlay?.let { windowManager.updateViewLayout(it, p) }
                             this@BasePopupPlayer.layoutParams.x = (startPlayerX + dx).toInt()
                             this@BasePopupPlayer.layoutParams.y = (startPlayerY + dy).toInt()
                             popupPlayerView?.let { windowManager.updateViewLayout(it, this@BasePopupPlayer.layoutParams) }
+                            p.x = this@BasePopupPlayer.layoutParams.x
+                            p.y = this@BasePopupPlayer.layoutParams.y
+                            ghostExitOverlay?.let { windowManager.updateViewLayout(it, p) }
                             true
                         } else false
                     }
