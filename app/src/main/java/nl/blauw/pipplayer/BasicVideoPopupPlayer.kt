@@ -114,16 +114,28 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         
         playerViewWrapper.setupFullscreenButton {
             val pos = player.currentPosition
+            val originalIndex = FullscreenBridge.currentIndex
             isEnteringFullscreen = true
             player.pause()
             if (isGhostMode) toggleGhostMode()
             removePopupWindow()
 
-            FullscreenBridge.onFullscreenClosed = { returnPos ->
+            FullscreenBridge.onFullscreenClosed = { finalIndex, returnPos ->
                 isEnteringFullscreen = false
-                windowManager.addView(playerView, layoutParams)
-                player.seekTo(returnPos)
-                player.playWhenReady = true
+                if (finalIndex == originalIndex) {
+                    windowManager.addView(playerView, layoutParams)
+                    player.seekTo(returnPos)
+                    player.playWhenReady = true
+                } else {
+                    dispose()
+                    PopupPlayerManager.remove(this@BasicVideoPopupPlayer)
+                    PopupPlayerManager.restoreFromFullscreen(
+                        FullscreenBridge.playlist,
+                        finalIndex,
+                        returnPos,
+                        FullscreenBridge.navMode
+                    )
+                }
                 FullscreenBridge.onFullscreenClosed = null
             }
 
@@ -219,7 +231,8 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     }
 
     override fun removePopupWindow() {
-        windowManager.removeViewImmediate(playerView)
+        if (playerView.parent != null)
+            windowManager.removeViewImmediate(playerView)
     }
     
     private fun getFrameAtCurrentPosition(videoUri: Uri, currentPosition: Long): Bitmap? {

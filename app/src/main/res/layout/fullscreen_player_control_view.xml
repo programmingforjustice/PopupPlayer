@@ -36,60 +36,13 @@
 
     </LinearLayout>
 
-    <!-- Spacer: pushes center row to middle -->
+    <!-- Spacer -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <!-- Center row: prev / play / pause / next -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp">
-
-        <ImageButton
-            android:id="@+id/prev_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_skip_previous"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="Previous"
-            android:layout_marginEnd="24dp"
-            android:visibility="gone" />
-
-        <ImageButton android:id="@id/exo_play"
-            style="@style/ExoMediaButton.Play"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
-
-        <ImageButton android:id="@id/exo_pause"
-            style="@style/ExoMediaButton.Pause"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp" />
-
-        <ImageButton
-            android:id="@+id/next_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_skip_next"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="Next"
-            android:layout_marginStart="24dp"
-            android:visibility="gone" />
-
-    </LinearLayout>
-
-    <!-- Spacer: pushes bottom row to bottom -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Bottom row: position + seekbar + duration -->
+    <!-- Seekbar row: position | seekbar | duration -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -97,7 +50,7 @@
         android:gravity="center_vertical"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
-        android:paddingBottom="16dp">
+        android:paddingTop="4dp">
 
         <TextView
             android:id="@id/exo_position"
@@ -120,6 +73,80 @@
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:paddingStart="8dp" />
+
+    </LinearLayout>
+
+    <!-- Play controls row: [lock | spacer] [prev | play/pause | next] [spacer] -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="12dp"
+        android:paddingTop="4dp">
+
+        <!-- Left section: lock button (anchored start) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_vertical|start"
+            android:paddingStart="12dp">
+
+            <ImageButton
+                android:id="@+id/fullscreen_lock_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_lock"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Lock" />
+
+        </LinearLayout>
+
+        <!-- Center section: prev | play | pause | next -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/prev_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_skip_previous"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Previous"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
+            <ImageButton android:id="@id/exo_play"
+                style="@style/ExoMediaButton.Play"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <ImageButton android:id="@id/exo_pause"
+                style="@style/ExoMediaButton.Pause"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <ImageButton
+                android:id="@+id/next_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_skip_next"
+                android:background="?android:attr/selectableItemBackground"
+                android:contentDescription="Next"
+                android:layout_marginStart="8dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Right section: mirror width of left section for true centering -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

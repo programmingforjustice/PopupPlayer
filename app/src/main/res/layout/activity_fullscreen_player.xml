@@ -14,4 +14,25 @@
         app:show_timeout="3000"
         app:resize_mode="fit" />
 
+    <!-- Shown when controls are locked; intercepts all touches -->
+    <FrameLayout
+        android:id="@+id/fullscreen_lock_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/fullscreen_unlock_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="12dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_lock"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="Unlock"
+            android:alpha="0.7" />
+
+    </FrameLayout>
+
 </FrameLayout>
