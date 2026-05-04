@@ -205,8 +205,8 @@ abstract class BasePopupPlayer(protected val context: Context) : PopupPlayer {
                             val dm = context.resources.displayMetrics
                             val playerW = this@BasePopupPlayer.layoutParams.width
                             val playerH = this@BasePopupPlayer.layoutParams.height
-                            this@BasePopupPlayer.layoutParams.x = (startPlayerX + dx).toInt().coerceIn(0, dm.widthPixels  - playerW)
-                            this@BasePopupPlayer.layoutParams.y = (startPlayerY + dy).toInt().coerceIn(0, dm.heightPixels - playerH)
+                            this@BasePopupPlayer.layoutParams.x = (startPlayerX + dx).toInt().coerceIn(0, maxOf(0, dm.widthPixels  - playerW))
+                            this@BasePopupPlayer.layoutParams.y = (startPlayerY + dy).toInt().coerceIn(0, maxOf(0, dm.heightPixels - playerH))
                             popupPlayerView?.let { windowManager.updateViewLayout(it, this@BasePopupPlayer.layoutParams) }
                             p.x = this@BasePopupPlayer.layoutParams.x
                             p.y = this@BasePopupPlayer.layoutParams.y
