@@ -50,6 +50,11 @@
 
     <activity android:name=".RecycleBinActivity" />
 
+    <activity
+        android:name=".FullscreenPlayerActivity"
+        android:configChanges="orientation|screenSize|keyboardHidden"
+        android:theme="@style/Theme.AppCompat.NoActionBar" />
+
     <service android:name=".PlayerService" 
       android:foregroundServiceType="mediaPlayback"
       android:exported="true"

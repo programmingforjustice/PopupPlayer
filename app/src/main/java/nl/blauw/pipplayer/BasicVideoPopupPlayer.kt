@@ -1,5 +1,6 @@
 package nl.blauw.pipplayer
 
+import android.content.Intent
 import android.net.Uri
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -39,6 +40,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
     var onNavModeChanged: ((NavMode) -> Unit)? = null
 
     private var onIsPlayingChangedListener: (() -> Unit)? = null
+    private var isEnteringFullscreen = false
 
     private var onClose: (() -> Unit)? = null
     var onOrderEscalation: (() -> Unit)? = null
@@ -82,7 +84,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         }
          
         playerWrapper.setOnIsPlayingChangedListener {
-            if (!isDisposed) onIsPlayingChangedListener?.invoke()
+            if (!isDisposed && !isEnteringFullscreen) onIsPlayingChangedListener?.invoke()
         }
     }
 
@@ -111,7 +113,26 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         playerViewWrapper.setupMuteToggleButton (audioCodecMuteToggleButtonListener::onClick)
         
         playerViewWrapper.setupFullscreenButton {
-            toggleFullscreen()
+            val pos = player.currentPosition
+            isEnteringFullscreen = true
+            player.pause()
+            if (isGhostMode) toggleGhostMode()
+            removePopupWindow()
+
+            FullscreenBridge.onFullscreenClosed = { returnPos ->
+                isEnteringFullscreen = false
+                windowManager.addView(playerView, layoutParams)
+                player.seekTo(returnPos)
+                player.playWhenReady = true
+                FullscreenBridge.onFullscreenClosed = null
+            }
+
+            val intent = Intent(context, FullscreenPlayerActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                putExtra(FullscreenPlayerActivity.EXTRA_URL, contentUrl)
+                putExtra(FullscreenPlayerActivity.EXTRA_POSITION, pos)
+            }
+            context.startActivity(intent)
         }
         
         playerViewWrapper.setupOrderEscalationButton {
