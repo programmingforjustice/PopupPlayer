@@ -115,6 +115,7 @@ class BasicVideoPopupPlayer @JvmOverloads constructor(context: Context, private 
         playerViewWrapper.setupFullscreenButton {
             val pos = player.currentPosition
             val originalIndex = FullscreenBridge.currentIndex
+            FullscreenBridge.aspectRatio = (playerView.tag as? Double) ?: 1.0
             isEnteringFullscreen = true
             player.pause()
             if (isGhostMode) toggleGhostMode()

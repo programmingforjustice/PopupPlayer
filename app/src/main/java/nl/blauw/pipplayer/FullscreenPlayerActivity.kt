@@ -1,5 +1,7 @@
 package nl.blauw.pipplayer
 
+import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -17,6 +19,8 @@ object FullscreenBridge {
     var playlist: List<String> = emptyList()
     var currentIndex: Int = 0
     var navMode: NavMode = NavMode.NONE
+    /** width / height of the video that triggered fullscreen; >1.0 means landscape. */
+    var aspectRatio: Double = 1.0
 }
 
 class FullscreenPlayerActivity : AppCompatActivity() {
@@ -43,13 +47,13 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         currentIndex = FullscreenBridge.currentIndex
 
         playerView = findViewById(R.id.fullscreen_player_view)
+        applyOrientation(FullscreenBridge.aspectRatio)
         startPlayer(url, lastPosition)
 
         playerView.findViewById<ImageButton>(R.id.fullscreen_back_button)
             ?.setOnClickListener { finish() }
 
-        playerView.findViewById<TextView>(R.id.fullscreen_title)?.text =
-            url.substringAfterLast('/').substringBeforeLast('.')
+        playerView.findViewById<TextView>(R.id.fullscreen_title)?.text = displayName(url)
 
         setupNavButtons()
         setupLockButton()
@@ -76,18 +80,28 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         player?.release()
         startPlayer(newUrl, 0L)
 
-        playerView.findViewById<TextView>(R.id.fullscreen_title)?.text =
-            newUrl.substringAfterLast('/').substringBeforeLast('.')
+        playerView.findViewById<TextView>(R.id.fullscreen_title)?.text = displayName(newUrl)
     }
 
     private fun startPlayer(url: String, position: Long) {
         val p = DefaultPlayerFactory(this).create(url)
         player = p
+        (p as? PlayerWrapper)?.setVideoSizeChangedListener { videoSize ->
+            if (videoSize.width > 0 && videoSize.height > 0)
+                applyOrientation(videoSize.width.toDouble() / videoSize.height)
+        }
         playerView.player = p
         p.prepare()
         p.seekTo(position)
         p.playWhenReady = true
         lastPosition = position
+    }
+
+    private fun applyOrientation(aspectRatio: Double) {
+        requestedOrientation = if (aspectRatio > 1.0)
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        else
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     // ── Lock ──────────────────────────────────────────────────
@@ -132,6 +146,9 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         FullscreenBridge.onFullscreenClosed?.invoke(currentIndex, lastPosition)
         FullscreenBridge.onFullscreenClosed = null
     }
+
+    private fun displayName(url: String): String =
+        Uri.decode(url.substringAfterLast('/')).substringBeforeLast('.')
 
     private fun hideSystemUi() {
         WindowInsetsControllerCompat(window, playerView).apply {

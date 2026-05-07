@@ -1,6 +1,8 @@
 package nl.blauw.pipplayer
 
 import android.content.Context
+import android.net.Uri
+import java.io.File
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.DefaultLoadControl
@@ -46,11 +48,13 @@ class DefaultPlayerFactory(
             context, Util.getUserAgent(context, context.getString(R.string.app_name))
         )
     
+        val mediaUri = if (contentUrl.startsWith("/")) Uri.fromFile(File(contentUrl))
+                       else Uri.parse(contentUrl)
+
         val contentMediaSource: MediaSource = ProgressiveMediaSource.Factory(
             dataSourceFactory,
             DefaultExtractorsFactory()
-        )//.createMediaSource(mediaItem))
-        .createMediaSource(MediaItem.fromUri(contentUrl))
+        ).createMediaSource(MediaItem.fromUri(mediaUri))
 
         (player as PlayerWrapper).apply {
           enableExoPlayerFeatures().setMediaSource(contentMediaSource)
