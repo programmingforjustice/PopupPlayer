@@ -122,7 +122,7 @@
                         android:background="@drawable/category_icon_bg"
                         android:padding="12dp" android:contentDescription="My Playlists" />
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="My Playlists" android:textSize="11sp" android:textColor="#333333"
+                        android:text="History" android:textSize="11sp" android:textColor="#333333"
                         android:gravity="center" android:layout_marginTop="4dp" />
                 </LinearLayout>
 
