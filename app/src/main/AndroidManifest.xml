@@ -50,6 +50,8 @@
 
     <activity android:name=".RecycleBinActivity" />
 
+    <activity android:name=".HistoryActivity" />
+
     <activity
         android:name=".FullscreenPlayerActivity"
         android:configChanges="orientation|screenSize|keyboardHidden"

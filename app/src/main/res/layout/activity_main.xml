@@ -111,6 +111,21 @@
                         android:gravity="center" android:layout_marginTop="4dp" />
                 </LinearLayout>
 
+                <LinearLayout android:id="@+id/categoryPlayHistory"
+                    android:layout_width="72dp" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true" android:focusable="true">
+                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
+                        android:src="@android:drawable/ic_menu_agenda"
+                        android:background="@drawable/category_icon_bg"
+                        android:padding="12dp" android:contentDescription="My Playlists" />
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="My Playlists" android:textSize="11sp" android:textColor="#333333"
+                        android:gravity="center" android:layout_marginTop="4dp" />
+                </LinearLayout>
+
                 <LinearLayout android:id="@+id/categoryCleaner"
                     android:layout_width="72dp" android:layout_height="wrap_content"
                     android:orientation="vertical" android:gravity="center"

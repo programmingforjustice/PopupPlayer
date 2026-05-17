@@ -14,8 +14,15 @@ import android.widget.Toast
 import org.json.JSONArray
 import org.json.JSONObject
 import com.google.android.exoplayer2.ExoPlayer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class PlayerService : Service() {
+
+    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     private val commandMap = mapOf(
         ACTION_START_PIP to ::startPopupPlayer,
@@ -62,12 +69,24 @@ class PlayerService : Service() {
             show()
             play()
         }
+        serviceScope.launch {
+            val arr = JSONArray().apply { put(url) }
+            HistoryRepository(applicationContext).insert(
+                PlayHistory(isNavigation = false, mediaPaths = arr.toString())
+            )
+        }
     }
-    
+
     private fun startPlaylistPlayer(intent: Intent?) {
         val paths = intent?.getStringArrayListExtra(EXTRA_PATHS)
             ?: throw IllegalStateException("cannot get paths from intent.")
         PopupPlayerManager.startPlaylist(paths)
+        serviceScope.launch {
+            val arr = JSONArray().apply { paths.forEach { put(it) } }
+            HistoryRepository(applicationContext).insert(
+                PlayHistory(isNavigation = paths.size > 1, mediaPaths = arr.toString())
+            )
+        }
     }
 
     private fun savePlayList(intent: Intent?) = PopupPlayerManager.savePlayList()
@@ -75,6 +94,7 @@ class PlayerService : Service() {
     private fun restorePlayList(intent: Intent?) = PopupPlayerManager.restorePlayList()
 
     override fun onDestroy() {
+        serviceScope.cancel()
         PopupPlayerManager.clear()
         super.onDestroy()
     }

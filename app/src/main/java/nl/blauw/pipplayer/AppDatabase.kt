@@ -11,13 +11,14 @@ import androidx.room.RoomDatabase
  * - version : 1 (스키마 변경 시 증가 + Migration 추가)
  */
 @Database(
-    entities = [Playlist::class, PlaylistItem::class],
-    version  = 1,
+    entities = [Playlist::class, PlaylistItem::class, PlayHistory::class],
+    version  = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun playlistDao(): PlaylistDao
+    abstract fun playHistoryDao(): PlayHistoryDao
 
     companion object {
         @Volatile

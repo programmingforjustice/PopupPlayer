@@ -695,6 +695,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, PlaylistActivity::class.java))
         }
 
+        findViewById<View>(R.id.categoryPlayHistory).setOnClickListener {
+            startActivity(Intent(this, HistoryActivity::class.java))
+        }
+
         findViewById<View>(R.id.categoryCleaner).setOnClickListener {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
                 startActivity(Intent(this, RecycleBinActivity::class.java))
