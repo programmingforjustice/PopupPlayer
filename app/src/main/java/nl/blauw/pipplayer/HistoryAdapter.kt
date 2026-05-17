@@ -57,7 +57,13 @@ data class HistoryEntry(
             }
         }
 
-    val name: String get() = if (primaryPath.isEmpty()) "Unknown" else File(primaryPath).name
+    val name: String get() {
+        val first = if (primaryPath.isEmpty()) "Unknown" else File(primaryPath).name
+        return if (isNavigation && paths.size > 1)
+            "$first and ${paths.size - 1} other media"
+        else
+            first
+    }
 
     fun subtextFor(context: Context): String {
         val date = DateFormat.format("yyyy-MM-dd HH:mm", Date(playedAt))
