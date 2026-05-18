@@ -14,6 +14,10 @@ android {
         targetSdk 35
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
     }
     
     signingConfigs {
@@ -52,7 +56,8 @@ android {
         }
         debug {
             // 디버그 빌드 설정 (서명하지 않음)
-            signingConfig signingConfigs.debug
+            //signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
     
