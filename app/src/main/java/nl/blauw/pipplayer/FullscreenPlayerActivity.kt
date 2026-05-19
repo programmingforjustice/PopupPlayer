@@ -129,9 +129,14 @@ class FullscreenPlayerActivity : AppCompatActivity() {
 
         val p = DefaultPlayerFactory(this).create(url)
         player = p
-        (p as? PlayerWrapper)?.setVideoSizeChangedListener { videoSize ->
-            if (videoSize.width > 0 && videoSize.height > 0)
-                applyOrientation(videoSize.width.toDouble() / videoSize.height)
+        (p as? PlayerWrapper)?.apply {
+            setVideoSizeChangedListener { videoSize ->
+                if (videoSize.width > 0 && videoSize.height > 0)
+                    applyOrientation(videoSize.width.toDouble() / videoSize.height)
+            }
+            if (playlist.size > 1) {
+                setOnPlaybackEndedListener { navigateTo(currentIndex + 1) }
+            }
         }
         playerView.player = p
         p.prepare()
