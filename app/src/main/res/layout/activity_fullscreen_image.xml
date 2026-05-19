@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!-- Full-screen image -->
+    <ImageView
+        android:id="@+id/fullscreen_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:contentDescription="Fullscreen image" />
+
+    <!-- Top bar: back button + title -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#80000000"
+        android:paddingStart="4dp"
+        android:paddingEnd="12dp">
+
+        <ImageButton
+            android:id="@+id/fullscreen_back_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:id="@+id/fullscreen_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:paddingStart="4dp" />
+
+    </LinearLayout>
+
+    <!-- Previous image button -->
+    <ImageButton
+        android:id="@+id/prev_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical|start"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_skip_previous"
+        android:background="#55000000"
+        android:visibility="gone"
+        android:contentDescription="Previous" />
+
+    <!-- Next image button -->
+    <ImageButton
+        android:id="@+id/next_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_skip_next"
+        android:background="#55000000"
+        android:visibility="gone"
+        android:contentDescription="Next" />
+
+    <!-- Slideshow countdown bar: drains left to right over 5 seconds -->
+    <ProgressBar
+        android:id="@+id/slideshow_progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_gravity="bottom"
+        android:max="1000"
+        android:progress="1000"
+        android:progressTint="#1E90FF"
+        android:progressBackgroundTint="#44FFFFFF"
+        android:visibility="gone" />
+
+</FrameLayout>

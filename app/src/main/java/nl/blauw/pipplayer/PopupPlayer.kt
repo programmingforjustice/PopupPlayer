@@ -1,5 +1,6 @@
 package nl.blauw.pipplayer
 
+import android.content.Intent
 import android.net.Uri
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -369,6 +370,9 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
             onClose?.invoke()
             dispose()
         }
+
+        imageViewLayout.findViewById<ImageButton>(R.id.fullscreen_button)
+            ?.setOnClickListener { enterFullscreen() }
         
         val orderEscalationButton = imageViewLayout.findViewById<ImageButton>(R.id.order_escalation_button)
         orderEscalationButton.setOnClickListener {
@@ -443,12 +447,50 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
     
     override fun removePopupWindow() {
         removeGhostExitOverlay()
-        windowManager.removeViewImmediate(imageViewLayout)
+        if (imageViewLayout.parent != null)
+            windowManager.removeViewImmediate(imageViewLayout)
     }
 
     override fun dispose() {
         removePopupWindow()
         PopupPlayerManager.remove(this)
+    }
+
+    private fun enterFullscreen() {
+        val url = contentUrl ?: return
+        if (imageViewLayout.parent == null) return  // not currently attached
+
+        val originalIndex = FullscreenBridge.currentIndex
+        val isInNavMode   = onPrev != null || onNext != null
+
+        if (isGhostMode) toggleGhostMode()
+        removePopupWindow()
+
+        FullscreenBridge.onFullscreenClosed = { finalIndex, _ ->
+            if (finalIndex == originalIndex || !isInNavMode) {
+                // Same item or standalone — re-attach the popup
+                if (imageViewLayout.parent == null)
+                    windowManager.addView(imageViewLayout, layoutParams)
+            } else if (FullscreenBridge.playlist.isNotEmpty()) {
+                // User navigated to a different item while in fullscreen
+                dispose()
+                PopupPlayerManager.remove(this@ImagePopupPlayer)
+                PopupPlayerManager.restoreFromFullscreen(
+                    FullscreenBridge.playlist,
+                    finalIndex,
+                    0L,
+                    FullscreenBridge.navMode
+                )
+            }
+            FullscreenBridge.onFullscreenClosed = null
+        }
+
+        context.startActivity(
+            Intent(context, FullscreenImageActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                putExtra(FullscreenImageActivity.EXTRA_URL, url)
+            }
+        )
     }
     
     override fun exportCurrentFrame(): Bitmap? {
