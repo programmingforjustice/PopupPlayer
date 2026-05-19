@@ -1,153 +1,213 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  Unified controller for both video and image items.
+
+  Structure (FrameLayout root):
+    1. ImageView (fullscreen_image_view) — shown for image items, GONE for video.
+    2. LinearLayout overlay — the dark control UI, always on top.
+       ├─ Top bar: back button + title
+       ├─ Spacer (weight=1)
+       ├─ exo_seekbar_row  — VISIBLE for video, GONE for image
+       ├─ slideshow_progress — GONE for video, VISIBLE for image (5-second countdown)
+       └─ Play-controls row
+            ├─ exo_lock_section  (weight=1) — VISIBLE for video, INVISIBLE for image
+            ├─ [prev | exo_play_pause_section | next]
+            └─ right spacer     (weight=1)
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#66000000"
     android:layoutDirection="ltr">
 
-    <!-- Top bar: back button + video title -->
+    <!-- ── IMAGE BACKGROUND ──────────────────────────────────── -->
+    <!-- Shown instead of the video surface for image-type items. -->
+    <ImageView
+        android:id="@+id/fullscreen_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:background="#000000"
+        android:contentDescription="Fullscreen image"
+        android:visibility="gone" />
+
+    <!-- ── CONTROL OVERLAY ───────────────────────────────────── -->
+    <!-- Dark semi-transparent overlay; identical for video and image. -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="4dp"
-        android:paddingEnd="12dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#66000000">
 
-        <ImageButton
-            android:id="@+id/fullscreen_back_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_arrow_back"
-            android:background="?android:attr/selectableItemBackground"
-            android:contentDescription="Back" />
-
-        <TextView
-            android:id="@+id/fullscreen_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingStart="8dp" />
-
-    </LinearLayout>
-
-    <!-- Spacer -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Seekbar row: position | seekbar | duration -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="4dp">
-
-        <TextView
-            android:id="@id/exo_position"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:paddingEnd="8dp" />
-
-        <View
-            android:id="@id/exo_progress_placeholder"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="26dp" />
-
-        <TextView
-            android:id="@id/exo_duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:paddingStart="8dp" />
-
-    </LinearLayout>
-
-    <!-- Play controls row: [lock | spacer] [prev | play/pause | next] [spacer] -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingBottom="12dp"
-        android:paddingTop="4dp">
-
-        <!-- Left section: lock button (anchored start) -->
+        <!-- Top bar: back button + media title -->
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical|start"
-            android:paddingStart="12dp">
-
-            <ImageButton
-                android:id="@+id/fullscreen_lock_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_lock"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="Lock" />
-
-        </LinearLayout>
-
-        <!-- Center section: prev | play | pause | next -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center_vertical"
+            android:paddingStart="4dp"
+            android:paddingEnd="12dp">
 
             <ImageButton
-                android:id="@+id/prev_button"
+                android:id="@+id/fullscreen_back_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/ic_skip_previous"
+                android:src="@drawable/ic_arrow_back"
                 android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="Previous"
-                android:layout_marginEnd="8dp"
-                android:visibility="gone" />
+                android:contentDescription="Back" />
 
-            <ImageButton android:id="@id/exo_play"
-                style="@style/ExoMediaButton.Play"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" />
-
-            <ImageButton android:id="@id/exo_pause"
-                style="@style/ExoMediaButton.Pause"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp" />
-
-            <ImageButton
-                android:id="@+id/next_button"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_skip_next"
-                android:background="?android:attr/selectableItemBackground"
-                android:contentDescription="Next"
-                android:layout_marginStart="8dp"
-                android:visibility="gone" />
+            <TextView
+                android:id="@+id/fullscreen_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:paddingStart="8dp" />
 
         </LinearLayout>
 
-        <!-- Right section: mirror width of left section for true centering -->
+        <!-- Spacer: pushes controls to the bottom -->
         <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <!-- ── VIDEO ONLY: ExoPlayer seek bar row ──────────────── -->
+        <LinearLayout
+            android:id="@+id/exo_seekbar_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="4dp">
+
+            <TextView
+                android:id="@id/exo_position"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:paddingEnd="8dp" />
+
+            <View
+                android:id="@id/exo_progress_placeholder"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="26dp" />
+
+            <TextView
+                android:id="@id/exo_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:paddingStart="8dp" />
+
+        </LinearLayout>
+
+        <!-- ── IMAGE ONLY: Slideshow countdown bar ─────────────── -->
+        <!-- Drains from full to empty over 5 seconds; hidden for video. -->
+        <ProgressBar
+            android:id="@+id/slideshow_progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="4dp"
+            android:max="1000"
+            android:progress="1000"
+            android:progressTint="#1E90FF"
+            android:progressBackgroundTint="#44FFFFFF"
+            android:visibility="gone" />
+
+        <!-- ── SHARED: Playback / navigation button row ─────────── -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingBottom="12dp"
+            android:paddingTop="4dp">
+
+            <!-- Left section: lock button (video only — INVISIBLE for images to preserve centering) -->
+            <LinearLayout
+                android:id="@+id/exo_lock_section"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|start"
+                android:paddingStart="12dp">
+
+                <ImageButton
+                    android:id="@+id/fullscreen_lock_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_lock"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="Lock" />
+
+            </LinearLayout>
+
+            <!-- Center section: prev | (play/pause for video) | next -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageButton
+                    android:id="@+id/prev_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_skip_previous"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="Previous"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="gone" />
+
+                <!-- Video-only: ExoPlayer play / pause buttons -->
+                <LinearLayout
+                    android:id="@+id/exo_play_pause_section"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageButton android:id="@id/exo_play"
+                        style="@style/ExoMediaButton.Play"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp" />
+
+                    <ImageButton android:id="@id/exo_pause"
+                        style="@style/ExoMediaButton.Pause"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp" />
+
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/next_button"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_skip_next"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:contentDescription="Next"
+                    android:layout_marginStart="8dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <!-- Right spacer: mirrors left section for true centering -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

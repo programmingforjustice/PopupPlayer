@@ -40,20 +40,19 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         private const val TIMER_TICK_MS    = 50L
     }
 
-    // ── Views ─────────────────────────────────────────────────────────────────
-    private lateinit var playerView:          PlayerView
-    private lateinit var fullscreenImageView: ImageView
-    private lateinit var imageControlOverlay: View
-    private lateinit var slideshowProgress:   ProgressBar
+    private lateinit var playerView: PlayerView
 
-    // ── State ─────────────────────────────────────────────────────────────────
     private var player: Player? = null
-    private var lastPosition     = 0L
-    private var currentIndex     = 0
+    private var lastPosition       = 0L
+    private var currentIndex       = 0
     private var isCurrentItemImage = false
     private var slideshowTimer: CountDownTimer? = null
 
     private val playlist get() = FullscreenBridge.playlist
+
+    // ── Shorthand: access views that live inside the controller layout ─────────
+    // All these IDs are declared in fullscreen_player_control_view.xml.
+    private fun <T : View> ctrl(id: Int): T? = playerView.findViewById(id)
 
     // ── Lifecycle ─────────────────────────────────────────────────────────────
 
@@ -66,23 +65,14 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         lastPosition = intent.getLongExtra(EXTRA_POSITION, 0L)
         currentIndex = FullscreenBridge.currentIndex
 
-        playerView           = findViewById(R.id.fullscreen_player_view)
-        fullscreenImageView  = findViewById(R.id.fullscreen_image_view)
-        imageControlOverlay  = findViewById(R.id.image_control_overlay)
-        slideshowProgress    = imageControlOverlay.findViewById(R.id.slideshow_progress)
+        playerView = findViewById(R.id.fullscreen_player_view)
 
         applyOrientation(FullscreenBridge.aspectRatio)
         startItem(url, lastPosition)
 
-        // Video-mode controls (inside PlayerView controller layout)
-        playerView.findViewById<ImageButton>(R.id.fullscreen_back_button)
-            ?.setOnClickListener { finish() }
-        setupVideoNavButtons()
+        ctrl<ImageButton>(R.id.fullscreen_back_button)?.setOnClickListener { finish() }
+        setupNavButtons()
         setupLockButton()
-
-        // Image-mode controls (inside image_control_overlay)
-        setupImageControls()
-
         hideSystemUi()
     }
 
@@ -90,7 +80,6 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         super.onResume()
         player?.playWhenReady = true
         hideSystemUi()
-        // Resume slideshow countdown if we're on an image and the timer was cancelled
         if (isCurrentItemImage && playlist.size > 1) startSlideshowTimer()
     }
 
@@ -107,7 +96,6 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         lastPosition = player?.currentPosition ?: lastPosition
         player?.release()
         player = null
-        // Images have no meaningful playback position
         val finalPos = if (isCurrentItemImage) 0L else lastPosition
         FullscreenBridge.onFullscreenClosed?.invoke(currentIndex, finalPos)
         FullscreenBridge.onFullscreenClosed = null
@@ -128,11 +116,16 @@ class FullscreenPlayerActivity : AppCompatActivity() {
     private fun showVideoMode(url: String, position: Long) {
         isCurrentItemImage = false
         slideshowTimer?.cancel()
-
         player?.release()
-        fullscreenImageView.visibility = View.GONE
-        imageControlOverlay.visibility = View.GONE
-        playerView.visibility          = View.VISIBLE
+
+        // Show ExoPlayer-specific controls; hide image elements
+        ctrl<ImageView>(R.id.fullscreen_image_view)?.visibility         = View.GONE
+        ctrl<View>(R.id.exo_seekbar_row)?.visibility                    = View.VISIBLE
+        ctrl<View>(R.id.slideshow_progress)?.visibility                 = View.GONE
+        ctrl<View>(R.id.exo_play_pause_section)?.visibility             = View.VISIBLE
+        ctrl<View>(R.id.exo_lock_section)?.visibility                   = View.VISIBLE
+
+        playerView.setControllerShowTimeoutMs(3000)
 
         val p = DefaultPlayerFactory(this).create(url)
         player = p
@@ -146,45 +139,53 @@ class FullscreenPlayerActivity : AppCompatActivity() {
         p.playWhenReady = true
         lastPosition = position
 
-        playerView.findViewById<TextView>(R.id.fullscreen_title)?.text = displayName(url)
+        ctrl<TextView>(R.id.fullscreen_title)?.text = displayName(url)
     }
 
     // ── Image mode ────────────────────────────────────────────────────────────
 
     private fun showImageMode(url: String) {
         isCurrentItemImage = true
-
         player?.release()
         player = null
-        playerView.player  = null
-        playerView.visibility = View.GONE
+        playerView.player = null
 
+        // Load image into the controller-internal ImageView
         val source: Any = if (url.startsWith("/") || url.startsWith("file://"))
             File(url.removePrefix("file://")) else Uri.parse(url)
-        Glide.with(this).load(source).into(fullscreenImageView)
+        ctrl<ImageView>(R.id.fullscreen_image_view)?.let {
+            it.visibility = View.VISIBLE
+            Glide.with(this).load(source).into(it)
+        }
 
-        fullscreenImageView.visibility = View.VISIBLE
-        imageControlOverlay.visibility = View.VISIBLE
+        // Hide ExoPlayer-specific controls; show image elements
+        ctrl<View>(R.id.exo_seekbar_row)?.visibility        = View.GONE
+        ctrl<View>(R.id.exo_play_pause_section)?.visibility = View.GONE
+        // INVISIBLE (not GONE) so the weight=1 left spacer still centres prev/next
+        ctrl<View>(R.id.exo_lock_section)?.visibility       = View.INVISIBLE
 
-        imageControlOverlay.findViewById<TextView>(R.id.image_title)?.text = displayName(url)
+        ctrl<TextView>(R.id.fullscreen_title)?.text = displayName(url)
 
-        // Images are typically portrait; let the system decide orientation
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 
+        // Keep controller visible indefinitely; hide after navigating to video
+        playerView.setControllerShowTimeoutMs(0)
+        playerView.showController()
+
         if (playlist.size > 1) startSlideshowTimer()
-        else slideshowProgress.visibility = View.GONE
+        else ctrl<View>(R.id.slideshow_progress)?.visibility = View.GONE
     }
 
     // ── Slideshow countdown ───────────────────────────────────────────────────
 
     private fun startSlideshowTimer() {
+        val progressBar = ctrl<ProgressBar>(R.id.slideshow_progress) ?: return
         slideshowTimer?.cancel()
-        slideshowProgress.visibility = View.VISIBLE
-        slideshowProgress.progress   = slideshowProgress.max
+        progressBar.visibility = View.VISIBLE
+        progressBar.progress   = progressBar.max
         slideshowTimer = object : CountDownTimer(IMAGE_DISPLAY_MS, TIMER_TICK_MS) {
             override fun onTick(ms: Long) {
-                slideshowProgress.progress =
-                    ((ms * slideshowProgress.max) / IMAGE_DISPLAY_MS).toInt()
+                progressBar.progress = ((ms * progressBar.max) / IMAGE_DISPLAY_MS).toInt()
             }
             override fun onFinish() { navigateTo(currentIndex + 1) }
         }.start()
@@ -192,27 +193,11 @@ class FullscreenPlayerActivity : AppCompatActivity() {
 
     // ── Navigation ────────────────────────────────────────────────────────────
 
-    private fun setupVideoNavButtons() {
-        val hasNav = playlist.size > 1
-        val prevBtn = playerView.findViewById<ImageButton>(R.id.prev_button)
-        val nextBtn = playerView.findViewById<ImageButton>(R.id.next_button)
-        prevBtn?.visibility = if (hasNav) View.VISIBLE else View.GONE
-        nextBtn?.visibility = if (hasNav) View.VISIBLE else View.GONE
-        prevBtn?.setOnClickListener { navigateTo(currentIndex - 1) }
-        nextBtn?.setOnClickListener { navigateTo(currentIndex + 1) }
-    }
-
-    private fun setupImageControls() {
-        imageControlOverlay.findViewById<ImageButton>(R.id.image_back_button)
-            ?.setOnClickListener { finish() }
-
-        val hasNav = playlist.size > 1
-        val prevBtn = imageControlOverlay.findViewById<ImageButton>(R.id.image_prev_button)
-        val nextBtn = imageControlOverlay.findViewById<ImageButton>(R.id.image_next_button)
-        prevBtn?.visibility = if (hasNav) View.VISIBLE else View.GONE
-        nextBtn?.visibility = if (hasNav) View.VISIBLE else View.GONE
-        prevBtn?.setOnClickListener { navigateTo(currentIndex - 1) }
-        nextBtn?.setOnClickListener { navigateTo(currentIndex + 1) }
+    private fun setupNavButtons() {
+        val hasNav  = playlist.size > 1
+        val visible = if (hasNav) View.VISIBLE else View.GONE
+        ctrl<ImageButton>(R.id.prev_button)?.let { it.visibility = visible; it.setOnClickListener { navigateTo(currentIndex - 1) } }
+        ctrl<ImageButton>(R.id.next_button)?.let { it.visibility = visible; it.setOnClickListener { navigateTo(currentIndex + 1) } }
     }
 
     private fun navigateTo(rawIndex: Int) {
@@ -229,7 +214,7 @@ class FullscreenPlayerActivity : AppCompatActivity() {
     // ── Lock (video mode only) ────────────────────────────────────────────────
 
     private fun setupLockButton() {
-        playerView.findViewById<ImageButton>(R.id.fullscreen_lock_button)
+        ctrl<ImageButton>(R.id.fullscreen_lock_button)
             ?.setOnClickListener { setLocked(true) }
         findViewById<View>(R.id.fullscreen_unlock_button)
             ?.setOnClickListener { setLocked(false) }
