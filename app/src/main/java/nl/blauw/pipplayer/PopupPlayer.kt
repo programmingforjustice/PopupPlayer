@@ -486,9 +486,10 @@ class ImagePopupPlayer @JvmOverloads constructor(context: Context, private val c
         }
 
         context.startActivity(
-            Intent(context, FullscreenImageActivity::class.java).apply {
+            Intent(context, FullscreenPlayerActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                putExtra(FullscreenImageActivity.EXTRA_URL, url)
+                putExtra(FullscreenPlayerActivity.EXTRA_URL, url)
+                putExtra(FullscreenPlayerActivity.EXTRA_POSITION, 0L)
             }
         )
     }
