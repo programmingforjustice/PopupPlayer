@@ -15,19 +15,18 @@
     android:focusable="true">
 
     <FrameLayout
-        android:layout_width="58dp"
-        android:layout_height="50dp"
-        android:background="@drawable/bg_folder_icon"
-        android:clipToOutline="true">
+        android:layout_width="64dp"
+        android:layout_height="46dp"
+        android:background="@android:color/transparent"
+        android:clipToOutline="false">
 
         <ImageView
             android:id="@+id/ivFolderThumbnail"
-            android:layout_width="44dp"
-            android:layout_height="34dp"
+            android:layout_width="64dp"
+            android:layout_height="46dp"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_folder_default"
-            android:tint="#8EA1A7"
             android:background="@android:color/transparent"
             android:contentDescription="Folder thumbnail" />
 
