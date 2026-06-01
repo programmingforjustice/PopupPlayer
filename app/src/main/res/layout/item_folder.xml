@@ -17,14 +17,14 @@
     android:focusable="true">
 
     <FrameLayout
-        android:layout_width="62dp"
+        android:layout_width="124dp"
         android:layout_height="62dp"
         android:background="@android:color/transparent"
         android:clipToOutline="false">
 
         <ImageView
             android:id="@+id/ivFolderThumbnail"
-            android:layout_width="62dp"
+            android:layout_width="124dp"
             android:layout_height="62dp"
             android:layout_gravity="center"
             android:scaleType="fitCenter"
