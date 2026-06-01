@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#F7F9FC">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,20 +15,23 @@
         <!-- ── TOP APP BAR ── -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="76dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingStart="4dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="8dp">
+            android:background="#FFFFFF"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
 
             <!-- 뒤로가기 버튼: 루트에서는 gone -->
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:src="@android:drawable/ic_menu_revert"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginEnd="8dp"
+                android:src="@drawable/ic_pp_back"
+                android:tint="#65717C"
+                android:padding="9dp"
+                android:scaleType="center"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Back"
                 android:visibility="gone" />
@@ -36,45 +39,58 @@
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="Video&#x2019;s"
-                android:textSize="24sp"
+                android:textSize="25sp"
                 android:textStyle="bold"
-                android:textColor="#000000"
+                android:textColor="#171717"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:paddingStart="8dp" />
+                android:paddingStart="0dp" />
 
             <ImageButton
                 android:id="@+id/btnFilterToggle"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/filter_toggle_normal"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_pp_filter"
+                android:tint="#65717C"
+                android:padding="8dp"
+                android:scaleType="center"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Filter toggle" />
 
             <ImageButton
                 android:id="@+id/btnSort"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_menu_sort_by_size"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_pp_sort"
+                android:tint="#65717C"
+                android:padding="8dp"
+                android:scaleType="center"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Sort" />
 
             <ImageButton
                 android:id="@+id/btnSearch"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_menu_search"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_pp_search"
+                android:tint="#65717C"
+                android:padding="8dp"
+                android:scaleType="center"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Search" />
 
             <ImageButton
                 android:id="@+id/btnLayoutToggle"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_dialog_dialer"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_pp_grid"
+                android:tint="#65717C"
+                android:padding="8dp"
+                android:scaleType="center"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Layout toggle" />
 
@@ -85,90 +101,171 @@
             android:id="@+id/categoryScrollView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="#FFFFFF"
             android:scrollbars="none"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp">
+            android:paddingTop="12dp"
+            android:paddingBottom="10dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
 
-                <LinearLayout android:id="@+id/categoryPlaylists"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
+                <LinearLayout
+                    android:id="@+id/categoryPlaylists"
+                    android:layout_width="76dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="6dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/ic_menu_agenda"
-                        android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="My Playlists" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="My Playlists" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:src="@drawable/ic_pp_playlist"
+                        android:tint="#3F7FD8"
+                        android:background="@drawable/category_icon_bg_primary"
+                        android:padding="12dp"
+                        android:scaleType="center"
+                        android:contentDescription="My Playlists" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="My Playlist"
+                        android:textSize="11sp"
+                        android:textColor="#3E4449"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_marginTop="6dp" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/categoryPlayHistory"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
+                <LinearLayout
+                    android:id="@+id/categoryPlayHistory"
+                    android:layout_width="76dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="6dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/ic_menu_agenda"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:src="@drawable/ic_pp_history"
+                        android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="My Playlists" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="History" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
+                        android:padding="12dp"
+                        android:scaleType="center"
+                        android:contentDescription="History" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="History"
+                        android:textSize="11sp"
+                        android:textColor="#3E4449"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_marginTop="6dp" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/categoryCleaner"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
+                <LinearLayout
+                    android:id="@+id/categoryCleaner"
+                    android:layout_width="76dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="6dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/ic_menu_delete"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:src="@drawable/ic_pp_trash"
+                        android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="Cleaner" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Cleaner" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
+                        android:padding="10dp"
+                        android:scaleType="center"
+                        android:contentDescription="Trash Bin" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Trash Bin"
+                        android:textSize="11sp"
+                        android:textColor="#3E4449"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_marginTop="6dp" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/categoryUrlStream"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
+                <LinearLayout
+                    android:id="@+id/categoryUrlStream"
+                    android:layout_width="76dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="6dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/ic_menu_share"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:src="@drawable/ic_pp_share"
+                        android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="URL Stream" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="URL Stream" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
+                        android:padding="12dp"
+                        android:scaleType="center"
+                        android:contentDescription="URL Stream" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="URL Stream"
+                        android:textSize="11sp"
+                        android:textColor="#3E4449"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_marginTop="6dp" />
                 </LinearLayout>
 
-                <LinearLayout android:id="@+id/categorySettings"
-                    android:layout_width="72dp" android:layout_height="wrap_content"
-                    android:orientation="vertical" android:gravity="center"
-                    android:layout_marginEnd="8dp"
+                <LinearLayout
+                    android:id="@+id/categorySettings"
+                    android:layout_width="76dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginEnd="6dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true" android:focusable="true">
-                    <ImageView android:layout_width="56dp" android:layout_height="56dp"
-                        android:src="@android:drawable/ic_menu_manage"
+                    android:clickable="true"
+                    android:focusable="true">
+                    <ImageView
+                        android:layout_width="58dp"
+                        android:layout_height="58dp"
+                        android:src="@drawable/ic_pp_settings"
+                        android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="12dp" android:contentDescription="Local Net" />
-                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                        android:text="Local Net" android:textSize="11sp" android:textColor="#333333"
-                        android:gravity="center" android:layout_marginTop="4dp" />
+                        android:padding="8dp"
+                        android:scaleType="center"
+                        android:contentDescription="Settings" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Settings"
+                        android:textSize="11sp"
+                        android:textColor="#3E4449"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:layout_marginTop="6dp" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -195,18 +292,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="none"
-            android:background="#F5F5F5"
+            android:background="#FFFFFF"
             android:visibility="gone">
             <TextView
                 android:id="@+id/tvBreadcrumb"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
-                android:textColor="#666666"
+                android:textColor="#8B949E"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:singleLine="true" />
         </HorizontalScrollView>
 
@@ -217,10 +314,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
+            android:background="#FFFFFF"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
             android:visibility="gone">
 
             <TextView
@@ -228,26 +326,25 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="12sp"
-                android:textColor="#999999" />
+                android:textSize="13sp"
+                android:textColor="#7F8891" />
 
-            <!-- all / video / image 필터 버튼 그룹 -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/bg_filter_group"
-                android:padding="2dp">
+                android:padding="3dp">
 
                 <TextView
                     android:id="@+id/btnFilterAll"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_height="32dp"
                     android:text="all"
                     android:textSize="12sp"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="13dp"
+                    android:paddingEnd="13dp"
                     android:background="@drawable/bg_filter_selected"
                     android:textColor="#FFFFFF"
                     android:clickable="true"
@@ -256,28 +353,28 @@
                 <TextView
                     android:id="@+id/btnFilterVideo"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_height="32dp"
                     android:text="video"
                     android:textSize="12sp"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="13dp"
+                    android:paddingEnd="13dp"
                     android:background="@android:color/transparent"
-                    android:textColor="#666666"
+                    android:textColor="#606A74"
                     android:clickable="true"
                     android:focusable="true" />
 
                 <TextView
                     android:id="@+id/btnFilterImage"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_height="32dp"
                     android:text="image"
                     android:textSize="12sp"
                     android:gravity="center"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
+                    android:paddingStart="13dp"
+                    android:paddingEnd="13dp"
                     android:background="@android:color/transparent"
-                    android:textColor="#666666"
+                    android:textColor="#606A74"
                     android:clickable="true"
                     android:focusable="true" />
 
@@ -285,11 +382,10 @@
 
         </LinearLayout>
 
-        <!-- ── 구분선 ── -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#EEEEEE" />
+            android:background="#E7EBF0" />
 
         <!-- ── 빈 상태 (파일 없을 때) ── -->
         <LinearLayout
@@ -347,7 +443,6 @@
         app:menu="@menu/bottom_nav_menu" />
 
     <!-- ── 멀티셀렉트 플로팅 바 ── -->
-    <!-- CoordinatorLayout 직접 자식으로 TOP APP BAR 영역을 덮는 floating 형태 -->
     <include
         android:id="@+id/multiselectBar"
         layout="@layout/layout_multiselect_bar"
