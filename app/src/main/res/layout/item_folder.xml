@@ -40,7 +40,6 @@
             android:background="@drawable/badge_bg_red"
             android:layout_gravity="top|start"
             android:visibility="gone" />
-
     </FrameLayout>
 
     <LinearLayout
@@ -68,7 +67,5 @@
             android:layout_marginTop="5dp"
             android:maxLines="1"
             android:ellipsize="end" />
-
     </LinearLayout>
-
 </LinearLayout>
