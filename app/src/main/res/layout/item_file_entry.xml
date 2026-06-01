@@ -1,84 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/item_file_entry.xml -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="74dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="9dp"
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
+    android:background="@drawable/bg_folder_item"
     android:clickable="true"
     android:focusable="true">
 
-    <!--
-        썸네일 컨테이너: FrameLayout 으로 레이어 겹침 처리
-        - ImageView (썸네일)
-        - View (파란 오버레이) — 선택 시만 VISIBLE
-        - ImageView (체크마크) — 선택 시만 VISIBLE
-        - ivPlayOverlay, tvDuration, tvGifBadge
-        너비 100dp, 높이는 9:16 비율 → ConstraintLayout 내부에서 처리
-    -->
     <FrameLayout
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/bg_grid_thumb"
+        android:layout_width="58dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_folder_icon"
         android:clipToOutline="true">
 
-        <!-- 비율 컨테이너 -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageView
+            android:id="@+id/ivEntryThumbnail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:padding="7dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="thumbnail" />
 
-            <!-- 썸네일 (9:16 비율) -->
-            <ImageView
-                android:id="@+id/ivEntryThumbnail"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:scaleType="centerCrop"
-                android:background="#E8ECF0"
-                android:contentDescription="thumbnail"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintDimensionRatio="W,16:9" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <!-- 파란 오버레이 (선택 시) — match_parent 로 썸네일 전체 덮음 -->
         <View
             android:id="@+id/viewSelectOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#664A7FD4"
+            android:background="#663F7FD8"
             android:visibility="gone" />
 
-        <!-- 체크마크 (선택 시, 중앙) -->
         <ImageView
             android:id="@+id/ivCheckMark"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_gravity="top|left"
+            android:layout_gravity="top|start"
             android:src="@drawable/ic_check_selected"
             android:visibility="gone"
             android:contentDescription="selected" />
 
-        <!-- 재생 오버레이 (동영상) -->
         <ImageView
             android:id="@+id/ivPlayOverlay"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:layout_gravity="center"
             android:src="@android:drawable/ic_media_play"
             android:alpha="0.85"
             android:visibility="gone"
             android:contentDescription="Play" />
 
-        <!-- 재생시간 (우하단) -->
         <TextView
             android:id="@+id/tvDuration"
             android:layout_width="wrap_content"
@@ -94,7 +72,6 @@
             android:paddingBottom="1dp"
             android:visibility="gone" />
 
-        <!-- GIF 뱃지 (좌하단) -->
         <TextView
             android:id="@+id/tvGifBadge"
             android:layout_width="wrap_content"
@@ -113,44 +90,44 @@
 
     </FrameLayout>
 
-    <!-- 이름 + 서브텍스트 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="14dp"
         android:layout_marginEnd="8dp">
 
         <TextView
             android:id="@+id/tvEntryName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#111111"
+            android:textSize="15.5sp"
+            android:textColor="#24282D"
             android:maxLines="2"
             android:ellipsize="end"
             android:lineSpacingMultiplier="1.1" />
 
         <TextView
             android:id="@+id/tvEntrySubtext"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="#888888"
-            android:layout_marginTop="3dp"
+            android:textSize="12.5sp"
+            android:textColor="#8B949D"
+            android:layout_marginTop="5dp"
             android:maxLines="1"
             android:ellipsize="end" />
 
     </LinearLayout>
 
-    <!-- 더보기 버튼 -->
     <ImageView
         android:id="@+id/ivEntryAction"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@android:drawable/ic_media_next"
-        android:alpha="0.4"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:src="@drawable/ic_pp_chevron_right"
+        android:tint="#A4ADB6"
+        android:alpha="1"
+        android:padding="4dp"
         android:contentDescription="action" />
 
 </LinearLayout>

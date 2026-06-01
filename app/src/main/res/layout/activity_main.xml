@@ -22,7 +22,6 @@
             android:paddingStart="14dp"
             android:paddingEnd="14dp">
 
-            <!-- 뒤로가기 버튼: 루트에서는 gone -->
             <ImageButton
                 android:id="@+id/btnBack"
                 android:layout_width="46dp"
@@ -31,7 +30,7 @@
                 android:src="@drawable/ic_pp_back"
                 android:tint="#65717C"
                 android:padding="9dp"
-                android:scaleType="center"
+                android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Back"
                 android:visibility="gone" />
@@ -54,10 +53,10 @@
                 android:id="@+id/btnFilterToggle"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:src="@drawable/ic_pp_filter"
+                android:src="@drawable/filter_toggle_normal"
                 android:tint="#65717C"
                 android:padding="8dp"
-                android:scaleType="center"
+                android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Filter toggle" />
 
@@ -65,10 +64,10 @@
                 android:id="@+id/btnSort"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:src="@drawable/ic_pp_sort"
+                android:src="@drawable/ic_sort_date_newest"
                 android:tint="#65717C"
                 android:padding="8dp"
-                android:scaleType="center"
+                android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Sort" />
 
@@ -79,7 +78,7 @@
                 android:src="@drawable/ic_pp_search"
                 android:tint="#65717C"
                 android:padding="8dp"
-                android:scaleType="center"
+                android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Search" />
 
@@ -87,10 +86,10 @@
                 android:id="@+id/btnLayoutToggle"
                 android:layout_width="44dp"
                 android:layout_height="44dp"
-                android:src="@drawable/ic_pp_grid"
+                android:src="@drawable/ic_layout_grid"
                 android:tint="#65717C"
                 android:padding="8dp"
-                android:scaleType="center"
+                android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Layout toggle" />
 
@@ -129,8 +128,8 @@
                         android:src="@drawable/ic_pp_playlist"
                         android:tint="#3F7FD8"
                         android:background="@drawable/category_icon_bg_primary"
-                        android:padding="12dp"
-                        android:scaleType="center"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
                         android:contentDescription="My Playlists" />
                     <TextView
                         android:layout_width="match_parent"
@@ -160,8 +159,8 @@
                         android:src="@drawable/ic_pp_history"
                         android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="12dp"
-                        android:scaleType="center"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
                         android:contentDescription="History" />
                     <TextView
                         android:layout_width="match_parent"
@@ -191,8 +190,8 @@
                         android:src="@drawable/ic_pp_trash"
                         android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="10dp"
-                        android:scaleType="center"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
                         android:contentDescription="Trash Bin" />
                     <TextView
                         android:layout_width="match_parent"
@@ -222,8 +221,8 @@
                         android:src="@drawable/ic_pp_share"
                         android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="12dp"
-                        android:scaleType="center"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
                         android:contentDescription="URL Stream" />
                     <TextView
                         android:layout_width="match_parent"
@@ -253,8 +252,8 @@
                         android:src="@drawable/ic_pp_settings"
                         android:tint="#7C8791"
                         android:background="@drawable/category_icon_bg"
-                        android:padding="8dp"
-                        android:scaleType="center"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
                         android:contentDescription="Settings" />
                     <TextView
                         android:layout_width="match_parent"
@@ -270,21 +269,6 @@
 
             </LinearLayout>
         </HorizontalScrollView>
-
-        <!-- Page indicator dots -->
-        <!-- <LinearLayout
-            android:id="@+id/layoutDots"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="4dp">
-            <View android:layout_width="6dp" android:layout_height="6dp"
-                android:background="@drawable/dot_active" android:layout_marginEnd="4dp" />
-            <View android:layout_width="6dp" android:layout_height="6dp"
-                android:background="@drawable/dot_inactive" />
-        </LinearLayout> -->
 
         <!-- ── 브레드크럼 (탐색 중에만 표시) ── -->
         <HorizontalScrollView
@@ -387,7 +371,6 @@
             android:layout_height="1dp"
             android:background="#E7EBF0" />
 
-        <!-- ── 빈 상태 (파일 없을 때) ── -->
         <LinearLayout
             android:id="@+id/layoutEmpty"
             android:layout_width="match_parent"
@@ -411,7 +394,6 @@
                 android:layout_marginTop="12dp" />
         </LinearLayout>
 
-        <!-- ── RecyclerView (루트 + 탐색 공용) ── -->
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefresh"
             android:layout_width="match_parent"
@@ -422,14 +404,15 @@
                 android:id="@+id/rvFolders"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="#F7F9FC"
                 android:clipToPadding="false"
+                android:paddingTop="8dp"
                 android:paddingBottom="8dp" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
-    <!-- ── BOTTOM NAVIGATION BAR ── -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
@@ -442,7 +425,6 @@
         app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav_menu" />
 
-    <!-- ── 멀티셀렉트 플로팅 바 ── -->
     <include
         android:id="@+id/multiselectBar"
         layout="@layout/layout_multiselect_bar"
@@ -451,7 +433,6 @@
         android:layout_gravity="top"
         android:visibility="gone" />
 
-    <!-- ── 검색 플로팅 바 ── -->
     <include
         android:id="@+id/searchBar"
         layout="@layout/layout_search_bar"

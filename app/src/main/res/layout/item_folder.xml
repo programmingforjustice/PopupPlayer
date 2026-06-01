@@ -1,33 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/item_folder.xml -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="74dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="9dp"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:background="?attr/selectableItemBackground"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:background="@drawable/bg_folder_item"
     android:clickable="true"
     android:focusable="true">
 
-    <!-- 썸네일 + 뱃지 -->
     <FrameLayout
-        android:layout_width="64dp"
-        android:layout_height="64dp">
+        android:layout_width="58dp"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_folder_icon"
+        android:clipToOutline="true">
 
-        <!-- 폴더 썸네일 이미지 (Glide 등으로 로딩) -->
         <ImageView
             android:id="@+id/ivFolderThumbnail"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:background="#E0E4EA"
+            android:layout_width="44dp"
+            android:layout_height="34dp"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_folder_default"
+            android:tint="#8EA1A7"
+            android:background="@android:color/transparent"
             android:contentDescription="Folder thumbnail" />
 
-        <!-- 미디어 개수 뱃지 (0이면 gone) -->
         <TextView
             android:id="@+id/tvBadge"
             android:layout_width="22dp"
@@ -41,30 +44,29 @@
 
     </FrameLayout>
 
-    <!-- 폴더명 + 서브텍스트 -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginStart="16dp">
+        android:layout_marginStart="14dp">
 
         <TextView
             android:id="@+id/tvFolderName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#000000"
+            android:textSize="15.5sp"
+            android:textColor="#24282D"
             android:maxLines="1"
             android:ellipsize="end" />
 
         <TextView
             android:id="@+id/tvFolderSubtext"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="#888888"
-            android:layout_marginTop="2dp"
+            android:textSize="12.5sp"
+            android:textColor="#8B949D"
+            android:layout_marginTop="5dp"
             android:maxLines="1"
             android:ellipsize="end" />
 
