@@ -6,124 +6,135 @@
     android:layout_marginStart="10dp"
     android:layout_marginEnd="10dp"
     android:layout_marginBottom="9dp"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
-    android:background="@drawable/bg_folder_item"
+    android:orientation="vertical"
+    android:background="@android:color/transparent"
     android:clickable="true"
     android:focusable="true">
 
-    <FrameLayout
-        android:layout_width="64dp"
-        android:layout_height="46dp"
-        android:background="@drawable/bg_media_thumb"
-        android:clipToOutline="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:background="@drawable/bg_folder_item">
+
+        <FrameLayout
+            android:layout_width="110dp"
+            android:layout_height="62dp"
+            android:background="@drawable/bg_media_thumb"
+            android:clipToOutline="true">
+
+            <ImageView
+                android:id="@+id/ivEntryThumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:scaleType="centerCrop"
+                android:padding="0dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="thumbnail" />
+
+            <View
+                android:id="@+id/viewSelectOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#663F7FD8"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/ivCheckMark"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="top|start"
+                android:src="@drawable/ic_check_selected"
+                android:visibility="gone"
+                android:contentDescription="selected" />
+
+            <ImageView
+                android:id="@+id/ivPlayOverlay"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:src="@android:drawable/ic_media_play"
+                android:alpha="0.85"
+                android:visibility="gone"
+                android:contentDescription="Play" />
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="4dp"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF"
+                android:background="#AA000000"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvGifBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="3dp"
+                android:text="GIF"
+                android:textSize="9sp"
+                android:textColor="#FFFFFF"
+                android:background="#CC000000"
+                android:paddingStart="3dp"
+                android:paddingEnd="3dp"
+                android:paddingTop="1dp"
+                android:paddingBottom="1dp"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/tvEntryName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15.5sp"
+                android:textColor="#24282D"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:lineSpacingMultiplier="1.1" />
+
+            <TextView
+                android:id="@+id/tvEntrySubtext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12.5sp"
+                android:textColor="#8B949D"
+                android:layout_marginTop="5dp"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
 
         <ImageView
-            android:id="@+id/ivEntryThumbnail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:scaleType="centerCrop"
-            android:padding="0dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="thumbnail" />
-
-        <View
-            android:id="@+id/viewSelectOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#663F7FD8"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/ivCheckMark"
+            android:id="@+id/ivEntryAction"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:layout_gravity="top|start"
-            android:src="@drawable/ic_check_selected"
-            android:visibility="gone"
-            android:contentDescription="selected" />
+            android:src="@drawable/ic_pp_chevron_right"
+            android:tint="#A4ADB6"
+            android:alpha="1"
+            android:padding="4dp"
+            android:contentDescription="action" />
 
-        <ImageView
-            android:id="@+id/ivPlayOverlay"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_media_play"
-            android:alpha="0.85"
-            android:visibility="gone"
-            android:contentDescription="Play" />
-
-        <TextView
-            android:id="@+id/tvDuration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="4dp"
-            android:textSize="10sp"
-            android:textColor="#FFFFFF"
-            android:background="#AA000000"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:paddingTop="1dp"
-            android:paddingBottom="1dp"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tvGifBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_margin="3dp"
-            android:text="GIF"
-            android:textSize="9sp"
-            android:textColor="#FFFFFF"
-            android:background="#CC000000"
-            android:paddingStart="3dp"
-            android:paddingEnd="3dp"
-            android:paddingTop="1dp"
-            android:paddingBottom="1dp"
-            android:visibility="gone" />
-    </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="14dp"
-        android:layout_marginEnd="8dp">
-
-        <TextView
-            android:id="@+id/tvEntryName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="15.5sp"
-            android:textColor="#24282D"
-            android:maxLines="2"
-            android:ellipsize="end"
-            android:lineSpacingMultiplier="1.1" />
-
-        <TextView
-            android:id="@+id/tvEntrySubtext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12.5sp"
-            android:textColor="#8B949D"
-            android:layout_marginTop="5dp"
-            android:maxLines="1"
-            android:ellipsize="end" />
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/ivEntryAction"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:src="@drawable/ic_pp_chevron_right"
-        android:tint="#A4ADB6"
-        android:alpha="1"
-        android:padding="4dp"
-        android:contentDescription="action" />
 </LinearLayout>
