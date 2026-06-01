@@ -12,23 +12,26 @@
         android:orientation="vertical"
         android:layout_marginBottom="60dp">
 
+        <!-- ── TOP APP BAR ── -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="76dp"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:background="#FFFFFF"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp">
+            android:paddingStart="4dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="8dp">
 
             <ImageButton
                 android:id="@+id/btnBack"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:layout_marginEnd="8dp"
                 android:src="@drawable/ic_pp_back"
                 android:tint="#65717C"
-                android:padding="9dp"
+                android:padding="8dp"
                 android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Back"
@@ -37,7 +40,7 @@
             <TextView
                 android:id="@+id/tvTitle"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
                 android:text="Video&#x2019;s"
@@ -90,13 +93,10 @@
                 android:scaleType="fitCenter"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Layout toggle" />
+
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#DDE3EA" />
-
+        <!-- ── CATEGORY TOOLBAR ── -->
         <HorizontalScrollView
             android:id="@+id/categoryScrollView"
             android:layout_width="match_parent"
@@ -123,6 +123,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true">
+
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
@@ -132,6 +133,7 @@
                         android:padding="10dp"
                         android:scaleType="fitCenter"
                         android:contentDescription="My Playlists" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -142,6 +144,7 @@
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:layout_marginTop="6dp" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -154,6 +157,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true">
+
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
@@ -163,6 +167,7 @@
                         android:padding="10dp"
                         android:scaleType="fitCenter"
                         android:contentDescription="History" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -173,6 +178,7 @@
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:layout_marginTop="6dp" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -185,6 +191,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true">
+
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
@@ -194,6 +201,7 @@
                         android:padding="10dp"
                         android:scaleType="fitCenter"
                         android:contentDescription="Trash Bin" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -204,6 +212,7 @@
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:layout_marginTop="6dp" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -216,6 +225,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true">
+
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
@@ -225,6 +235,7 @@
                         android:padding="10dp"
                         android:scaleType="fitCenter"
                         android:contentDescription="URL Stream" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -235,6 +246,7 @@
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:layout_marginTop="6dp" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -247,6 +259,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true">
+
                     <ImageView
                         android:layout_width="50dp"
                         android:layout_height="50dp"
@@ -259,6 +272,7 @@
                         android:paddingBottom="5dp"
                         android:scaleType="fitCenter"
                         android:contentDescription="Settings" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -269,10 +283,20 @@
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:layout_marginTop="6dp" />
+
                 </LinearLayout>
+
             </LinearLayout>
         </HorizontalScrollView>
 
+        <!-- 앱바/툴바 영역과 경로 표시 사이 구분선 -->
+        <View
+            android:id="@+id/dividerToolbarToBreadcrumb"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDE3EA" />
+
+        <!-- ── 브레드크럼 / 경로 표시 ── -->
         <HorizontalScrollView
             android:id="@+id/layoutBreadcrumb"
             android:layout_width="match_parent"
@@ -280,6 +304,7 @@
             android:scrollbars="none"
             android:background="#FFFFFF"
             android:visibility="gone">
+
             <TextView
                 android:id="@+id/tvBreadcrumb"
                 android:layout_width="wrap_content"
@@ -290,15 +315,17 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
                 android:singleLine="true" />
+
         </HorizontalScrollView>
 
+        <!-- 경로 표시와 항목 수/필터 줄 사이 구분선 -->
         <View
             android:id="@+id/layoutBreadcrumbDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#DDE3EA"
-            android:visibility="gone" />
+            android:background="#DDE3EA" />
 
+        <!-- ── 항목 수 + 필터 버튼 그룹 ── -->
         <LinearLayout
             android:id="@+id/layoutFilterBar"
             android:layout_width="match_parent"
@@ -368,7 +395,9 @@
                     android:textColor="#606A74"
                     android:clickable="true"
                     android:focusable="true" />
+
             </LinearLayout>
+
         </LinearLayout>
 
         <View
@@ -384,12 +413,14 @@
             android:orientation="vertical"
             android:gravity="center"
             android:visibility="gone">
+
             <ImageView
                 android:layout_width="72dp"
                 android:layout_height="72dp"
                 android:src="@android:drawable/ic_menu_gallery"
                 android:alpha="0.3"
                 android:contentDescription="Empty" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -397,6 +428,7 @@
                 android:textSize="15sp"
                 android:textColor="#AAAAAA"
                 android:layout_marginTop="12dp" />
+
         </LinearLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -413,7 +445,9 @@
                 android:clipToPadding="false"
                 android:paddingTop="14dp"
                 android:paddingBottom="8dp" />
+
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -443,4 +477,5 @@
         android:layout_height="56dp"
         android:layout_gravity="top"
         android:visibility="gone" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
