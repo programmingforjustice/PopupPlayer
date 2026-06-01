@@ -1,2 +1,8 @@
 android_sdk/
 app/build/
+.gradle
+./gradlew
+.kotlin/
+.vscode/
+app/release-key.jks
+local.properties
