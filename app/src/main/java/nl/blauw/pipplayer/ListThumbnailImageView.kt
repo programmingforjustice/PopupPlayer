@@ -3,6 +3,7 @@ package nl.blauw.pipplayer
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 
@@ -11,8 +12,8 @@ import androidx.appcompat.widget.AppCompatImageView
  *
  * FileListAdapter uses the same item_file_entry.xml for sub-folder rows and media rows.
  * Directory rows should visually match the top-level folder rows, while media rows should
- * keep the wide 9:16-style thumbnail. This view adjusts its parent thumbnail frame when
- * the adapter binds a folder icon or media thumbnail.
+ * keep the wide thumbnail. This view adjusts its parent thumbnail frame when the adapter
+ * binds a folder icon or media thumbnail.
  */
 class ListThumbnailImageView @JvmOverloads constructor(
     context: Context,
@@ -20,9 +21,10 @@ class ListThumbnailImageView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : AppCompatImageView(context, attrs, defStyleAttr) {
 
-    private val folderSizePx = dp(62)
-    private val mediaWidthPx = dp(110)
-    private val mediaHeightPx = dp(62)
+    private val folderWidthPx = dp(100)
+    private val folderHeightPx = ViewGroup.LayoutParams.WRAP_CONTENT
+    private val mediaWidthPx = dp(100)
+    private val mediaHeightPx = ViewGroup.LayoutParams.WRAP_CONTENT
 
     override fun setImageResource(resId: Int) {
         super.setImageResource(resId)
@@ -39,7 +41,7 @@ class ListThumbnailImageView @JvmOverloads constructor(
     }
 
     private fun applyFolderSizing() {
-        resizeParent(folderSizePx, folderSizePx)
+        resizeParent(folderWidthPx, folderHeightPx)
         (parent as? View)?.background = null
         (parent as? View)?.clipToOutline = false
     }
