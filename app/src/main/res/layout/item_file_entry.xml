@@ -30,12 +30,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <nl.blauw.pipplayer.ListThumbnailImageView
+                <!--nl.blauw.pipplayer.ListThumbnailImageView
                     android:id="@+id/ivEntryThumbnail"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:scaleType="centerCrop"
                     android:padding="0dp"
+                    android:background="#E8ECF0"
+                    android:contentDescription="thumbnail"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="W,16:9" /-->
+
+                <ImageView
+                    android:id="@+id/ivEntryThumbnail"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
                     android:background="#E8ECF0"
                     android:contentDescription="thumbnail"
                     app:layout_constraintStart_toStartOf="parent"
