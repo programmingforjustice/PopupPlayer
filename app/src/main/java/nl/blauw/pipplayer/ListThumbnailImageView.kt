@@ -49,7 +49,7 @@ class ListThumbnailImageView @JvmOverloads constructor(
     private fun applyMediaSizing() {
         resizeParent(mediaWidthPx, mediaHeightPx)
         (parent as? View)?.setBackgroundResource(R.drawable.bg_media_thumb)
-        (parent as? View)?.clipToOutline = true
+        (parent as? View)?.clipToOutline = false
     }
 
     private fun resizeParent(width: Int, height: Int) {
