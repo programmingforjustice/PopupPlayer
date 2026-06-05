@@ -243,12 +243,9 @@ class FileListAdapter(
     }
 
     class ListDirVH(view: View) : RecyclerView.ViewHolder(view) {
-        val ivThumb:   ImageView = view.findViewById(R.id.ivEntryThumbnail)
-        val ivOverlay: ImageView = view.findViewById(R.id.ivPlayOverlay)
-        val tvGif:     TextView  = view.findViewById(R.id.tvGifBadge)
-        val tvName:    TextView  = view.findViewById(R.id.tvEntryName)
-        val tvSub:     TextView  = view.findViewById(R.id.tvEntrySubtext)
-        val ivAction:  ImageView = view.findViewById(R.id.ivEntryAction)
+        val ivThumb: ImageView = view.findViewById(R.id.ivFolderThumbnail)
+        val tvName:  TextView  = view.findViewById(R.id.tvFolderName)
+        val tvSub:   TextView  = view.findViewById(R.id.tvFolderSubtext)
     }
 
     class ListMediaVH(view: View) : RecyclerView.ViewHolder(view) {
@@ -285,7 +282,7 @@ class FileListAdapter(
         fun inflate(res: Int) = LayoutInflater.from(parent.context).inflate(res, parent, false)
         return when (viewType) {
             VT_HEADER     -> HeaderVH(inflate(R.layout.item_section_header))
-            VT_DIR_LIST   -> ListDirVH(inflate(R.layout.item_file_entry))
+            VT_DIR_LIST   -> ListDirVH(inflate(R.layout.item_folder))
             VT_MEDIA_LIST -> ListMediaVH(inflate(R.layout.item_file_entry))
             VT_DIR_GRID   -> GridDirVH(inflate(R.layout.item_directory_grid))
             else          -> GridMediaVH(inflate(R.layout.item_file_entry_grid))
@@ -304,16 +301,12 @@ class FileListAdapter(
                 val ctx   = holder.itemView.context
                 Glide.with(ctx).clear(holder.ivThumb)
                 holder.ivThumb.setImageResource(R.drawable.ic_folder_default)
-                holder.ivThumb.scaleType    = ImageView.ScaleType.CENTER_INSIDE
-                //holder.ivThumb.setBackgroundColor(0xFFE0E4EA.toInt())
-                holder.ivThumb.setBackgroundColor(android.graphics.Color.WHITE)
-                holder.ivOverlay.visibility = View.GONE
-                holder.tvGif.visibility     = View.GONE
-                holder.tvName.text          = entry.name
-                holder.tvSub.text           = entry.subtextFor(ctx)
-                holder.ivAction.visibility  = View.GONE
-                holder.ivAction.setOnClickListener(null)
+                holder.ivThumb.scaleType = ImageView.ScaleType.FIT_CENTER
+                holder.ivThumb.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                holder.tvName.text = entry.name
+                holder.tvSub.text  = entry.subtextFor(ctx)
                 holder.itemView.setOnClickListener { onDirectoryClick(entry) }
+                holder.itemView.setOnLongClickListener(null)
             }
 
             is ListMediaVH -> {
