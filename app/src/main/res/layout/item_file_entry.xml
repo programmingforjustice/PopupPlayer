@@ -99,14 +99,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="14dp"
+            android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp">
 
             <TextView
                 android:id="@+id/tvEntryName"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="15.5sp"
+                android:textSize="14sp"
                 android:textColor="#24282D"
                 android:maxLines="2"
                 android:ellipsize="end"
@@ -114,11 +114,11 @@
 
             <TextView
                 android:id="@+id/tvEntrySubtext"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12.5sp"
+                android:textSize="12sp"
                 android:textColor="#8B949D"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="3dp"
                 android:maxLines="1"
                 android:ellipsize="end" />
         </LinearLayout>
