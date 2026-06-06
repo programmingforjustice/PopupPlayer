@@ -674,12 +674,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateSortButton() {
         val iconRes = when (currentSort) {
-            SortOrder.NAME_ASC      -> R.drawable.ic_sort_name_desc
-            SortOrder.NAME_DESC     -> R.drawable.ic_sort_date_newest
-            SortOrder.DATE_NEWEST   -> R.drawable.ic_sort_date_oldest
-            SortOrder.DATE_OLDEST   -> R.drawable.ic_sort_size_largest
-            SortOrder.SIZE_LARGEST  -> R.drawable.ic_sort_size_smallest
-            SortOrder.SIZE_SMALLEST -> R.drawable.ic_sort_name_asc
+            SortOrder.NAME_ASC      -> R.drawable.ic_sort_name_asc
+            SortOrder.NAME_DESC     -> R.drawable.ic_sort_name_desc
+            SortOrder.DATE_NEWEST   -> R.drawable.ic_sort_date_newest
+            SortOrder.DATE_OLDEST   -> R.drawable.ic_sort_date_oldest
+            SortOrder.SIZE_LARGEST  -> R.drawable.ic_sort_size_largest
+            SortOrder.SIZE_SMALLEST -> R.drawable.ic_sort_size_smallest
         }
         btnSort.setImageResource(iconRes)
     }
