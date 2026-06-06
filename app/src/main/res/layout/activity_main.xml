@@ -358,13 +358,13 @@
                     android:id="@+id/btnFilterAll"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:text="\u0020all\u0020"
+                    android:text="all"
                     android:textSize="12sp"
                     android:gravity="center"
                     android:paddingStart="13dp"
                     android:paddingEnd="13dp"
                     android:background="@drawable/bg_filter_selected"
-                    android:textColor="#7C8791"
+                    android:textColor="#3F7FD8"
                     android:clickable="true"
                     android:focusable="true" />
 
