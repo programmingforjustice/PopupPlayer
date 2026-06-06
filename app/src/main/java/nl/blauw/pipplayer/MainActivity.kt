@@ -611,7 +611,7 @@ class MainActivity : AppCompatActivity() {
     private fun updateFilterButtons() {
         val selectedBg   = R.drawable.bg_filter_selected
         val unselectedBg = android.R.color.transparent
-        val selectedColor   = 0xFFFFFFFF.toInt()
+        val selectedColor   = 0xFF7C8791.toInt()
         val unselectedColor = 0xFF666666.toInt()
 
         btnFilterAll.setBackgroundResource(
