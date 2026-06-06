@@ -856,6 +856,7 @@ class MainActivity : AppCompatActivity() {
             if (restoreScroll) restoreScrollPosition(KEY_ROOT)
         } else {
             layoutFilterBar.visibility = View.VISIBLE
+            layoutFilterBarDivider.visibility = View.VISIBLE
             updateFilterButtons()
             loadAllMedia()
         }
@@ -903,7 +904,9 @@ class MainActivity : AppCompatActivity() {
         tvTitle.text                = folder.name
         btnBack.visibility          = View.VISIBLE
         layoutBreadcrumb.visibility = View.VISIBLE
-        layoutFilterBar.visibility  = View.VISIBLE
+        layoutBreadcrumbDivider.visibility = View.VISIBLE
+        layoutFilterBar.visibility = View.VISIBLE
+        layoutFilterBarDivider.visibility = View.VISIBLE
         updateBreadcrumb()
 
         // 새 폴더 진입 시 필터 초기화
