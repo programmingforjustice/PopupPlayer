@@ -129,7 +129,7 @@
                         android:layout_height="50dp"
                         android:src="@drawable/ic_pp_playlist"
                         android:tint="#3F7FD8"
-                        android:background="@drawable/category_icon_bg_primary"
+                        android:background="@drawable/category_icon_bg"
                         android:padding="10dp"
                         android:scaleType="fitCenter"
                         android:contentDescription="My Playlists" />
@@ -358,7 +358,7 @@
                     android:id="@+id/btnFilterAll"
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
-                    android:text="all"
+                    android:text="\u0020all\u0020"
                     android:textSize="12sp"
                     android:gravity="center"
                     android:paddingStart="13dp"
