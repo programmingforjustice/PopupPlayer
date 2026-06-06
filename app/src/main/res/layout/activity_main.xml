@@ -330,6 +330,7 @@
         <View
             android:id="@+id/layoutBreadcrumbDivider"
             android:layout_width="match_parent"
+            android:visibility="false"
             android:layout_height="1dp"
             android:background="#DDE3EA" />
 
@@ -410,6 +411,7 @@
 
         <View android:id="@+id/layoutFilterBarDivider"
             android:layout_width="match_parent"
+            android:visibility="false"
             android:layout_height="1dp"
             android:background="#E7EBF0" />
 
