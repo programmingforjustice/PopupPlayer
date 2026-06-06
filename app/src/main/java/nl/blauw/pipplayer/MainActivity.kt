@@ -54,10 +54,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvBreadcrumb: TextView
     private lateinit var tvItemCount: TextView
     private lateinit var layoutBreadcrumb: View
+    private lateinit var layoutBreadcrumbDivider: View
     private lateinit var layoutFilterBar: View
     private lateinit var btnFilterAll: TextView
     private lateinit var btnFilterVideo: TextView
     private lateinit var btnFilterImage: TextView
+    private lateinit var layoutFilterBarDivider: View
     private lateinit var layoutEmpty: LinearLayout
     private lateinit var swipeRefresh: SwipeRefreshLayout
     private lateinit var rvFolders: RecyclerView
@@ -142,7 +144,9 @@ class MainActivity : AppCompatActivity() {
         tvBreadcrumb     = findViewById(R.id.tvBreadcrumb)
         tvItemCount      = findViewById(R.id.tvItemCount)
         layoutBreadcrumb = findViewById(R.id.layoutBreadcrumb)
+        layoutBreadcrumbDivider = findViewById(R.id.layoutBreadcrumbDivider)
         layoutFilterBar  = findViewById(R.id.layoutFilterBar)
+        layoutFilterBarDivider  = findViewById(R.id.layoutFilterBarDivider)
         btnFilterAll     = findViewById(R.id.btnFilterAll)
         btnFilterVideo   = findViewById(R.id.btnFilterVideo)
         btnFilterImage   = findViewById(R.id.btnFilterImage)
@@ -839,11 +843,13 @@ class MainActivity : AppCompatActivity() {
     private fun showRootScreen(restoreScroll: Boolean = false) {
         tvTitle.text                = "Video's"
         layoutBreadcrumb.visibility = View.GONE
+        layoutBreadcrumbDivider.visibility = View.GONE
         btnBack.visibility          = View.GONE
         currentFilter               = FilterType.ALL
 
         if (showFoldersMode) {
             layoutFilterBar.visibility = View.GONE
+            layoutFilterBarDivider.visibility = View.GONE
             if (rvFolders.adapter !== rootFolderAdapter) rvFolders.adapter = rootFolderAdapter
             layoutEmpty.visibility = View.GONE
             rvFolders.visibility   = View.VISIBLE

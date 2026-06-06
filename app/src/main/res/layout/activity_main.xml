@@ -106,12 +106,20 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp"-->
 
-            <LinearLayout
+            <!--LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingStart="12dp"
-                android:paddingEnd="12dp">
+                android:paddingEnd="12dp"-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="#FFFFFF"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
 
                 <LinearLayout
                     android:id="@+id/categoryPlaylists"
@@ -400,7 +408,7 @@
 
         </LinearLayout>
 
-        <View
+        <View android:id="@+id/layoutFilterBarDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#E7EBF0" />
